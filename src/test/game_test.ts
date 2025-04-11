@@ -1,0 +1,70 @@
+import * as assert from "assert";
+import { Game } from "../server/game";
+import { Player } from "../server/player";
+import { Board } from "../server/board";
+import { Pos } from "../server/pos";
+import { SOLDIER_NAME } from "../server/unit/soldier";
+import { Resources } from "../server/resources";
+import { GameBuilder } from "../server/game_builder";
+
+describe('Game Test', () => {
+    it('Remove all units of player', () => {
+        let [game, board, p1, p2, p3] = newThreePlayerGame();
+        p1.resources.add(new Resources(20, 0, 0));
+        
+        p1.NewUnit(SOLDIER_NAME, new Pos(0, 0));
+        p1.NewUnit(SOLDIER_NAME, new Pos(0, 0));
+        p1.NewUnit(SOLDIER_NAME, new Pos(0, 0));
+
+        p2.NewUnit(SOLDIER_NAME, new Pos(0, 0));
+        
+        p3.NewUnit(SOLDIER_NAME, new Pos(0, 0));
+
+        assert.strictEqual(board.entities.length, 8);
+        p1.heart.currHp = 0;
+        game.arePlayersStillAlive();
+        assert.strictEqual(board.entities.length, 4);
+    });
+
+    it('Game ends', () => {
+        let [game, board, p1, p2, p3] = newThreePlayerGame();
+
+        assert.strictEqual(game.checkGameStillGoing(), true);
+        p2.heart.currHp = 0;
+        game.arePlayersStillAlive();
+        assert.strictEqual(game.players.length, 2);
+        p3.heart.currHp = 0;
+        game.arePlayersStillAlive();
+        assert.strictEqual(game.players.length, 1);
+        assert.strictEqual(game.checkGameStillGoing(), false);
+    });
+});
+
+it('Short Game', () => {
+    let [game, board, p1, p2, p3] = newThreePlayerGame();
+
+    for (let i = 0; i < 1000; i++) {
+        game.mainLoop()
+    }
+
+    assert.strictEqual(board.entities.length, 3);
+
+    p1.NewUnit(SOLDIER_NAME, new Pos(0, 4));
+
+    assert.strictEqual(board.entities.length, 4);
+
+    for (let i = 0; i < 1000; i++) {
+        game.mainLoop();
+    }
+
+    assert.strictEqual(game.checkGameStillGoing(), false);
+});
+
+function newThreePlayerGame() : [Game, Board, Player, Player, Player] {
+    let board : Board = new Board(10, 10);
+    let p1 : Player = new Player(new Pos(0, 5), board);
+    let p2 : Player = new Player(new Pos(9, 5), board);
+    let p3 : Player = new Player(new Pos(5, 9), board);
+    let game : Game = new Game([p1, p2, p3], board);
+    return [game, board, p1, p2, p3];
+}
