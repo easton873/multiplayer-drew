@@ -1,4 +1,5 @@
 import { Board } from "./board";
+import { GameData, UnitData } from "./game_data";
 import { Player } from "./player";
 import { Unit } from "./unit/unit";
 
@@ -50,5 +51,13 @@ export class Game {
 
     get players() {
         return this._players
+    }
+
+    gameData() : GameData {
+        let units : UnitData[] = [];
+        this.board.entities.forEach((unit : Unit) => {
+            units.push(new UnitData(unit.pos));
+        })
+        return new GameData(units);
     }
 }
