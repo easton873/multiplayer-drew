@@ -1,7 +1,7 @@
-import { Board } from "../board";
-import { Player } from "../player";
-import { Pos } from "../pos";
-import { Resources } from "../resources";
+import { Board } from "../board.js";
+import { Player } from "../player.js";
+import { Pos } from "../pos.js";
+import { Resources } from "../resources.js";
 
 export abstract class ObservableUnit {
     private observers : UnitObserver[] = [];

@@ -1,6 +1,7 @@
-import { Era } from "../server/era";
-import { Resources } from "../server/resources";
+
 import * as assert from "assert";
+import { Resources } from "../src/server/game/resources.js";
+import { Era } from "../src/server/game/era.js";
 
 describe('Era Test', () => {
     it('era test', () => {

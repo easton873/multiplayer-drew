@@ -1,74 +1,21 @@
-// import { clientHandler } from "./client_handler";
-
-// const express = require('express');
-// const app = express();
-
-// const server = require('http').Server(app);
-// const io = require('socket.io')(server, {
-//         cors: {
-//             origin: '*',
-//         }
-//     });
-
-// const path = require('path');
-
-// const PORT = process.env.PORT || 8080;
-
-// app.use( express.static(path.resolve('./***path***/build/')));
-
-// app.get('/', function(req : any, res : any) {
-//     res.sendFile(path.resolve('./***path***/index.html'));
-// });
-
-// server.listen(PORT, ()=>{
-//     console.log("Up and at 'em");
-// });
-
-// // const io = require('socket.io')({
-// //     cors: {
-// //         origin: '*',
-// //     }
-// // });
-
-// io.on('connection', (client : any) => {
-//     clientHandler.handleClientActions(client, io);
-// });
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import path from 'path';
-import { GameBuilder } from './game_builder';
-import { Game } from './game';
-import { PlayerBuilder } from './player';
-import { Pos } from './pos';
-import { clientHandler } from './client_handler';
+import { fileURLToPath } from 'url';
+
+import { PlayerBuilder } from './game/player.js';
+import { GameBuilder } from './game/game_builder.js';
+import { Pos } from './game/pos.js';
+import { Game } from './game/game.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-
-const PORT = 3000;
-
-app.use(express.static(path.join(__dirname, './frontend')));
-
-io.on('connection', (client) => {
-    client.join("0");
-    clientHandler.handleClientActions(client, io);
-    console.log('a user connected:', client.id);
-
-//     client.on('draw', (data) => {
-//     // Broadcast to all other clients
-//     client.broadcast.emit('draw', data);
-//   });
-
-  client.on('disconnect', () => {
-    console.log('user disconnected:', client.id);
-  });
-});
-
-server.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
-});
 
 const builder : GameBuilder = new GameBuilder();
 const game : Game = builder.BuildGame(100, 100, [
@@ -88,7 +35,82 @@ function startGameInterval(){
 
 function emitGameState(roomName, gameInstance) {
     io.sockets.in(roomName).
-        emit('gameState', JSON.stringify(gameInstance));
+        emit('gameState', gameInstance);
 }
 
 startGameInterval();
+
+io.on('connection', (client) => {
+  client.join("0");
+  // clientHandler.handleClientActions(client, io);
+  console.log('a user connected:', client.id);
+
+//     client.on('draw', (data) => {
+//     // Broadcast to all other clients
+//     client.broadcast.emit('draw', data);
+//   });
+
+client.on('disconnect', () => {
+  console.log('user disconnected:', client.id);
+});
+});
+
+// io.on('connection', (socket) => {
+//   const newPlayer: Player = { id: socket.id, x: 0, y: 0 };
+//   players[socket.id] = newPlayer;
+
+//   io.emit('players', players);
+
+//   socket.on('move', (pos: { x: number; y: number }) => {
+//     players[socket.id].x = pos.x;
+//     players[socket.id].y = pos.y;
+//     io.emit('players', players);
+//   });
+
+//   socket.on('disconnect', () => {
+//     delete players[socket.id];
+//     io.emit('players', players);
+//   });
+// });
+
+app.use(express.static(path.join(__dirname, '../../dist')));
+
+server.listen(3000, () => {
+  console.log('Server listening on http://localhost:3000');
+});
+
+// import express from 'express';
+// import http from 'http';
+// import { Server } from 'socket.io';
+// import path from 'path';
+// import { Player } from '../shared/types';
+
+// const app = express();
+// const server = http.createServer(app);
+// const io = new Server(server);
+
+// const players: Record<string, Player> = {};
+
+// io.on('connection', (socket) => {
+//   const newPlayer: Player = { id: socket.id, x: 0, y: 0 };
+//   players[socket.id] = newPlayer;
+
+//   io.emit('players', players);
+
+//   socket.on('move', (pos: { x: number; y: number }) => {
+//     players[socket.id].x = pos.x;
+//     players[socket.id].y = pos.y;
+//     io.emit('players', players);
+//   });
+
+//   socket.on('disconnect', () => {
+//     delete players[socket.id];
+//     io.emit('players', players);
+//   });
+// });
+
+// app.use(express.static(path.join(__dirname, '../../dist')));
+
+// server.listen(3000, () => {
+//   console.log('Server listening on http://localhost:3000');
+// });

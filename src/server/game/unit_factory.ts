@@ -1,8 +1,8 @@
-import { Player } from "./player";
-import { Pos } from "./pos";
-import { ResourceUnit, ResourceUnitFactory } from "./unit/resource_unit";
-import { Soldier } from "./unit/soldier";
-import { Unit } from "./unit/unit";
+import { Player } from "./player.js";
+import { Pos } from "./pos.js";
+import { ResourceUnit, ResourceUnitFactory } from "./unit/resource_unit.js";
+import { Soldier } from "./unit/soldier.js";
+import { Unit } from "./unit/unit.js";
 
 export class UnitFactory {
     resouceUnitFactory : ResourceUnitFactory;

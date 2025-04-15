@@ -1,46 +1,54 @@
-import { Random } from "./math";
+import { Random } from "./math.js";
 
 export class Pos {
-    constructor(private x : number, private y : number) {}
+    constructor(private _x : number, private _y : number) {}
+
+    get x() : number {
+        return this._x;
+    }
+
+    get y() : number {
+        return this._y;
+    }
 
     isAdjacent(other : Pos) : boolean {
-        let x = Math.abs(this.x - other.x);
-        let y = Math.abs(this.y - other.y);
+        let x = Math.abs(this._x - other._x);
+        let y = Math.abs(this._y - other._y);
         return x <= 1 && y <= 1;
     }
 
     equals(other : Pos) : boolean {
-        return this.x == other.x && this.y == other.y;
+        return this._x == other._x && this._y == other._y;
     }
 
     moveUp() {
-        this.y++;
+        this._y++;
     }
 
     moveDown() {
-        this.y--;
+        this._y--;
     }
 
     moveRight() {
-        this.x++;
+        this._x++;
     }
 
     moveLeft() {
-        this.x--;
+        this._x--;
     }
 
     distanceTo(other : Pos) {
-        let x = other.x - this.x;
-        let y = other.y - this.y;
+        let x = other._x - this._x;
+        let y = other._y - this._y;
         return x * x + y * y;
     }
 
     moveTowards(other : Pos) {
         if (this.equals(other)) {
             return;
-        } else if (this.y == other.y) {
+        } else if (this._y == other._y) {
             this.moveXTowards(other);
-        } else if (this.x == other.x) {
+        } else if (this._x == other._x) {
             this.moveYTowards(other);
         } else {
             if (Random.fromRange(0, 1) == 0) {
@@ -52,17 +60,17 @@ export class Pos {
     }
 
     private moveXTowards(other : Pos) {
-        if (this.x < other.x) {
+        if (this._x < other._x) {
             this.moveRight();
-        } else if (this.x > other.x) {
+        } else if (this._x > other._x) {
             this.moveLeft();
         }
     }
 
     private moveYTowards(other : Pos) {
-        if (this.y < other.y) {
+        if (this._y < other._y) {
             this.moveUp();
-        } else if (this.y > other.y) {
+        } else if (this._y > other._y) {
             this.moveDown();
         }
     }

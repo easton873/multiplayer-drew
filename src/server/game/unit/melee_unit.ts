@@ -1,7 +1,7 @@
-import { Player } from "../player";
-import { Pos } from "../pos";
-import { Resources } from "../resources";
-import { UnitWithTarget } from "./unit";
+import { Player } from "../player.js";
+import { Pos } from "../pos.js";
+import { Resources } from "../resources.js";
+import { UnitWithTarget } from "./unit.js";
 
 export abstract class MeleeUnit extends UnitWithTarget {
     protected damage;

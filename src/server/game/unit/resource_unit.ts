@@ -1,8 +1,8 @@
-import { Board } from "../board";
-import { Player } from "../player";
-import { Pos } from "../pos";
-import { Resources } from "../resources";
-import { Unit } from "./unit";
+import { Board } from "../board.js";
+import { Player } from "../player.js";
+import { Pos } from "../pos.js";
+import { Resources } from "../resources.js";
+import { Unit } from "./unit.js";
 
 export class ResourceUnit extends Unit {
     constructor(player : Player, pos : Pos, name : string, hp : number, speed : number, private resources : Resources, cost : Resources) {

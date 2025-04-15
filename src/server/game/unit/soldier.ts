@@ -1,8 +1,8 @@
-import { Unit } from "./unit";
-import { MeleeUnit } from "./melee_unit";
-import { Player } from "../player";
-import { Pos } from "../pos";
-import { Resources } from "../resources";
+import { Unit } from "./unit.js";
+import { MeleeUnit } from "./melee_unit.js";
+import { Player } from "../player.js";
+import { Pos } from "../pos.js";
+import { Resources } from "../resources.js";
 
 export const SOLDIER_NAME = "Soldier";
 

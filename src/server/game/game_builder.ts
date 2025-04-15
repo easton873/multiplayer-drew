@@ -1,6 +1,6 @@
-import { Board } from "./board";
-import { Game } from "./game";
-import { Player, PlayerBuilder } from "./player";
+import { Board } from "./board.js";
+import { Game } from "./game.js";
+import { Player, PlayerBuilder } from "./player.js";
 
 export class GameBuilder {
     constructor(){}

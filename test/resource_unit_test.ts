@@ -1,10 +1,9 @@
 import * as assert from "assert";
-import { Player } from "../server/player";
-import { Resources } from "../server/resources";
-import { Pos } from "../server/pos";
-import { Board } from "../server/board";
-import { LUMBER_JACK_NAME, MERCHANT_NAME, MINER_NAME } from "../server/unit/resource_unit";
-import { UnitFactory } from "../server/unit_factory";
+import { Board } from "../src/server/game/board.js";
+import { Player } from "../src/server/game/player.js";
+import { UnitFactory } from "../src/server/game/unit_factory.js";
+import { Pos } from "../src/server/game/pos.js";
+import { Resources } from "../src/server/game/resources.js";
 
 describe('Resource Unit Tests', () => {
     it('Merchant test', () => {

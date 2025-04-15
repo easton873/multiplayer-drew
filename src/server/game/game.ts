@@ -1,7 +1,7 @@
-import { Board } from "./board";
-import { GameData, UnitData } from "./game_data";
-import { Player } from "./player";
-import { Unit } from "./unit/unit";
+import { GameData, UnitData, PosData } from '../../shared/types.js';
+import { Board } from "./board.js";
+import { Player } from "./player.js";
+import { Unit } from "./unit/unit.js";
 
 export class Game {
     constructor(private _players : Player[], private board : Board) {}
@@ -56,8 +56,11 @@ export class Game {
     gameData() : GameData {
         let units : UnitData[] = [];
         this.board.entities.forEach((unit : Unit) => {
-            units.push(new UnitData(unit.pos));
+            const unitPos : PosData = {x: unit.pos.x, y: unit.pos.y}
+            const unitData : UnitData = {pos : unitPos};
+            units.push(unitData);
         })
-        return new GameData(units);
+        const gameData : GameData = {units: units}
+        return gameData;
     }
 }

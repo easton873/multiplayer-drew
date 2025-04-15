@@ -1,7 +1,7 @@
-import { EraHeartInfo } from "./heart";
-import { Resources } from "./resources";
-import { MERCHANT_NAME } from "./unit/resource_unit";
-import { SOLDIER_NAME } from "./unit/soldier";
+import { EraHeartInfo } from "./heart.js";
+import { Resources } from "./resources.js";
+import { MERCHANT_NAME } from "./unit/resource_unit.js";
+import { SOLDIER_NAME } from "./unit/soldier.js";
 
 const STARTING_COST : Resources = new Resources(10, 0 ,0);
 const STARTING_RESOURCES : Resources = new Resources(1, 0, 0);

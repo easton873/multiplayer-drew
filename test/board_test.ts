@@ -1,9 +1,10 @@
 import * as assert from "assert";
-import { Board } from "../server/board";
-import { Soldier } from "../server/unit/soldier";
-import { Player } from "../server/player";
-import { Unit } from "../server/unit/unit";
-import { Pos } from "../server/pos";
+import { Board } from "../src/server/game/board.js";
+import { Player } from "../src/server/game/player.js";
+import { Pos } from "../src/server/game/pos.js";
+import { Soldier } from "../src/server/game/unit/soldier.js";
+import { Unit } from "../src/server/game/unit/unit.js";
+
 
 
 describe('Board Test', () => {

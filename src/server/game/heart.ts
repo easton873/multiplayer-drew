@@ -1,7 +1,7 @@
-import { Player } from "./player";
-import { Pos } from "./pos";
-import { Resources } from "./resources";
-import { ResourceUnit } from "./unit/resource_unit";
+import { Player } from "./player.js";
+import { Pos } from "./pos.js";
+import { Resources } from "./resources.js";
+import { ResourceUnit } from "./unit/resource_unit.js";
 
 export const HEART_NAME = "Heart";
 

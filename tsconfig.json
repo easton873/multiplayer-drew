@@ -1,11 +1,16 @@
 {
-    "compilerOptions" : {
-        "target" : "es5",
-        // "module" : "es2015",
-        "outDir" : "./out",
-        "rootDir" : "./src",
-        "downlevelIteration": true,
-        "sourceMap": true,
-        "esModuleInterop": true,
-    },
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "baseUrl": "src",
+    "paths": {
+      "*": ["node_modules", "src/*"]
+    }
+  },
+  "include": ["src/**/*", "test/**/*"]
 }

@@ -1,4 +1,4 @@
-import { Unit, UnitObserver } from "./unit/unit";
+import { Unit, UnitObserver } from "./unit/unit.js";
 
 export class Board implements UnitObserver {
     entities : Unit[] = [];

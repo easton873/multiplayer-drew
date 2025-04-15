@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { Pos } from "../server/pos";
+import { Pos } from "../src/server/game/pos.js";
 
 
 describe('Test pos', () => {

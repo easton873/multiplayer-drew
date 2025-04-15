@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { Resources } from "../server/resources";
+import { Resources } from "../src/server/game/resources.js";
 
 describe('Resources Tests', () => {
     it('equals test', () => {

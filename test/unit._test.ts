@@ -1,11 +1,11 @@
 import * as assert from "assert";
-import { Player } from "../server/player";
-import { Soldier, SOLDIER_NAME } from "../server/unit/soldier";
-import { Unit, UnitWithTarget } from "../server/unit/unit";
-import { Pos } from "../server/pos";
-import { Board } from "../server/board";
-import { ResourceUnit, ResourceUnitFactory } from "../server/unit/resource_unit";
-import { Resources } from "../server/resources";
+import { Board } from "../src/server/game/board.js";
+import { Player } from "../src/server/game/player.js";
+import { Unit, UnitWithTarget } from "../src/server/game/unit/unit.js";
+import { Soldier } from "../src/server/game/unit/soldier.js";
+import { Pos } from "../src/server/game/pos.js";
+import { ResourceUnitFactory } from "../src/server/game/unit/resource_unit.js";
+import { Resources } from "../src/server/game/resources.js";
 
 describe('Unit Test', () => {
     it('removal test', () => {

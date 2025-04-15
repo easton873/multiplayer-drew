@@ -1,12 +1,12 @@
-import { Era } from "./era";
-import { Board } from "./board";
-import { EraHeartInfo, Heart } from "./heart";
-import { Pos } from "./pos";
-import { Resources } from "./resources";
-import { LUMBER_JACK_NAME, MERCHANT_NAME, MINER_NAME, ResourceUnit } from "./unit/resource_unit";
-import { Soldier, SOLDIER_NAME } from "./unit/soldier";
-import { Unit } from "./unit/unit";
-import { UnitFactory } from "./unit_factory";
+import { Board } from "./board.js";
+import { EraHeartInfo, Heart } from "./heart.js";
+import { Resources } from "./resources.js";
+import { LUMBER_JACK_NAME, MERCHANT_NAME, MINER_NAME, ResourceUnit } from "./unit/resource_unit.js";
+import { Soldier, SOLDIER_NAME } from "./unit/soldier.js";
+import { Unit } from "./unit/unit.js";
+import { UnitFactory } from "./unit_factory.js";
+import { Pos } from "./pos.js";
+import { Era } from "./era.js";
 
 export class PlayerBuilder {
     constructor(public pos : Pos){}
