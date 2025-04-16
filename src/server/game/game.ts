@@ -1,4 +1,4 @@
-import { GameData, UnitData, PosData } from '../../shared/types.js';
+import { GameData, UnitData, PosData, BoardData } from '../../shared/types.js';
 import { Board } from "./board.js";
 import { Player } from "./player.js";
 import { Unit } from "./unit/unit.js";
@@ -54,13 +54,14 @@ export class Game {
     }
 
     gameData() : GameData {
+        let board : BoardData = {width: this.board.width, height: this.board.height}
         let units : UnitData[] = [];
         this.board.entities.forEach((unit : Unit) => {
             const unitPos : PosData = {x: unit.pos.x, y: unit.pos.y}
             const unitData : UnitData = {pos : unitPos};
             units.push(unitData);
         })
-        const gameData : GameData = {units: units}
+        const gameData : GameData = {units: units, board: board}
         return gameData;
     }
 }

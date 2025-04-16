@@ -2,8 +2,16 @@ import { Unit, UnitObserver } from "./unit/unit.js";
 
 export class Board implements UnitObserver {
     entities : Unit[] = [];
-    constructor(private width : number,  private length : number) {
+    constructor(private _width : number,  private _height : number) {
         this.entities
+    }
+
+    get width() : number {
+        return this._width;
+    }
+
+    get height() : number {
+        return this._height;
     }
 
     notifyDeath(unit: Unit) {

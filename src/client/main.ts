@@ -1,13 +1,27 @@
-import { GameData } from '../shared/types';
+import { GameData, UnitData } from '../shared/types';
 import { io } from 'socket.io-client';
 
 const socket = io();
 const canvas = document.getElementById('game') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
 
+const SCALER : number = 4;
+const SIZE : number = 10;
+
 socket.on('gameState', (data : GameData) => {
-  console.log(data);
+  ctx.canvas.height = data.board.height * SCALER + SIZE;
+  ctx.canvas.width = data.board.width * SCALER + SIZE;
+  data.units.forEach((unit : UnitData) => {
+    drawUnit(unit);
+  });
 });
+
+function drawUnit(unit : UnitData) {
+  let x : number = unit.pos.x * SCALER;
+  let y : number = unit.pos.y * SCALER;
+  ctx.fillStyle = 'black';
+  ctx.fillRect(x, y, SIZE, SIZE);
+}
 
 // import { io } from 'socket.io-client';
 // import { Player } from '../shared/types';
