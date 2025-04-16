@@ -1,26 +1,54 @@
-import { GameData, UnitData } from '../shared/types';
+import { GAME_INSTANCE_KEY, GameData, MERCHANT_NAME, PosData, SOLDIER_NAME, UNIT_SPAWN_KEY, UnitData } from '../shared/types';
 import { io } from 'socket.io-client';
 
 const socket = io();
 const canvas = document.getElementById('game') as HTMLCanvasElement;
+const resourceLabel = document.getElementById('resourceLabel') as HTMLLabelElement;
+const unitSelect = document.getElementById('unitSelect') as HTMLSelectElement;
 const ctx = canvas.getContext('2d')!;
 
-const SCALER : number = 4;
 const SIZE : number = 10;
 
-socket.on('gameState', (data : GameData) => {
-  ctx.canvas.height = data.board.height * SCALER + SIZE;
-  ctx.canvas.width = data.board.width * SCALER + SIZE;
+fillSelect(unitSelect, [
+  SOLDIER_NAME,
+  MERCHANT_NAME,
+]);
+
+canvas.addEventListener('click', handleClick);
+
+socket.on(GAME_INSTANCE_KEY, drawGame);
+
+function drawGame(data : GameData) {
+  resourceLabel.innerText = 'Gold: ' + data.resources.gold + ' Wood: ' + data.resources.wood + ' Stone: ' + data.resources.stone;
+  ctx.canvas.height = data.board.height * SIZE + SIZE;
+  ctx.canvas.width = data.board.width * SIZE + SIZE;
   data.units.forEach((unit : UnitData) => {
     drawUnit(unit);
   });
-});
+}
 
 function drawUnit(unit : UnitData) {
-  let x : number = unit.pos.x * SCALER;
-  let y : number = unit.pos.y * SCALER;
+  let x : number = unit.pos.x * SIZE;
+  let y : number = unit.pos.y * SIZE;
   ctx.fillStyle = 'black';
   ctx.fillRect(x, y, SIZE, SIZE);
+}
+
+function handleClick(event) {
+  const rect = canvas.getBoundingClientRect();
+  const x = Math.floor((event.clientX - rect.left) / SIZE);
+  const y = Math.floor((event.clientY - rect.top) / SIZE);
+  const posData : PosData = {x:x, y:y};
+  socket.emit(UNIT_SPAWN_KEY, posData, unitSelect.value);
+}
+
+function fillSelect(selectElement : HTMLSelectElement, units : string[]) {
+  units.forEach(unitType => {
+    const optionElement = document.createElement('option');
+    optionElement.value = unitType;
+    optionElement.text = unitType;
+    selectElement.add(optionElement);
+  });
 }
 
 // import { io } from 'socket.io-client';

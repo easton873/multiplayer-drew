@@ -3,8 +3,7 @@ import { MeleeUnit } from "./melee_unit.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
-
-export const SOLDIER_NAME = "Soldier";
+import { SOLDIER_NAME } from "../../../shared/types.js";
 
 export class Soldier extends MeleeUnit {
     inRange(other: Unit): boolean {

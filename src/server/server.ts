@@ -8,6 +8,8 @@ import { PlayerBuilder } from './game/player.js';
 import { GameBuilder } from './game/game_builder.js';
 import { Pos } from './game/pos.js';
 import { Game } from './game/game.js';
+import { GAME_INSTANCE_KEY } from '../shared/types.js';
+import { clientHandler } from './game/client_handler.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,7 +20,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 const builder : GameBuilder = new GameBuilder();
-const game : Game = builder.BuildGame(100, 100, [
+const game : Game = builder.BuildGame(500, 500, [
     new PlayerBuilder(new Pos(10, 50)),
     new PlayerBuilder(new Pos(90, 50)),
 ]);
@@ -29,21 +31,22 @@ function startGameInterval(){
     const intervalId = setInterval(() => {
         game.mainLoop();
         emitGameState("0", game.gameData());
-        //clearInterval(intervalId); end game line
+        if (!game.checkGameStillGoing()) {
+          clearInterval(intervalId);
+        } 
     }, 1000 / FRAME_RATE);
 }
 
 function emitGameState(roomName, gameInstance) {
     io.sockets.in(roomName).
-        emit('gameState', gameInstance);
+        emit(GAME_INSTANCE_KEY, gameInstance);
 }
 
 startGameInterval();
 
 io.on('connection', (client) => {
   client.join("0");
-  // clientHandler.handleClientActions(client, io);
-  console.log('a user connected:', client.id);
+  clientHandler.handleClientActions(client, io, game);
 
 //     client.on('draw', (data) => {
 //     // Broadcast to all other clients

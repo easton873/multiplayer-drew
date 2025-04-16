@@ -1,6 +1,7 @@
-import { GameData, UnitData, PosData, BoardData } from '../../shared/types.js';
+import { GameData, UnitData, PosData, BoardData, ResourceData } from '../../shared/types.js';
 import { Board } from "./board.js";
 import { Player } from "./player.js";
+import { Pos } from './pos.js';
 import { Unit } from "./unit/unit.js";
 
 export class Game {
@@ -56,12 +57,17 @@ export class Game {
     gameData() : GameData {
         let board : BoardData = {width: this.board.width, height: this.board.height}
         let units : UnitData[] = [];
+        let resources : ResourceData = this._players[0].resources.getResourceData();
         this.board.entities.forEach((unit : Unit) => {
             const unitPos : PosData = {x: unit.pos.x, y: unit.pos.y}
             const unitData : UnitData = {pos : unitPos};
             units.push(unitData);
         })
-        const gameData : GameData = {units: units, board: board}
+        const gameData : GameData = {units: units, board: board, resources: resources};
         return gameData;
+    }
+
+    attemptPlaceUnit(pos : PosData, unitType : string) {
+        this._players[0].NewUnit(unitType, new Pos(pos.x, pos.y));
     }
 }

@@ -1,10 +1,10 @@
 import * as assert from "assert";
 import { Resources } from "../src/server/game/resources.js";
 import { Pos } from "../src/server/game/pos.js";
-import { SOLDIER_NAME } from "../src/server/game/unit/soldier.js";
 import { Board } from "../src/server/game/board.js";
 import { Player } from "../src/server/game/player.js";
 import { Game } from "../src/server/game/game.js";
+import { SOLDIER_NAME } from "../src/shared/types.js";
 
 describe('Game Test', () => {
     it('Remove all units of player', () => {

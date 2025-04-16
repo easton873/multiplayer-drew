@@ -1,3 +1,4 @@
+import { LUMBER_JACK_NAME, MERCHANT_NAME, MINER_NAME } from "../../../shared/types.js";
 import { Board } from "../board.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
@@ -13,10 +14,6 @@ export class ResourceUnit extends Unit {
         this.team.resources.add(this.resources);
     }
 }
-
-export const MERCHANT_NAME = "Merchant";
-export const LUMBER_JACK_NAME = "Lumber Jack";
-export const MINER_NAME = "Miner";
 
 export class ResourceUnitFactory {
     constructor(private player : Player) {}
