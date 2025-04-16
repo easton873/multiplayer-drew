@@ -1,6 +1,6 @@
 import { EraHeartInfo } from "./heart.js";
 import { Resources } from "./resources.js";
-import { MERCHANT_NAME, SOLDIER_NAME } from "../../shared/types.js";
+import { EraData, LUMBER_JACK_NAME, MERCHANT_NAME, SOLDIER_NAME } from "../../shared/types.js";
 
 const STARTING_COST : Resources = new Resources(10, 0 ,0);
 const STARTING_RESOURCES : Resources = new Resources(1, 0, 0);
@@ -25,15 +25,17 @@ export class Era {
         return this.availableUnits.includes(name);
     }
 
-    advanceToNextEra(resources : Resources) {
+    advanceToNextEra(resources : Resources) : boolean{
         if (this.currEra.nextState() == null) {
-            return;
+            return false;
         }
         if (this.canAffordNextEra(resources)) {
             resources.spend(this.nextEraCost);
             this.currEra = this.currEra.nextState();
             this.prepareNewEra(this.currEra);
+            return true;
         }
+        return false;
     }
 
     canAffordNextEra(resources : Resources) : boolean {
@@ -46,6 +48,14 @@ export class Era {
     prepareNewEra(newEra : EraState) {
         this.nextEraCost = newEra.nextEraCost();
         this.availableUnits = newEra.getAvailableUnits();
+    }
+
+    getEraData() : EraData {
+        return {
+            eraName: this.currEra.getName(),
+            nextEraCost: this.currEra.nextEraCost().getResourceData(),
+            availableUnits: this.currEra.getAvailableUnits(),
+        }
     }
 }
 
@@ -102,7 +112,7 @@ class SecondEra extends BaseEra implements EraState {
         return 20;
     }
     getAvailableUnits(): string[] {
-        return [SOLDIER_NAME, MERCHANT_NAME];
+        return [SOLDIER_NAME, MERCHANT_NAME, LUMBER_JACK_NAME];
     }
 
 }

@@ -53,4 +53,8 @@ export class Player {
     isDead() : Boolean {
         return this.heart.currHp <= 0;
     }
+
+    attemptUpgradeEra() : boolean {
+        return this.era.advanceToNextEra(this.resources);
+    }
 }

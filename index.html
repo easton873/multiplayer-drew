@@ -33,16 +33,45 @@
       display: block;
       margin: auto; /* Center the canvas horizontally */
     }
+
+    #formScreen {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .centeredForm {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
   </style>
 </head>
 <body>
-  <div id="controls">
-    <label id="resourceLabel">Multiplayer Drew</label>
-    <select id="unitSelect"></select>
+  <!-- Main Game Screen -->
+  <div id="gameScreen">
+    <div id="controls">
+      <label id="resourceLabel">Multiplayer Drew</label>
+      <select id="unitSelect"></select>
+      <label id="eraNameLabel">Current Era</label>
+      <button id="upgradeButton">Upgrade Era</button>
+      <label id="nextEraLabel">Next Era</label>
+    </div>
+    <div id="canvasContainer">
+      <canvas id="game" width="1600" height="1200"></canvas>
+    </div>
   </div>
 
-  <div id="canvasContainer">
-    <canvas id="game" width="1600" height="1200"></canvas> <!-- large size to trigger scroll -->
+  <!-- Second Screen (Centered Form) -->
+  <div id="formScreen">
+    <div class="centeredForm">
+      <label for="roomInput">Enter a room</label>
+      <input type="text" id="roomInput" />
+      <button id="joinButton">Join</button>
+      <button id="createButton">Create Room</button>
+    </div>
   </div>
 </body>
 </html>
