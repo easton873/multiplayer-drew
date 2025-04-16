@@ -40,6 +40,7 @@ export const GAME_INSTANCE_KEY = "gameInstance";
 export const UNIT_SPAWN_KEY = "spawn";
 export const UPGRADE_ERA_KEY = "era";
 export const UPDGRADE_SUCCESS_KEY = "upgrade success";
+export const DISCONNECT_KEY = "disconnect";
 
 // units
 export const SOLDIER_NAME = "Soldier";

@@ -1,10 +1,13 @@
+import { PosData } from "./types.js"
+
 export interface GameBuilderData {
   boardX : number
   boardY : number
 }
 
 export interface GameSetupData {
-    players : PlayerSetupData
+    roomCode : string
+    players : PlayerSetupData[]
 }
 
 export interface PlayerSetupData {

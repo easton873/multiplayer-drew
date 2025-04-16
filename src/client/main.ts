@@ -1,4 +1,5 @@
-import { EraData, GAME_INSTANCE_KEY, GameData, JOIN_ROOM_KEY, JOIN_SUCCESS_KEY, MERCHANT_NAME, PosData, SOLDIER_NAME, UNIT_SPAWN_KEY, UnitData, UPDGRADE_SUCCESS_KEY, UPGRADE_ERA_KEY } from '../shared/types';
+import { GameSetupData, PlayerSetupData } from '../shared/bulider';
+import { CREATE_ROOM_KEY, EraData, GAME_INSTANCE_KEY, GameData, JOIN_ROOM_KEY, JOIN_SUCCESS_KEY, MERCHANT_NAME, PosData, SOLDIER_NAME, UNIT_SPAWN_KEY, UnitData, UPDGRADE_SUCCESS_KEY, UPGRADE_ERA_KEY } from '../shared/types';
 import { io } from 'socket.io-client';
 
 const socket = io();
@@ -6,19 +7,41 @@ const socket = io();
 // join room screen
 const formScreen = document.getElementById("formScreen") as HTMLDivElement;
 const roomInput = document.getElementById("roomInput") as HTMLInputElement;
+const nameInput = document.getElementById("nameInput") as HTMLInputElement;
 const joinButton = document.getElementById("joinButton") as HTMLButtonElement;
 const createButton = document.getElementById("createButton") as HTMLButtonElement;
 
 joinButton.onclick = joinRoom;
+createButton.onclick = createRoom;
 
 function joinRoom() {
-  socket.emit(JOIN_ROOM_KEY, roomInput.value);
+  socket.emit(JOIN_ROOM_KEY, roomInput.value, nameInput.value);
+}
+
+function createRoom() {
+  socket.emit(CREATE_ROOM_KEY, nameInput.value);
 }
 
 socket.on(JOIN_SUCCESS_KEY, joinSuccess);
-function joinSuccess() {
-  formScreen.style.display = "none";
-  gameScreen.style.display = "inline";
+function joinSuccess(data : GameSetupData) {
+  console.log(data);
+  toWaitingScreen();
+  drawListFirstTime(data.players);
+  roomCodeLabel.innerText = "Room Code: " + data.roomCode;
+}
+
+// waiting screen
+const waitingScreen = document.getElementById("waitingScreen") as HTMLDivElement;
+const playerList = document.getElementById("playerList") as HTMLUListElement;
+const roomCodeLabel = document.getElementById("roomCodeLabel") as HTMLLabelElement;
+
+function drawListFirstTime(data : PlayerSetupData[]) {
+  playerList.innerHTML = '';
+  data.forEach((p : PlayerSetupData) => {
+    const li = document.createElement('li');
+    li.textContent = p.name;
+    playerList.appendChild(li);
+  })
 }
 
 // game screen
@@ -33,6 +56,7 @@ const ctx = canvas.getContext('2d')!;
 
 upgradeButton.onclick = attemptUpgradeEra;
 gameScreen.style.display = "none";
+waitingScreen.style.display = "none";
 formScreen.style.display = "flex";
 
 const SIZE : number = 10;
@@ -91,6 +115,16 @@ function upgradeEra(era : EraData) {
   fillSelect(unitSelect, era.availableUnits);
   eraNameLabel.innerText = 'Era: ' + era.eraName;
   nextEraLabel.innerText = 'Next Era Cost:' + era.nextEraCost.gold + 'g' + era.nextEraCost.wood + 'w' + era.nextEraCost.stone + 's'
+}
+
+function toWaitingScreen() {
+  waitingScreen.style.display = "flex";
+  formScreen.style.display = "none";
+}
+
+function toGameScreen() {
+  waitingScreen.style.display = "none";
+  gameScreen.style.display = "inline";
 }
 
 // import { io } from 'socket.io-client';

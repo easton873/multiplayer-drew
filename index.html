@@ -41,6 +41,13 @@
       align-items: center;
     }
 
+    #waitingScreen {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     .centeredForm {
       display: flex;
       flex-direction: column;
@@ -67,10 +74,22 @@
   <!-- Second Screen (Centered Form) -->
   <div id="formScreen">
     <div class="centeredForm">
+      <label for="nameInput">Player Name</label>
+      <input type="text" id="nameInput" />
       <label for="roomInput">Enter a room</label>
       <input type="text" id="roomInput" />
       <button id="joinButton">Join</button>
       <button id="createButton">Create Room</button>
+    </div>
+  </div>
+
+  <!-- Third Screen (Centered Form) -->
+  <div id="waitingScreen">
+    <div class="centeredForm">
+      <h1>Waiting Room</h1>
+      <label id="roomCodeLabel">Room Code: </label>
+      <label for="playerList">Current Players</label>
+      <ul id="playerList"></ul>
     </div>
   </div>
 </body>

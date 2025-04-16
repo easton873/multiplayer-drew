@@ -10,6 +10,7 @@ import { Pos } from './game/pos.js';
 import { Game } from './game/game.js';
 import { GAME_INSTANCE_KEY } from '../shared/types.js';
 import { clientHandler } from './game/client_handler.js';
+import { GameRoom } from './game/game_room.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,6 +26,8 @@ const game : Game = builder.BuildGame(500, 500, [
     new PlayerBuilder(new Pos(10, 50)),
     new PlayerBuilder(new Pos(90, 50)),
 ]);
+
+const games : Map<string, GameRoom> = new Map<string, GameRoom>();
 
 function startGameInterval(){
     const intervalId = setInterval(() => {
@@ -44,7 +47,7 @@ function emitGameState(roomName, gameInstance) {
 startGameInterval();
 
 io.on('connection', (client) => {
-  clientHandler.handleClientActions(client, io, game);
+  clientHandler.handleClientActions(client, io, games);
 });
 
 app.use(express.static(path.join(__dirname, '../../dist')));
