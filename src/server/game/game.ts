@@ -61,7 +61,7 @@ export class Game {
         let resources : ResourceData = this._players[0].resources.getResourceData();
         let era : EraData = this._players[0].era.getEraData();
         this.board.entities.forEach((unit : Unit) => {
-            const unitPos : PosData = {x: unit.pos.x, y: unit.pos.y}
+            const unitPos : PosData = unit.pos.getPosData();
             const unitData : UnitData = {pos : unitPos};
             units.push(unitData);
         })

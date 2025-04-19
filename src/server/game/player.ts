@@ -9,10 +9,6 @@ import { Pos } from "./pos.js";
 import { Era } from "./era.js";
 import { LUMBER_JACK_NAME, MERCHANT_NAME, MINER_NAME, SOLDIER_NAME } from "../../shared/types.js";
 
-export class PlayerBuilder {
-    constructor(public pos : Pos){}
-}
-
 export class Player {
     resources : Resources = new Resources(5, 0, 0);
     private unitFactory : UnitFactory = new UnitFactory(this);
@@ -21,7 +17,7 @@ export class Player {
 
     heart : ResourceUnit;
 
-    constructor(pos : Pos, board : Board) {
+    constructor(pos : Pos, board : Board, private id : string, private name : string) {
         this.board = board;
         this.heart = new Heart(this, pos, this.era.currEra.getHeart());
         this.board.addEntity(this.heart);

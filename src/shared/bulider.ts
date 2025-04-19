@@ -7,10 +7,15 @@ export interface GameBuilderData {
 
 export interface GameSetupData {
     roomCode : string
-    players : PlayerSetupData[]
+    players : PlayerJoinData[]
+}
+
+export interface PlayerJoinData {
+    name : string
+    ready : boolean
 }
 
 export interface PlayerSetupData {
     name : string
-    ready : boolean
+    pos : PosData
 }

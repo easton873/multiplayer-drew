@@ -1,7 +1,12 @@
+import { PosData } from "../../shared/types.js";
 import { Random } from "./math.js";
 
 export class Pos {
     constructor(private _x : number, private _y : number) {}
+
+    getPosData() : PosData {
+        return {x: this._x, y: this._y};
+    }
 
     get x() : number {
         return this._x;

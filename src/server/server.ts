@@ -1,15 +1,12 @@
 import express from 'express';
 import http from 'http';
-import { Server } from 'socket.io';
+import { DefaultEventsMap, Server, Socket } from 'socket.io';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { PlayerBuilder } from './game/player.js';
-import { GameBuilder } from './game/game_builder.js';
-import { Pos } from './game/pos.js';
 import { Game } from './game/game.js';
-import { GAME_INSTANCE_KEY } from '../shared/types.js';
-import { clientHandler } from './game/client_handler.js';
+import { GAME_INSTANCE_KEY } from '../shared/routes.js';
+import { ClientHandler } from './game/client_handler.js';
 import { GameRoom } from './game/game_room.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -18,24 +15,19 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io : Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any> = new Server(server);
 const FRAME_RATE = 10;
 
-const builder : GameBuilder = new GameBuilder();
-const game : Game = builder.BuildGame(500, 500, [
-    new PlayerBuilder(new Pos(10, 50)),
-    new PlayerBuilder(new Pos(90, 50)),
-]);
-
-const games : Map<string, GameRoom> = new Map<string, GameRoom>();
+const rooms : Map<string, GameRoom> = new Map<string, GameRoom>();
+const playerLookup : Map<string, GameRoom> = new Map<string, GameRoom>();
 
 function startGameInterval(){
     const intervalId = setInterval(() => {
-        game.mainLoop();
-        emitGameState("0", game.gameData());
-        if (!game.checkGameStillGoing()) {
-          clearInterval(intervalId);
-        } 
+        // game.mainLoop();
+        // emitGameState("0", game.gameData());
+        // if (!game.checkGameStillGoing()) {
+        //   clearInterval(intervalId);
+        // } 
     }, 1000 / FRAME_RATE);
 }
 
@@ -44,10 +36,8 @@ function emitGameState(roomName, gameInstance) {
         emit(GAME_INSTANCE_KEY, gameInstance);
 }
 
-startGameInterval();
-
-io.on('connection', (client) => {
-  clientHandler.handleClientActions(client, io, games);
+io.on('connection', (client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) => {
+  new ClientHandler(client, io, rooms, playerLookup);
 });
 
 app.use(express.static(path.join(__dirname, '../../dist')));

@@ -1,5 +1,6 @@
-import { GameSetupData, PlayerSetupData } from '../shared/bulider';
-import { CREATE_ROOM_KEY, EraData, GAME_INSTANCE_KEY, GameData, JOIN_ROOM_KEY, JOIN_SUCCESS_KEY, MERCHANT_NAME, PosData, SOLDIER_NAME, UNIT_SPAWN_KEY, UnitData, UPDGRADE_SUCCESS_KEY, UPGRADE_ERA_KEY } from '../shared/types';
+import { emitCreateRoom, emitEraUpgrade, emitJoinRoom, emitSpawnUnit, emitStartGme, GAME_INSTANCE_KEY, JOIN_SUCCESS_KEY, START_SUCCESS_KEY, UPDGRADE_SUCCESS_KEY } from '../shared/routes';
+import { GameSetupData, PlayerJoinData, PlayerSetupData } from '../shared/bulider';
+import { EraData, GameData, MERCHANT_NAME, PosData, SOLDIER_NAME, UnitData } from '../shared/types';
 import { io } from 'socket.io-client';
 
 const socket = io();
@@ -11,38 +12,11 @@ const nameInput = document.getElementById("nameInput") as HTMLInputElement;
 const joinButton = document.getElementById("joinButton") as HTMLButtonElement;
 const createButton = document.getElementById("createButton") as HTMLButtonElement;
 
-joinButton.onclick = joinRoom;
-createButton.onclick = createRoom;
-
-function joinRoom() {
-  socket.emit(JOIN_ROOM_KEY, roomInput.value, nameInput.value);
-}
-
-function createRoom() {
-  socket.emit(CREATE_ROOM_KEY, nameInput.value);
-}
-
-socket.on(JOIN_SUCCESS_KEY, joinSuccess);
-function joinSuccess(data : GameSetupData) {
-  console.log(data);
-  toWaitingScreen();
-  drawListFirstTime(data.players);
-  roomCodeLabel.innerText = "Room Code: " + data.roomCode;
-}
-
 // waiting screen
 const waitingScreen = document.getElementById("waitingScreen") as HTMLDivElement;
 const playerList = document.getElementById("playerList") as HTMLUListElement;
 const roomCodeLabel = document.getElementById("roomCodeLabel") as HTMLLabelElement;
-
-function drawListFirstTime(data : PlayerSetupData[]) {
-  playerList.innerHTML = '';
-  data.forEach((p : PlayerSetupData) => {
-    const li = document.createElement('li');
-    li.textContent = p.name;
-    playerList.appendChild(li);
-  })
-}
+const waitingStartButton = document.getElementById("waitingStartButton") as HTMLButtonElement;
 
 // game screen
 const gameScreen = document.getElementById("gameScreen")!;
@@ -54,10 +28,48 @@ const eraNameLabel = document.getElementById('eraNameLabel') as HTMLLabelElement
 const nextEraLabel = document.getElementById('nextEraLabel') as HTMLLabelElement;
 const ctx = canvas.getContext('2d')!;
 
-upgradeButton.onclick = attemptUpgradeEra;
 gameScreen.style.display = "none";
 waitingScreen.style.display = "none";
 formScreen.style.display = "flex";
+
+joinButton.onclick = joinRoom;
+createButton.onclick = createRoom;
+waitingStartButton.onclick = startGame;
+upgradeButton.onclick = attemptUpgradeEra;
+
+function joinRoom() {
+  emitJoinRoom(socket, roomInput.value, nameInput.value);
+}
+
+function createRoom() {
+  emitCreateRoom(socket, nameInput.value);
+}
+
+socket.on(JOIN_SUCCESS_KEY, joinSuccess);
+function joinSuccess(data : GameSetupData) {
+  console.log(data);
+  toWaitingScreen();
+  drawListFirstTime(data.players);
+  roomCodeLabel.innerText = "Room Code: " + data.roomCode;
+}
+
+function drawListFirstTime(data : PlayerJoinData[]) {
+  playerList.innerHTML = '';
+  data.forEach((p : PlayerJoinData) => {
+    const li = document.createElement('li');
+    li.textContent = p.name;
+    playerList.appendChild(li);
+  })
+}
+
+function startGame() {
+  emitStartGme(socket);
+}
+
+socket.on(START_SUCCESS_KEY, startGameSuccess)
+function startGameSuccess() {
+  toGameScreen();
+}
 
 const SIZE : number = 10;
 
@@ -87,7 +99,7 @@ function handleClick(event) {
   const x = Math.floor((event.clientX - rect.left) / SIZE);
   const y = Math.floor((event.clientY - rect.top) / SIZE);
   const posData : PosData = {x:x, y:y};
-  socket.emit(UNIT_SPAWN_KEY, posData, unitSelect.value);
+  emitSpawnUnit(socket, posData, unitSelect.value);
 }
 
 function fillSelect(selectElement : HTMLSelectElement, units : string[]) {
@@ -108,7 +120,7 @@ function removeOptions(selectElement) {
 }
 
 function attemptUpgradeEra() {
-  socket.emit(UPGRADE_ERA_KEY);
+  emitEraUpgrade(socket);
 }
 
 function upgradeEra(era : EraData) {
