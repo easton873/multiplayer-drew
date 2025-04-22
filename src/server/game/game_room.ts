@@ -1,4 +1,4 @@
-import { GameSetupData, PlayerJoinData, PlayerSetupData } from "../../shared/bulider.js";
+import { GameWaitingData, PlayerWaitingData, PlayerSetupData, GameSetupData } from "../../shared/bulider.js";
 import { Game } from "./game.js";
 import { Pos } from "./pos.js";
 import { Board } from "./board.js";
@@ -6,6 +6,8 @@ import { Player } from "./player.js";
 
 export class GameRoom {
     public players : Map<string, SetupPlayer> = new Map<string, SetupPlayer>; // player id to player
+    public boardX : number = 100;
+    public boardY : number = 100;
     constructor(public roomCode : string){}
 
     addPlayer(id : string, name : string) {
@@ -17,14 +19,31 @@ export class GameRoom {
         
     }
 
-    joinRoomData() : GameSetupData {
+    joinRoomData() : GameWaitingData {
         return {roomCode: this.roomCode, players: this.getPlayerJoinData()};
     }
 
-    private getPlayerJoinData() : PlayerJoinData[] {
-        let players : PlayerJoinData[] = [];
+    setupData(currentPlayer : boolean) : GameSetupData {
+        return {boardX: this.boardX, boardY: this.boardY, players: this.getPlayerSetupData(), currentPlayer: currentPlayer};
+    }
+
+    setBoardXY(width : number, height : number) {
+        this.boardX = width;
+        this.boardY = height;
+    }
+
+    private getPlayerJoinData() : PlayerWaitingData[] {
+        let players : PlayerWaitingData[] = [];
         this.players.forEach((player : SetupPlayer) => {
             players.push(player.getJoinData());
+        });
+        return players;
+    }
+
+    private getPlayerSetupData() : PlayerSetupData[] {
+        let players : PlayerSetupData[] = [];
+        this.players.forEach((player : SetupPlayer) => {
+            players.push(player.getSetupData());
         });
         return players;
     }
@@ -47,8 +66,12 @@ class SetupPlayer {
         this.pos = pos;
     }
 
-    getJoinData() : PlayerJoinData {
+    getJoinData() : PlayerWaitingData {
         return {ready: true, name: this.name};
+    }
+
+    getSetupData() : PlayerSetupData {
+        return {name : this.name, pos : this.pos};
     }
 
     getPlayerSetupData() : PlayerSetupData {

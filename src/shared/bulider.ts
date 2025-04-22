@@ -1,18 +1,20 @@
 import { PosData } from "./types.js"
 
-export interface GameBuilderData {
-  boardX : number
-  boardY : number
+export interface GameWaitingData {
+    roomCode : string
+    players : PlayerWaitingData[]
+}
+
+export interface PlayerWaitingData {
+    name : string
+    ready : boolean
 }
 
 export interface GameSetupData {
-    roomCode : string
-    players : PlayerJoinData[]
-}
-
-export interface PlayerJoinData {
-    name : string
-    ready : boolean
+    boardX : number
+    boardY : number
+    players : PlayerSetupData[]
+    currentPlayer : boolean
 }
 
 export interface PlayerSetupData {

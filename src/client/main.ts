@@ -1,105 +1,44 @@
-import { emitCreateRoom, emitEraUpgrade, emitJoinRoom, emitSpawnUnit, emitStartGme, GAME_INSTANCE_KEY, JOIN_SUCCESS_KEY, START_SUCCESS_KEY, UPDGRADE_SUCCESS_KEY } from '../shared/routes';
-import { GameSetupData, PlayerJoinData, PlayerSetupData } from '../shared/bulider';
+import { emitCreateRoom, emitEraUpgrade, emitJoinRoom, emitSpawnUnit, emitStartGme, GAME_INSTANCE_KEY, UPDGRADE_SUCCESS_KEY } from '../shared/routes';
+import { GameWaitingData, PlayerWaitingData, PlayerSetupData } from '../shared/bulider';
 import { EraData, GameData, MERCHANT_NAME, PosData, SOLDIER_NAME, UnitData } from '../shared/types';
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
+import { DefaultEventsMap } from 'socket.io';
+import { ScreenManager } from './screen/manager';
+import { ClientReceiver } from '../shared/client';
+import { FrontendClientHandler } from './handler';
 
-const socket = io();
+const socket : Socket<DefaultEventsMap, DefaultEventsMap> = io();
+const manager : ScreenManager = new ScreenManager();
+const clientHandler : ClientReceiver = new FrontendClientHandler(socket, manager);
 
-// join room screen
-const formScreen = document.getElementById("formScreen") as HTMLDivElement;
-const roomInput = document.getElementById("roomInput") as HTMLInputElement;
-const nameInput = document.getElementById("nameInput") as HTMLInputElement;
-const joinButton = document.getElementById("joinButton") as HTMLButtonElement;
-const createButton = document.getElementById("createButton") as HTMLButtonElement;
-
-// waiting screen
-const waitingScreen = document.getElementById("waitingScreen") as HTMLDivElement;
-const playerList = document.getElementById("playerList") as HTMLUListElement;
-const roomCodeLabel = document.getElementById("roomCodeLabel") as HTMLLabelElement;
-const waitingStartButton = document.getElementById("waitingStartButton") as HTMLButtonElement;
-
-// game screen
-const gameScreen = document.getElementById("gameScreen")!;
-const canvas = document.getElementById('game') as HTMLCanvasElement;
-const resourceLabel = document.getElementById('resourceLabel') as HTMLLabelElement;
-const unitSelect = document.getElementById('unitSelect') as HTMLSelectElement;
-const upgradeButton = document.getElementById('upgradeButton') as HTMLButtonElement;
-const eraNameLabel = document.getElementById('eraNameLabel') as HTMLLabelElement;
-const nextEraLabel = document.getElementById('nextEraLabel') as HTMLLabelElement;
-const ctx = canvas.getContext('2d')!;
-
-gameScreen.style.display = "none";
-waitingScreen.style.display = "none";
-formScreen.style.display = "flex";
-
-joinButton.onclick = joinRoom;
-createButton.onclick = createRoom;
-waitingStartButton.onclick = startGame;
-upgradeButton.onclick = attemptUpgradeEra;
+manager.joinScreen.joinButton.onclick = joinRoom;
+manager.joinScreen.createButton.onclick = createRoom;
+manager.waitingScreen.startButton.onclick = startGame;
+manager.gameScreen.upgradeButton.onclick = attemptUpgradeEra;
 
 function joinRoom() {
-  emitJoinRoom(socket, roomInput.value, nameInput.value);
+  emitJoinRoom(socket, manager.joinScreen.roomInput.value, manager.joinScreen.nameInput.value);
 }
 
 function createRoom() {
-  emitCreateRoom(socket, nameInput.value);
-}
-
-socket.on(JOIN_SUCCESS_KEY, joinSuccess);
-function joinSuccess(data : GameSetupData) {
-  console.log(data);
-  toWaitingScreen();
-  drawListFirstTime(data.players);
-  roomCodeLabel.innerText = "Room Code: " + data.roomCode;
-}
-
-function drawListFirstTime(data : PlayerJoinData[]) {
-  playerList.innerHTML = '';
-  data.forEach((p : PlayerJoinData) => {
-    const li = document.createElement('li');
-    li.textContent = p.name;
-    playerList.appendChild(li);
-  })
+  emitCreateRoom(socket, manager.joinScreen.nameInput.value);
 }
 
 function startGame() {
   emitStartGme(socket);
 }
 
-socket.on(START_SUCCESS_KEY, startGameSuccess)
-function startGameSuccess() {
-  toGameScreen();
-}
+manager.gameScreen.canvas.addEventListener('click', handleClick);
 
-const SIZE : number = 10;
-
-canvas.addEventListener('click', handleClick);
-
-socket.on(GAME_INSTANCE_KEY, drawGame);
-socket.on(UPDGRADE_SUCCESS_KEY, upgradeEra);
-
-function drawGame(data : GameData) {
-  resourceLabel.innerText = 'Gold: ' + data.resources.gold + ' Wood: ' + data.resources.wood + ' Stone: ' + data.resources.stone;
-  ctx.canvas.height = data.board.height * SIZE + SIZE;
-  ctx.canvas.width = data.board.width * SIZE + SIZE;
-  data.units.forEach((unit : UnitData) => {
-    drawUnit(unit);
-  });
-}
-
-function drawUnit(unit : UnitData) {
-  let x : number = unit.pos.x * SIZE;
-  let y : number = unit.pos.y * SIZE;
-  ctx.fillStyle = 'black';
-  ctx.fillRect(x, y, SIZE, SIZE);
-}
+// socket.on(GAME_INSTANCE_KEY, drawGame);
+// socket.on(UPDGRADE_SUCCESS_KEY, upgradeEra);
 
 function handleClick(event) {
-  const rect = canvas.getBoundingClientRect();
-  const x = Math.floor((event.clientX - rect.left) / SIZE);
-  const y = Math.floor((event.clientY - rect.top) / SIZE);
+  const rect = manager.gameScreen.canvas.getBoundingClientRect();
+  const x = Math.floor((event.clientX - rect.left) / manager.gameScreen.SIZE);
+  const y = Math.floor((event.clientY - rect.top) / manager.gameScreen.SIZE);
   const posData : PosData = {x:x, y:y};
-  emitSpawnUnit(socket, posData, unitSelect.value);
+  emitSpawnUnit(socket, posData, manager.gameScreen.unitSelect.value);
 }
 
 function fillSelect(selectElement : HTMLSelectElement, units : string[]) {
@@ -124,48 +63,7 @@ function attemptUpgradeEra() {
 }
 
 function upgradeEra(era : EraData) {
-  fillSelect(unitSelect, era.availableUnits);
-  eraNameLabel.innerText = 'Era: ' + era.eraName;
-  nextEraLabel.innerText = 'Next Era Cost:' + era.nextEraCost.gold + 'g' + era.nextEraCost.wood + 'w' + era.nextEraCost.stone + 's'
+  fillSelect(manager.gameScreen.unitSelect, era.availableUnits);
+  manager.gameScreen.eraNameLabel.innerText = 'Era: ' + era.eraName;
+  manager.gameScreen.nextEraLabel.innerText = 'Next Era Cost:' + era.nextEraCost.gold + 'g' + era.nextEraCost.wood + 'w' + era.nextEraCost.stone + 's'
 }
-
-function toWaitingScreen() {
-  waitingScreen.style.display = "flex";
-  formScreen.style.display = "none";
-}
-
-function toGameScreen() {
-  waitingScreen.style.display = "none";
-  gameScreen.style.display = "inline";
-}
-
-// import { io } from 'socket.io-client';
-// import { Player } from '../shared/types';
-
-// const socket = io();
-// const canvas = document.getElementById('game') as HTMLCanvasElement;
-// const ctx = canvas.getContext('2d')!;
-
-// let players: Record<string, Player> = {};
-
-// socket.on('players', (updatedPlayers) => {
-//   players = updatedPlayers;
-//   draw();
-// });
-
-// function draw() {
-//   ctx.clearRect(0, 0, canvas.width, canvas.height);
-//   for (const id in players) {
-//     const player = players[id];
-//     ctx.fillStyle = id === socket.id ? 'blue' : 'red';
-//     ctx.fillRect(player.x, player.y, 20, 20);
-//   }
-// }
-
-// canvas.addEventListener('mousemove', (e) => {
-//   const rect = canvas.getBoundingClientRect();
-//   const x = e.clientX - rect.left;
-//   const y = e.clientY - rect.top;
-//   socket.emit('move', { x, y });
-// });
-

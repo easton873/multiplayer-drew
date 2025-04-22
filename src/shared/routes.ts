@@ -2,13 +2,12 @@ import { Game } from '../server/game/game.js';
 import { GameRoom } from '../server/game/game_room.js';
 import { DefaultEventsMap, Server, Socket } from 'socket.io';
 import { PosData } from './types.js';
+import { GameWaitingData } from './bulider.js';
 
 // socket events
 export const JOIN_ROOM_KEY = "join";
-export const JOIN_SUCCESS_KEY = "join success";
 export const CREATE_ROOM_KEY = "create";
 export const START_GAME_KEY = "start";
-export const START_SUCCESS_KEY = "start success";
 
 export const GAME_INSTANCE_KEY = "gameInstance";
 export const UNIT_SPAWN_KEY = "spawn";
@@ -20,9 +19,7 @@ export abstract class RouteReceiver {
     constructor(protected client: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
         protected io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
         protected rooms : Map<string, GameRoom>, 
-        protected playerRoomLookup : Map<string, GameRoom>) {
-        console.log("guy connected");
-        
+        protected playerRoomLookup : Map<string, GameRoom>) {        
         client.on(JOIN_ROOM_KEY, (roomCode : string, playerName : string) => this.handleJoinRoom(roomCode, playerName));
         client.on(CREATE_ROOM_KEY, (playerName : string) => this.handleCreateRoom(playerName));
         client.on(START_GAME_KEY, () => this.handleStartGame());
