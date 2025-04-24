@@ -14,7 +14,6 @@ export interface GameSetupData {
     boardX : number
     boardY : number
     players : PlayerSetupData[]
-    currentPlayer : boolean
 }
 
 export interface PlayerSetupData {

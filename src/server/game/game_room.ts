@@ -3,6 +3,7 @@ import { Game } from "./game.js";
 import { Pos } from "./pos.js";
 import { Board } from "./board.js";
 import { Player } from "./player.js";
+import { DefaultEventsMap, Socket } from "socket.io";
 
 export class GameRoom {
     public players : Map<string, SetupPlayer> = new Map<string, SetupPlayer>; // player id to player
@@ -10,8 +11,8 @@ export class GameRoom {
     public boardY : number = 100;
     constructor(public roomCode : string){}
 
-    addPlayer(id : string, name : string) {
-        this.players.set(id, new SetupPlayer(id, name));
+    addPlayer(id : string, name : string, client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) {
+        this.players.set(id, new SetupPlayer(id, name, client));
     }
 
     addPlayerPos(id : string, pos : Pos) {
@@ -23,13 +24,39 @@ export class GameRoom {
         return {roomCode: this.roomCode, players: this.getPlayerJoinData()};
     }
 
-    setupData(currentPlayer : boolean) : GameSetupData {
-        return {boardX: this.boardX, boardY: this.boardY, players: this.getPlayerSetupData(), currentPlayer: currentPlayer};
+    setupData() : GameSetupData {
+        return {boardX: this.boardX, boardY: this.boardY, players: this.getPlayerSetupData()};
     }
 
     setBoardXY(width : number, height : number) {
         this.boardX = width;
         this.boardY = height;
+    }
+
+    allPlayersHavePos() : boolean {
+        return this.getPoslessPlayers().length == 0;
+    }
+
+    getPoslessPlayer() : SetupPlayer {
+        let players = this.getPoslessPlayers();
+        if (players.length == 0) {
+            throw new Error("no posless players");
+        }
+        return this.getRandomPlayer(players);
+    }
+
+    private getPoslessPlayers() : SetupPlayer[] {
+        let players : SetupPlayer[] = [];
+        this.players.forEach((player : SetupPlayer) => {
+            if (player.getPos() == null) {
+                players.push(player);
+            }
+        });
+        return players;
+    }
+
+    private getRandomPlayer(players : SetupPlayer[]) : SetupPlayer {
+        return players[Math.floor(Math.random() * players.length)];
     }
 
     private getPlayerJoinData() : PlayerWaitingData[] {
@@ -59,8 +86,20 @@ export class GameRoom {
 }
 
 class SetupPlayer {
-    private pos : Pos
-    constructor(private id : string, private name: string) {}
+    private pos : Pos = null;
+    constructor(private id : string, private name: string, private client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) {}
+
+    getClient() : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any> {
+        return this.client;
+    }
+
+    getId() : string {
+        return this.id;
+    }
+
+    getPos() : Pos {
+        return this.pos;
+    }
 
     setPos(pos : Pos) {
         this.pos = pos;

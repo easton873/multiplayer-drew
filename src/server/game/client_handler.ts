@@ -3,11 +3,16 @@ import { CREATE_ROOM_KEY, DISCONNECT_KEY, JOIN_ROOM_KEY, RouteReceiver, START_GA
 import { Era } from "./era.js";
 import { Game } from "./game.js";
 import { GameRoom, randomRoomID } from "./game_room.js";
-import { emitJoinSuccess, emitStartSuccess, START_SUCCESS_KEY } from "../../shared/client.js";
+import { emitJoinSuccess, emitSetPosSuccess, emitStartSuccess, emitYourTurn, START_SUCCESS_KEY } from "../../shared/client.js";
+import { Pos } from "./pos.js";
+import { DefaultEventsMap, Server, Socket } from "socket.io";
 
 
 export class ClientHandler extends RouteReceiver {
-    constructor(client: any, io: any, rooms : Map<string, GameRoom>, playerRoomLookup : Map<string, GameRoom>){
+    constructor(client: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
+        io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
+        rooms : Map<string, GameRoom>, 
+        playerRoomLookup : Map<string, GameRoom>){
         console.log("guy connected");
         super(client, io, rooms, playerRoomLookup);
     }   
@@ -26,7 +31,7 @@ export class ClientHandler extends RouteReceiver {
         }
         this.playerRoomLookup.set(this.client.id, currGame);
         this.client.join(roomCode);
-        currGame.addPlayer(this.client.id, name);
+        currGame.addPlayer(this.client.id, name, this.client);
         emitJoinSuccess(this.io, roomCode, currGame.joinRoomData());
         console.log("Client " + this.client.id + " joined room " + roomCode);
     }
@@ -36,7 +41,22 @@ export class ClientHandler extends RouteReceiver {
         if (!gameRoom) {
             return;
         }
-        emitStartSuccess(this.io, gameRoom.roomCode, gameRoom.setupData(false));
+        emitStartSuccess(this.io, gameRoom.roomCode, gameRoom.setupData());
+        emitYourTurn(gameRoom.getPoslessPlayer().getClient(), gameRoom.setupData());
+    }
+
+    handleSubmitStartPos(pos: PosData) {
+        let gameRoom = this.playerRoomLookup.get(this.client.id);
+        if (!gameRoom) {
+            return;
+        }
+        gameRoom.addPlayerPos(this.client.id, Pos.FromPosData(pos));
+        emitSetPosSuccess(this.client);
+        emitStartSuccess(this.io, gameRoom.roomCode, gameRoom.setupData());
+        if (gameRoom.allPlayersHavePos()) {
+            return;
+        }
+        emitYourTurn(gameRoom.getPoslessPlayer().getClient(), gameRoom.setupData());
     }
 
     handleDisconnect(){

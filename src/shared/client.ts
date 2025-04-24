@@ -4,16 +4,21 @@ import { GameSetupData, GameWaitingData } from "./bulider";
 
 const JOIN_SUCCESS_KEY = "join success";
 export const START_SUCCESS_KEY = "start success";
-export const SEND_START_POS = "start pos";
+const YOUR_TURN_KEY = "start pos";
+const SET_POS_SUCCESS = "set pos success";
 
 export abstract class ClientReceiver {
     constructor(protected socket : Socket<DefaultEventsMap, DefaultEventsMap>) {
         socket.on(JOIN_SUCCESS_KEY, (data : GameWaitingData) => this.handleJoinSuccess(data));
         socket.on(START_SUCCESS_KEY, (data : GameSetupData) => this.handleStartSuccess(data));
+        socket.on(YOUR_TURN_KEY, (data : GameSetupData) => this.handleYourTurn(data));
+        socket.on(SET_POS_SUCCESS, () => this.handleSetPosSuccess());
     }
 
     abstract handleJoinSuccess(data : GameWaitingData);
     abstract handleStartSuccess(data : GameSetupData);
+    abstract handleYourTurn(data : GameSetupData);
+    abstract handleSetPosSuccess();
 }
 
 export function emitJoinSuccess(io : any, roomCode : string, currGame : GameWaitingData) {
@@ -22,4 +27,12 @@ export function emitJoinSuccess(io : any, roomCode : string, currGame : GameWait
 
 export function emitStartSuccess(io : any, roomCode : string, data : GameSetupData) {
     io.sockets.in(roomCode).emit(START_SUCCESS_KEY, data);
+}
+
+export function emitYourTurn(client : any, data : GameSetupData) {
+    client.emit(YOUR_TURN_KEY, data);
+}
+
+export function emitSetPosSuccess(client : any) {
+    client.emit(SET_POS_SUCCESS);
 }

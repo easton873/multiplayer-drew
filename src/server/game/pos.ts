@@ -4,6 +4,10 @@ import { Random } from "./math.js";
 export class Pos {
     constructor(private _x : number, private _y : number) {}
 
+    static FromPosData(pos : PosData) : Pos {
+        return new Pos(pos.x, pos.y);
+    }
+
     getPosData() : PosData {
         return {x: this._x, y: this._y};
     }

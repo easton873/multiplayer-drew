@@ -5,6 +5,8 @@ export class WaitingScreen {
     public playerList = document.getElementById("playerList") as HTMLUListElement;
     public roomCodeLabel = document.getElementById("roomCodeLabel") as HTMLLabelElement;
     public startButton = document.getElementById("waitingStartButton") as HTMLButtonElement;
+    public widthInput = document.getElementById("widthInput") as HTMLInputElement;
+    public heightInput = document.getElementById("heightInput") as HTMLInputElement;
 
     drawListFirstTime(data : PlayerWaitingData[]) {
       this.playerList.innerHTML = '';
