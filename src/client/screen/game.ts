@@ -1,4 +1,5 @@
-import { GameData, UnitData } from "../../shared/types";
+import { GameSetupData, PlayerSetupData } from "../../shared/bulider";
+import { GameData, PosData, UnitData } from "../../shared/types";
 
 export class GameScreen {
     public div = document.getElementById("gameScreen")!;
@@ -8,8 +9,19 @@ export class GameScreen {
     public upgradeButton = document.getElementById('upgradeButton') as HTMLButtonElement;
     public eraNameLabel = document.getElementById('eraNameLabel') as HTMLLabelElement;
     public nextEraLabel = document.getElementById('nextEraLabel') as HTMLLabelElement;
-    public ctx = this.canvas.getContext('2d')!;
+    public ctx : CanvasRenderingContext2D = this.canvas.getContext('2d')!;
     public SIZE : number = 10;
+
+    drawSetupGame(data : GameSetupData) {
+      if (!data) {
+        return;
+      }
+      data.players.forEach((player : PlayerSetupData) => {
+        if (player.pos) {
+          this.drawUnitByPos(player.pos);
+        }
+      });
+    }
 
     drawGame(data : GameData) {
       this.resourceLabel.innerText = 'Gold: ' + data.resources.gold + ' Wood: ' + data.resources.wood + ' Stone: ' + data.resources.stone;
@@ -25,8 +37,12 @@ export class GameScreen {
     }
     
     drawUnit(unit : UnitData) {
-      let x : number = unit.pos.x * this.SIZE;
-      let y : number = unit.pos.y * this.SIZE;
+      this.drawUnitByPos(unit.pos);
+    }
+
+    drawUnitByPos(pos : PosData) {
+      let x : number = pos.x * this.SIZE;
+      let y : number = pos.y * this.SIZE;
       this.ctx.fillStyle = 'black';
       this.ctx.fillRect(x, y, this.SIZE, this.SIZE);
     }

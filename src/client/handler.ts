@@ -1,11 +1,12 @@
 import { Socket } from "socket.io-client";
-import { GameSetupData, GameWaitingData } from "../shared/bulider";
+import { GameSetupData, GameWaitingData, PlayerSetupData } from "../shared/bulider";
 import { ClientReceiver } from "../shared/client";
 import { ScreenManager } from "./screen/manager";
 import { DefaultEventsMap } from "socket.io";
 import { emitSubmitStartPos } from "../shared/routes";
 
 export class FrontendClientHandler extends ClientReceiver {
+    private latestData : GameSetupData;
     private mouseMoveSelectStartPos;
     private clickSelectStartPos;
     constructor(socket : Socket<DefaultEventsMap, DefaultEventsMap>, private manager : ScreenManager)  {
@@ -17,9 +18,10 @@ export class FrontendClientHandler extends ClientReceiver {
         this.manager.waitingScreen.roomCodeLabel.innerText = "Room Code: " + data.roomCode;
     }
     handleStartSuccess(data: GameSetupData) {
-        console.log(data);
         this.manager.toGameScreen();
+        this.latestData = data;
         this.manager.gameScreen.setCanvasSize(data.boardX, data.boardY);
+        this.manager.gameScreen.drawSetupGame(this.latestData);
     }
     handleYourTurn(data: GameSetupData) {
         let gameScreen = this.manager.gameScreen;
@@ -28,13 +30,14 @@ export class FrontendClientHandler extends ClientReceiver {
             const offset = gameScreen.SIZE / 2;
             const rect = gameScreen.canvas.getBoundingClientRect();
             ctx.clearRect(0, 0, gameScreen.canvas.width, gameScreen.canvas.height);
+            this.manager.gameScreen.drawSetupGame(this.latestData);
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             let gameX = Math.floor(x / gameScreen.SIZE);
             let gameY = Math.floor(y / gameScreen.SIZE);
             let drawX = gameX * gameScreen.SIZE;
             let drawY = gameY * gameScreen.SIZE;
-            ctx.fillRect(drawX, drawY, gameScreen.SIZE, gameScreen.SIZE);
+            this.manager.gameScreen.drawUnitByPos({x: gameX, y: gameY});
             ctx.beginPath();
             let radius = 3;
             ctx.arc(drawX + offset, drawY + offset, radius * gameScreen.SIZE, 0, 2 * Math.PI);

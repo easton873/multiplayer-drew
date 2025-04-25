@@ -110,7 +110,7 @@ class SetupPlayer {
     }
 
     getSetupData() : PlayerSetupData {
-        return {name : this.name, pos : this.pos};
+        return {name : this.name, pos : this.pos ? this.pos.getPosData() : null};
     }
 
     getPlayerSetupData() : PlayerSetupData {
