@@ -1,5 +1,5 @@
 import { GameSetupData, PlayerSetupData } from "../../shared/bulider";
-import { GameData, PosData, UnitData } from "../../shared/types";
+import { EraData, GameData, PosData, UnitData } from "../../shared/types";
 
 export class GameScreen {
     public div = document.getElementById("gameScreen")!;
@@ -46,4 +46,27 @@ export class GameScreen {
       this.ctx.fillStyle = 'black';
       this.ctx.fillRect(x, y, this.SIZE, this.SIZE);
     }
-}
+
+    fillSelect(selectElement : HTMLSelectElement, units : string[]) {
+      this.removeOptions(selectElement);
+      units.forEach(unitType => {
+        const optionElement = document.createElement('option');
+        optionElement.value = unitType;
+        optionElement.text = unitType;
+        selectElement.add(optionElement);
+      });
+    }
+    
+    removeOptions(selectElement) {
+      var i, L = selectElement.options.length - 1;
+      for(i = L; i >= 0; i--) {
+         selectElement.remove(i);
+      }
+    }
+
+    upgradeEra(era : EraData) {
+      this.fillSelect(this.unitSelect, era.availableUnits);
+      this.eraNameLabel.innerText = 'Era: ' + era.eraName;
+      this.nextEraLabel.innerText = 'Next Era Cost:' + era.nextEraCost.gold + 'g' + era.nextEraCost.wood + 'w' + era.nextEraCost.stone + 's'
+    }
+} 

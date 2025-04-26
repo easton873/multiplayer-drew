@@ -10,10 +10,8 @@ export const CREATE_ROOM_KEY = "create";
 export const START_GAME_KEY = "start";
 const SUBMIT_START_POS_KEY = "submit start pos";
 
-export const GAME_INSTANCE_KEY = "gameInstance";
 export const UNIT_SPAWN_KEY = "spawn";
 export const UPGRADE_ERA_KEY = "era";
-export const UPDGRADE_SUCCESS_KEY = "upgrade success";
 export const DISCONNECT_KEY = "disconnect";
 
 export abstract class RouteReceiver {
@@ -55,7 +53,7 @@ export function emitSubmitStartPos(socket : any, pos : PosData){
 }
 
 export function emitSpawnUnit(socket : any, pos : PosData, unitType : string) {
-    socket.emit(UNIT_SPAWN_KEY);
+    socket.emit(UNIT_SPAWN_KEY, pos, unitType);
 }
 
 export function emitEraUpgrade(socket : any) {

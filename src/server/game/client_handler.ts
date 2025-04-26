@@ -1,20 +1,24 @@
 import { PosData } from "../../shared/types.js";
-import { CREATE_ROOM_KEY, DISCONNECT_KEY, JOIN_ROOM_KEY, RouteReceiver, START_GAME_KEY, UNIT_SPAWN_KEY, UPDGRADE_SUCCESS_KEY, UPGRADE_ERA_KEY } from "../../shared/routes.js";
+import { CREATE_ROOM_KEY, DISCONNECT_KEY, JOIN_ROOM_KEY, RouteReceiver, START_GAME_KEY, UNIT_SPAWN_KEY, UPGRADE_ERA_KEY } from "../../shared/routes.js";
 import { Era } from "./era.js";
 import { Game } from "./game.js";
 import { GameRoom, randomRoomID } from "./game_room.js";
-import { emitJoinSuccess, emitSetPosSuccess, emitStartSuccess, emitYourTurn, START_SUCCESS_KEY } from "../../shared/client.js";
+import { emitGameBuilt, emitGameState, emitJoinSuccess, emitSetPosSuccess, emitStartSuccess, emitUpgradeEraSuccess, emitYourTurn, START_SUCCESS_KEY } from "../../shared/client.js";
 import { Pos } from "./pos.js";
 import { DefaultEventsMap, Server, Socket } from "socket.io";
+import { Player } from "./player.js";
 
+const FRAME_RATE = 10;
 
 export class ClientHandler extends RouteReceiver {
     constructor(client: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
         io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
         rooms : Map<string, GameRoom>, 
-        playerRoomLookup : Map<string, GameRoom>){
+        playerRoomLookup : Map<string, GameRoom>, 
+        private playerClients : Map<string, Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>>){
         console.log("guy connected");
         super(client, io, rooms, playerRoomLookup);
+        this.playerClients.set(this.client.id, this.client);
     }   
 
     handleCreateRoom(name : string) {
@@ -54,6 +58,34 @@ export class ClientHandler extends RouteReceiver {
         emitSetPosSuccess(this.client);
         emitStartSuccess(this.io, gameRoom.roomCode, gameRoom.setupData());
         if (gameRoom.allPlayersHavePos()) {
+            let game : Game = gameRoom.buildGame();
+            game.players.forEach((player : Player) => {
+                let tempClient = this.playerClients.get(player.getID());
+                if (!tempClient) {
+                    return;
+                }
+                console.log('emit build success to ', player.getID());
+                emitGameBuilt(tempClient, player.era.getEraData());
+            });
+            console.log('starting game loop');
+            const intervalId = setInterval(() => {
+                game.mainLoop();
+                game.players.forEach((player : Player) => {
+                    let tempClient = this.playerClients.get(player.getID());
+                    if (!tempClient) {
+                        return;
+                    }
+                    let data = game.gameData(player.getID());
+                    if (!data) {
+                        return;
+                    }
+                    emitGameState(tempClient, data);
+                });
+                if (!game.checkGameStillGoing()) {
+                    console.log('game over');
+                    clearInterval(intervalId);
+                } 
+            }, 1000 / FRAME_RATE);
             return;
         }
         emitYourTurn(gameRoom.getPoslessPlayer().getClient(), gameRoom.setupData());
@@ -64,17 +96,32 @@ export class ClientHandler extends RouteReceiver {
     }
 
     handleSpawnUnit(pos : PosData, unitType : string) {
-        // if (!this.game) {
-        //     return;
-        // }
-        // this.game.attemptPlaceUnit(pos, unitType);
+        let room = this.playerRoomLookup.get(this.client.id);
+        if (!room || !room.getGame()) {
+            console.log('game is null');
+            return;
+        }
+        let game = room.getGame();
+        let player = game.getPlayer(this.client.id);
+        if (!player) {
+            return;
+        }
+        player.NewUnit(unitType, new Pos(pos.x, pos.y));
     }
 
     handleEraUpgrade() {
-        // if (!this.game) {
-        //     return;
-        // }
-        // let era : Era = this.game.upgradeEra();
-        // this.client.emit(UPDGRADE_SUCCESS_KEY, era.getEraData())
+        let room = this.playerRoomLookup.get(this.client.id);
+        if (!room || !room.getGame()) {
+            console.log('game is null');
+            return;
+        }
+        let game = room.getGame();
+        let player = game.getPlayer(this.client.id);
+        if (!player) {
+            return;
+        }
+        if (player.attemptUpgradeEra()) {
+            emitUpgradeEraSuccess(this.client, player.era.getEraData());
+        }
     }
 }

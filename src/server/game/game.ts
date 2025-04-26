@@ -55,11 +55,15 @@ export class Game {
         return this._players
     }
 
-    gameData() : GameData {
+    gameData(playerID : string) : GameData {
+        let player = this.getPlayer(playerID);
+        if (!player) {
+            return null;
+        }
         let board : BoardData = {width: this.board.width, height: this.board.height}
         let units : UnitData[] = [];
-        let resources : ResourceData = this._players[0].resources.getResourceData();
-        let era : EraData = this._players[0].era.getEraData();
+        let resources : ResourceData = player.resources.getResourceData();
+        let era : EraData = player.era.getEraData();
         this.board.entities.forEach((unit : Unit) => {
             const unitPos : PosData = unit.pos.getPosData();
             const unitData : UnitData = {pos : unitPos};
@@ -69,12 +73,12 @@ export class Game {
         return gameData;
     }
 
-    attemptPlaceUnit(pos : PosData, unitType : string) {
-        this._players[0].NewUnit(unitType, new Pos(pos.x, pos.y));
-    }
-
-    upgradeEra() : Era {
-        this._players[0].attemptUpgradeEra();
-        return this._players[0].era
+    getPlayer(id : string) : Player {
+        for (let i = 0; i < this._players.length; ++i) {
+            if (this._players[i].getID() == id) {
+                return this._players[i]
+            }
+        }
+        return null;
     }
 }

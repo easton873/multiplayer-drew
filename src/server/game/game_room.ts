@@ -9,6 +9,7 @@ export class GameRoom {
     public players : Map<string, SetupPlayer> = new Map<string, SetupPlayer>; // player id to player
     public boardX : number = 100;
     public boardY : number = 100;
+    private game : Game;
     constructor(public roomCode : string){}
 
     addPlayer(id : string, name : string, client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) {
@@ -81,7 +82,12 @@ export class GameRoom {
         this.players.forEach((player : SetupPlayer) => {
             players.push(player.createPlayer(board));
         })
-        return new Game(players, board);
+        this.game = new Game(players, board);
+        return this.game;
+    }
+
+    getGame() : Game {
+        return this.game;
     }
 }
 

@@ -53,4 +53,8 @@ export class Player {
     attemptUpgradeEra() : boolean {
         return this.era.advanceToNextEra(this.resources);
     }
+
+    getID() : string {
+        return this.id;
+    }
 }
