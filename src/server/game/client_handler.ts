@@ -79,7 +79,7 @@ export class ClientHandler extends RouteReceiver {
                     if (!data) {
                         return;
                     }
-                    emitGameState(tempClient, data);
+                    emitGameState(tempClient, data, player.getTeam());
                 });
                 if (!game.checkGameStillGoing()) {
                     console.log('game over');

@@ -19,7 +19,7 @@ export abstract class ClientReceiver {
         socket.on(YOUR_TURN_KEY, (data : GameSetupData) => this.handleYourTurn(data));
         socket.on(SET_POS_SUCCESS, () => this.handleSetPosSuccess());
         socket.on(GAME_BUILD_SUCCESS, (era : EraData) => this.handleBuildSucces(era));
-        socket.on(GAME_INSTANCE_KEY, (data : GameData) => this.handleEmitGamestate(data));
+        socket.on(GAME_INSTANCE_KEY, (data : GameData, team : number) => this.handleEmitGamestate(data, team));
         socket.on(UPDGRADE_SUCCESS_KEY, (era : EraData) => this.handleEraUpgradeSuccess(era));
 
     }
@@ -29,7 +29,7 @@ export abstract class ClientReceiver {
     abstract handleYourTurn(data : GameSetupData);
     abstract handleSetPosSuccess();
     abstract handleBuildSucces(era : EraData);
-    abstract handleEmitGamestate(gameInstance : GameData);
+    abstract handleEmitGamestate(gameInstance : GameData, team : number);
     abstract handleEraUpgradeSuccess(era : EraData);
 }
 
@@ -53,8 +53,8 @@ export function emitGameBuilt(client : any, era : EraData) {
     client.emit(GAME_BUILD_SUCCESS, era);
 }
 
-export function emitGameState(client : any, gameInstance : GameData) {
-    client.emit(GAME_INSTANCE_KEY, gameInstance);
+export function emitGameState(client : any, gameInstance : GameData, team : number) {
+    client.emit(GAME_INSTANCE_KEY, gameInstance, team);
 }
 
 export function emitUpgradeEraSuccess(client : any, era : EraData) {

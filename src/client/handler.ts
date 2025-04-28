@@ -62,8 +62,8 @@ export class FrontendClientHandler extends ClientReceiver {
         this.manager.gameScreen.canvas.removeEventListener('mousemove', this.mouseMoveSelectStartPos);
         this.manager.gameScreen.canvas.removeEventListener('click', this.clickSelectStartPos);
     }
-    handleEmitGamestate(gameInstance: GameData) {
-        this.manager.gameScreen.drawGame(gameInstance);
+    handleEmitGamestate(gameInstance: GameData, team : number) {
+        this.manager.gameScreen.drawGame(gameInstance, team);
     }
     handleBuildSucces(era: EraData) {
         console.log('build success!');

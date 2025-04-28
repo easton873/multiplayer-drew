@@ -92,6 +92,7 @@ export class GameRoom {
 }
 
 class SetupPlayer {
+    static team : number = 0;
     private pos : Pos = null;
     constructor(private id : string, private name: string, private client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) {}
 
@@ -124,7 +125,7 @@ class SetupPlayer {
     }
 
     createPlayer(board : Board) : Player {
-        return new Player(this.pos, board, this.id, this.name);
+        return new Player(SetupPlayer.team++, this.pos, board, this.id, this.name);
     }
 }
 

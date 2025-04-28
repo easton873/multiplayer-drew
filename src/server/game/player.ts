@@ -17,10 +17,14 @@ export class Player {
 
     heart : ResourceUnit;
 
-    constructor(pos : Pos, board : Board, private id : string, private name : string) {
+    constructor(private team : number, pos : Pos, board : Board, private id : string, private name : string) {
         this.board = board;
         this.heart = new Heart(this, pos, this.era.currEra.getHeart());
         this.board.addEntity(this.heart);
+    }
+
+    getTeam() : number {
+        return this.team;
     }
 
     NewUnit(unitType : string, pos : Pos) {

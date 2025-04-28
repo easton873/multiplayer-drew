@@ -23,11 +23,11 @@ export class GameScreen {
       });
     }
 
-    drawGame(data : GameData) {
+    drawGame(data : GameData, team : number) {
       this.resourceLabel.innerText = 'Gold: ' + data.resources.gold + ' Wood: ' + data.resources.wood + ' Stone: ' + data.resources.stone;
       this.setCanvasSize(data.board.width, data.board.height);
       data.units.forEach((unit : UnitData) => {
-        this.drawUnit(unit);
+        this.drawUnit(unit, team);
       });
     }
 
@@ -36,7 +36,10 @@ export class GameScreen {
         this.ctx.canvas.width = width * this.SIZE + this.SIZE;
     }
     
-    drawUnit(unit : UnitData) {
+    drawUnit(unit : UnitData, team : number) {
+      if (unit.team == team) {
+        this.drawBorder(unit.pos);
+      }
       this.drawUnitByPos(unit.pos);
     }
 
@@ -45,6 +48,13 @@ export class GameScreen {
       let y : number = pos.y * this.SIZE;
       this.ctx.fillStyle = 'black';
       this.ctx.fillRect(x, y, this.SIZE, this.SIZE);
+    }
+
+    drawBorder(pos : PosData) {
+      let x : number = pos.x * this.SIZE;
+      let y : number = pos.y * this.SIZE;
+      this.ctx.fillStyle = '#00FF00';
+      this.ctx.fillRect(x - 1, y - 1, this.SIZE + 2, this.SIZE + 2);
     }
 
     fillSelect(selectElement : HTMLSelectElement, units : string[]) {

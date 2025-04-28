@@ -19,6 +19,7 @@ export interface ResourceData {
 
 export interface UnitData {
   pos : PosData
+  team : number
 }
 
 export interface BoardData {
