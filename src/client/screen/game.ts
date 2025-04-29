@@ -29,6 +29,7 @@ export class GameScreen {
       data.units.forEach((unit : UnitData) => {
         this.drawUnit(unit, team);
       });
+      this.drawCircle(data.heart.pos.x, data.heart.pos.y, Math.floor(Math.sqrt(data.heart.radius)), "black");
     }
 
     setCanvasSize(width : number, height : number) {
@@ -55,6 +56,15 @@ export class GameScreen {
       let y : number = pos.y * this.SIZE;
       this.ctx.fillStyle = '#00FF00';
       this.ctx.fillRect(x - 1, y - 1, this.SIZE + 2, this.SIZE + 2);
+    }
+
+    drawCircle(x : number, y : number, radius : number, color : string) {
+      let offset = this.SIZE / 2;
+      let ctx = this.ctx;
+      ctx.strokeStyle = color;
+      ctx.beginPath();
+      ctx.arc(x * this.SIZE + offset, y * this.SIZE + offset, radius * this.SIZE, 0, 2 * Math.PI);
+      ctx.stroke();
     }
 
     fillSelect(selectElement : HTMLSelectElement, units : string[]) {

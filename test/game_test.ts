@@ -61,9 +61,9 @@ it('Short Game', () => {
 
 function newThreePlayerGame() : [Game, Board, Player, Player, Player] {
     let board : Board = new Board(10, 10);
-    let p1 : Player = new Player(new Pos(0, 5), board);
-    let p2 : Player = new Player(new Pos(9, 5), board);
-    let p3 : Player = new Player(new Pos(5, 9), board);
+    let p1 : Player = new Player(0, new Pos(0, 5), board, "0", "");
+    let p2 : Player = new Player(1, new Pos(9, 5), board, "1", "");
+    let p3 : Player = new Player(2, new Pos(5, 9), board, "2", "");
     let game : Game = new Game([p1, p2, p3], board);
     return [game, board, p1, p2, p3];
 }

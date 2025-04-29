@@ -1,8 +1,14 @@
 export interface GameData {
+  heart : HeartData
   units : UnitData[]
   board : BoardData
   resources : ResourceData
   era : EraData
+}
+
+export interface HeartData {
+  pos : PosData
+  radius : number
 }
 
 export interface EraData {

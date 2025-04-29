@@ -10,7 +10,7 @@ import { Unit } from "../src/server/game/unit/unit.js";
 describe('Board Test', () => {
     it('removal test', () => {
         let board : Board = new Board(10, 10);
-        let player : Player = new Player(new Pos(0, 0), board);
+        let player : Player = new Player(1, new Pos(0, 0), board, "", "");
         let unit : Unit = new Soldier(player, new Pos(0, 0));
         board.addEntity(unit);
         assert.strictEqual(board.entities.length, 2);

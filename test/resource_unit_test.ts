@@ -8,7 +8,7 @@ import { Resources } from "../src/server/game/resources.js";
 describe('Resource Unit Tests', () => {
     it('Merchant test', () => {
         let board : Board = new Board(10, 10);
-        let player : Player = new Player(new Pos(0, 0), board);
+        let player : Player = new Player(0, new Pos(0, 0), board, "0", "");
         let unitFactory : UnitFactory = new UnitFactory(player);
         let unit = unitFactory.NewMerchant(new Pos(0, 0));
 
@@ -22,7 +22,7 @@ describe('Resource Unit Tests', () => {
 
     it('Lumberjack test', () => {
         let board : Board = new Board(10, 10);
-        let player : Player = new Player(new Pos(0, 0), board);
+        let player : Player = new Player(0, new Pos(0, 0), board, "0", "");
         let unitFactory : UnitFactory = new UnitFactory(player);
         let unit = unitFactory.NewLumberJack(new Pos(0, 0));
 
@@ -36,7 +36,7 @@ describe('Resource Unit Tests', () => {
 
     it('Miner test', () => {
         let board : Board = new Board(10, 10);
-        let player : Player = new Player(new Pos(0, 0), board);
+        let player : Player = new Player(0, new Pos(0, 0), board, "0", "");
         let unitFactory : UnitFactory = new UnitFactory(player);
         let unit = unitFactory.NewMiner(new Pos(0, 0));
 

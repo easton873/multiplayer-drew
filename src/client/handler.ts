@@ -37,13 +37,8 @@ export class FrontendClientHandler extends ClientReceiver {
             const y = e.clientY - rect.top;
             let gameX = Math.floor(x / gameScreen.SIZE);
             let gameY = Math.floor(y / gameScreen.SIZE);
-            let drawX = gameX * gameScreen.SIZE;
-            let drawY = gameY * gameScreen.SIZE;
             this.manager.gameScreen.drawUnitByPos({x: gameX, y: gameY});
-            ctx.beginPath();
-            let radius = 3;
-            ctx.arc(drawX + offset, drawY + offset, radius * gameScreen.SIZE, 0, 2 * Math.PI);
-            ctx.stroke();
+            this.manager.gameScreen.drawCircle(gameX, gameY, 3, "black");
         };
         let temp2 = (e : MouseEvent) => {
             const rect = gameScreen.canvas.getBoundingClientRect();

@@ -62,3 +62,27 @@ export class Player {
         return this.id;
     }
 }
+
+export class PlayerProxy extends Player {
+    constructor(team : number, pos : Pos, board : Board, id : string, name : string) {
+        super(team, pos, board, id, name);
+    }
+
+    NewUnit(unitType: string, pos: Pos): void {
+        if (this.heart.pos.distanceTo(pos) > this.era.getRadius() ||
+            this.countUnits() >= this.era.getUnitLimit()) {
+            return;
+        }
+        super.NewUnit(unitType, pos);
+    }
+
+    private countUnits() : number {
+        let count = 0;
+        this.board.entities.forEach((unit : Unit) => {
+            if (unit.team == this) {
+                count++;
+            }
+        });
+        return count;
+    }
+}

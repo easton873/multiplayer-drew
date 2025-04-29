@@ -2,7 +2,7 @@ import { GameWaitingData, PlayerWaitingData, PlayerSetupData, GameSetupData } fr
 import { Game } from "./game.js";
 import { Pos } from "./pos.js";
 import { Board } from "./board.js";
-import { Player } from "./player.js";
+import { Player, PlayerProxy } from "./player.js";
 import { DefaultEventsMap, Socket } from "socket.io";
 
 export class GameRoom {
@@ -125,7 +125,7 @@ class SetupPlayer {
     }
 
     createPlayer(board : Board) : Player {
-        return new Player(SetupPlayer.team++, this.pos, board, this.id, this.name);
+        return new PlayerProxy(SetupPlayer.team++, this.pos, board, this.id, this.name);
     }
 }
 

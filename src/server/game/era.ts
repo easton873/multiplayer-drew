@@ -57,6 +57,14 @@ export class Era {
             availableUnits: this.currEra.getAvailableUnits(),
         }
     }
+
+    getRadius() : number {
+        return this.currEra.getRadius();
+    }
+
+    getUnitLimit() : number {
+        return this.currEra.getUnitLimmit();
+    }
 }
 
 interface EraState {
@@ -66,6 +74,7 @@ interface EraState {
     getRadius() : number;
     getHeart() : EraHeartInfo;
     getAvailableUnits() : string[];
+    getUnitLimmit() : number;
 }
 
 abstract class BaseEra {
@@ -80,7 +89,7 @@ abstract class BaseEra {
     }
 }
 
-class StartingEra extends BaseEra implements EraState {
+export class StartingEra extends BaseEra implements EraState {
     constructor() {
         super(STARTING_HP, STARTING_SPEED, STARTING_RESOURCES, STARTING_COST);
     }
@@ -95,6 +104,9 @@ class StartingEra extends BaseEra implements EraState {
     }
     getAvailableUnits(): string[] {
         return [SOLDIER_NAME, MERCHANT_NAME];
+    }
+    getUnitLimmit(): number {
+        return 10;
     }
 }
 
@@ -114,5 +126,7 @@ class SecondEra extends BaseEra implements EraState {
     getAvailableUnits(): string[] {
         return [SOLDIER_NAME, MERCHANT_NAME, LUMBER_JACK_NAME];
     }
-
+    getUnitLimmit(): number {
+        return 20;
+    }
 }
