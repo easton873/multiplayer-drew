@@ -10,11 +10,10 @@ describe('Era Test', () => {
         assert.strictEqual(era.canAffordNextEra(myResources), false);
         era.advanceToNextEra(myResources);
         assert.strictEqual(myResources.equals(new Resources(5, 0, 0)), true);
-        myResources.add(new Resources(5, 0, 0));
+        myResources.add(era.nextEraCost);
         assert.strictEqual(era.canAffordNextEra(myResources), true);
         era.advanceToNextEra(myResources);
-        assert.strictEqual(myResources.equals(new Resources(0, 0, 0)), true);
-        myResources.add(new Resources(20, 0, 0));
+        assert.strictEqual(myResources.equals(new Resources(5, 0, 0)), true);
         assert.strictEqual(era.canAffordNextEra(myResources), false);
     });
 });

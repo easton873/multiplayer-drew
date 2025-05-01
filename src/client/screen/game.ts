@@ -5,7 +5,9 @@ export class GameScreen {
     public div = document.getElementById("gameScreen")!;
     public canvas = document.getElementById('game') as HTMLCanvasElement;
     public resourceLabel = document.getElementById('resourceLabel') as HTMLLabelElement;
+    public heartProgress = document.getElementById('heartProgress') as HTMLProgressElement;
     public unitSelect = document.getElementById('unitSelect') as HTMLSelectElement;
+    public unitCountLabel = document.getElementById('unitCountLabel') as HTMLLabelElement;
     public upgradeButton = document.getElementById('upgradeButton') as HTMLButtonElement;
     public eraNameLabel = document.getElementById('eraNameLabel') as HTMLLabelElement;
     public nextEraLabel = document.getElementById('nextEraLabel') as HTMLLabelElement;
@@ -33,15 +35,26 @@ export class GameScreen {
     drawGame(data : GameData, team : number) {
       this.resourceLabel.innerText = 'Gold: ' + data.resources.gold + ' Wood: ' + data.resources.wood + ' Stone: ' + data.resources.stone;
       this.setCanvasSize(data.board.width, data.board.height);
+      this.setHp(data);
+      this.setUnitCount(data);
       data.units.forEach((unit : UnitData) => {
         this.drawUnit(unit, team);
       });
-      this.drawCircle(data.heart.pos.x, data.heart.pos.y, Math.floor(Math.sqrt(data.heart.radius)), "black");
+      this.drawCircle(data.playerData.pos.x, data.playerData.pos.y, Math.floor(Math.sqrt(data.playerData.radius)), "black");
     }
 
     setCanvasSize(width : number, height : number) {
         this.ctx.canvas.height = height * this.SIZE + this.SIZE;
         this.ctx.canvas.width = width * this.SIZE + this.SIZE;
+    }
+
+    setHp(data : GameData) {
+      this.heartProgress.max = data.playerData.totalHealth;
+      this.heartProgress.value = data.playerData.health;
+    }
+
+    setUnitCount(data : GameData) {
+      this.unitCountLabel.innerText = 'Units ' + data.playerData.numUnits + '/' + data.playerData.maxUnits;
     }
     
     drawUnit(unit : UnitData, team : number) {

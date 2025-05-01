@@ -2,15 +2,26 @@ import { EraHeartInfo } from "./heart.js";
 import { Resources } from "./resources.js";
 import { ARCHER_NAME, EraData, KAMAKAZE_NAME, LUMBER_JACK_NAME, MERCHANT_NAME, SOLDIER_NAME } from "../../shared/types.js";
 
-const STARTING_COST : Resources = new Resources(10, 0 ,0);
+const STARTING_COST : Resources = new Resources(100, 0 ,0);
 const STARTING_RESOURCES : Resources = new Resources(1, 0, 0);
-const STARTING_SPEED : number = 5;
+const STARTING_SPEED : number = 10;
 const STARTING_HP : number = 10;
+const STARTING_NUM_UNITS : number = 10;
+const STARTING_RADIUS : number = 16;
 
-const SECOND_COST : Resources = new Resources(25, 10, 0);
+const SECOND_COST : Resources = new Resources(200, 40, 0);
 const SECOND_RESOURCES : Resources = new Resources(2, 1, 0);
-const SECOND_SPEED : number = 5;
+const SECOND_SPEED : number = 10;
 const SECOND_HP : number = 20;
+const SECOND_NUM_UNITS : number = 25;
+const SECOND_RADIUS : number = 25;
+
+const THIRD_COST : Resources = new Resources(600, 200, 0);
+const THIRD_RESOURCES : Resources = new Resources(3, 2, 0);
+const THIRD_SPEED : number = 10;
+const THIRD_HP : number = 30;
+const THIRD_NUM_UNITS : number = 45;
+const THIRD_RADIUS : number = 36;
 
 export class Era {
     nextEraCost : Resources;
@@ -78,7 +89,7 @@ interface EraState {
 }
 
 abstract class BaseEra {
-    constructor(public hp : number, public speed : number, public resources : Resources, public cost : Resources ){}
+    constructor(public hp : number, public speed : number, public resources : Resources, public cost : Resources, public radius : number, public numUnits : number){}
 
     nextEraCost(): Resources {
         return this.cost;
@@ -87,11 +98,19 @@ abstract class BaseEra {
     getHeart(): EraHeartInfo {
         return new EraHeartInfo(this.hp, this.speed, this.resources);
     }
+
+    getRadius(): number {
+        return this.radius;
+    }
+
+    getUnitLimmit(): number {
+        return this.numUnits;
+    }
 }
 
 export class StartingEra extends BaseEra implements EraState {
     constructor() {
-        super(STARTING_HP, STARTING_SPEED, STARTING_RESOURCES, STARTING_COST);
+        super(STARTING_HP, STARTING_SPEED, STARTING_RESOURCES, STARTING_COST, STARTING_RADIUS, STARTING_NUM_UNITS);
     }
     nextState(): EraState {
         return new SecondEra();
@@ -99,34 +118,37 @@ export class StartingEra extends BaseEra implements EraState {
     getName(): string {
         return "The Starting Era";
     }
-    getRadius(): number {
-        return 15;
-    }
     getAvailableUnits(): string[] {
         return [SOLDIER_NAME, MERCHANT_NAME];
-    }
-    getUnitLimmit(): number {
-        return 10;
     }
 }
 
 class SecondEra extends BaseEra implements EraState {
     constructor() {
-        super(SECOND_HP, SECOND_SPEED, SECOND_RESOURCES, SECOND_COST);
+        super(SECOND_HP, SECOND_SPEED, SECOND_RESOURCES, SECOND_COST, SECOND_RADIUS, SECOND_NUM_UNITS);
     }
     nextState(): EraState {
-        throw new Error("Method not implemented.");
+        return new ThirdEra();
     }
     getName(): string {
         return "The Second Era";
     }
-    getRadius(): number {
-        return 20;
-    }
     getAvailableUnits(): string[] {
         return [SOLDIER_NAME, MERCHANT_NAME, LUMBER_JACK_NAME, ARCHER_NAME, KAMAKAZE_NAME];
     }
-    getUnitLimmit(): number {
-        return 20;
+}
+
+class ThirdEra extends BaseEra implements EraState {
+    constructor() {
+        super(THIRD_HP, THIRD_SPEED, THIRD_RESOURCES, THIRD_COST, THIRD_RADIUS, THIRD_NUM_UNITS);
+    }
+    nextState(): EraState {
+        return null;
+    }
+    getName(): string {
+        return "Third Era";
+    }
+    getAvailableUnits(): string[] {
+        return [SOLDIER_NAME, MERCHANT_NAME, LUMBER_JACK_NAME, ARCHER_NAME, KAMAKAZE_NAME];
     }
 }

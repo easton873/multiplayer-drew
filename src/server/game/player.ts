@@ -1,19 +1,19 @@
 import { Board } from "./board.js";
-import { EraHeartInfo, Heart } from "./heart.js";
+import { Heart } from "./heart.js";
 import { Resources } from "./resources.js";
 import { ResourceUnit } from "./unit/resource_unit.js";
-import { Soldier } from "./unit/soldier.js";
 import { Unit } from "./unit/unit.js";
 import { UnitFactory } from "./unit_factory.js";
 import { Pos } from "./pos.js";
 import { Era } from "./era.js";
-import { ARCHER_NAME, KAMAKAZE_NAME, LUMBER_JACK_NAME, MERCHANT_NAME, MINER_NAME, SOLDIER_NAME } from "../../shared/types.js";
+import { ARCHER_NAME, KAMAKAZE_NAME, LUMBER_JACK_NAME, MERCHANT_NAME, MINER_NAME, PlayerSpecificData, SOLDIER_NAME } from "../../shared/types.js";
 
 export class Player {
     resources: Resources = new Resources(5, 0, 0);
     private unitFactory: UnitFactory = new UnitFactory(this);
     board: Board;
     era: Era = new Era();
+    protected unitCount = 0;
 
     heart: ResourceUnit;
 
@@ -69,6 +69,17 @@ export class Player {
     getID(): string {
         return this.id;
     }
+
+    getPlayerSpecificData() : PlayerSpecificData {
+        return {
+            pos: this.heart.pos.getPosData(), 
+            radius: this.era.getRadius(), 
+            health: this.heart.currHp, 
+            totalHealth: this.heart.hp,
+            numUnits: this.unitCount,
+            maxUnits: this.era.getUnitLimit()
+        }
+    }
 }
 
 export class PlayerProxy extends Player {
@@ -78,10 +89,11 @@ export class PlayerProxy extends Player {
 
     NewUnit(unitType: string, pos: Pos): void {
         if (this.heart.pos.distanceTo(pos) > this.era.getRadius() ||
-            this.countUnits() >= this.era.getUnitLimit()) {
+            this.unitCount >= this.era.getUnitLimit()) {
             return;
         }
         super.NewUnit(unitType, pos);
+        this.unitCount = this.countUnits();
     }
 
     private countUnits(): number {

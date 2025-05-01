@@ -1,4 +1,4 @@
-import { GameData, UnitData, PosData, BoardData, ResourceData, EraData, HeartData } from '../../shared/types.js';
+import { GameData, UnitData, PosData, BoardData, ResourceData, EraData, PlayerSpecificData } from '../../shared/types.js';
 import { Board } from "./board.js";
 import { Era } from './era.js';
 import { Player } from "./player.js";
@@ -60,7 +60,7 @@ export class Game {
         if (!player) {
             return null;
         }
-        let heart : HeartData = {pos: player.heart.pos.getPosData(), radius: player.era.getRadius()};
+        let heart : PlayerSpecificData = player.getPlayerSpecificData();
         let board : BoardData = {width: this.board.width, height: this.board.height};
         let units : UnitData[] = [];
         let resources : ResourceData = player.resources.getResourceData();
@@ -71,7 +71,7 @@ export class Game {
             units.push(unitData);
         })
         const gameData : GameData = {
-            heart: heart,
+            playerData: heart,
             units: units, 
             board: board, 
             resources: resources, 
