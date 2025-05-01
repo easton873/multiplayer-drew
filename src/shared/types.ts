@@ -26,6 +26,8 @@ export interface ResourceData {
 export interface UnitData {
   pos : PosData
   team : number
+  color : string
+  playerColor : string
 }
 
 export interface BoardData {
@@ -40,6 +42,8 @@ export interface PosData {
 
 // units
 export const SOLDIER_NAME = "Soldier";
+export const ARCHER_NAME = "Archer";
+export const KAMAKAZE_NAME = "Kamakaze";
 // resource units
 export const MERCHANT_NAME = "Merchant";
 export const LUMBER_JACK_NAME = "Lumber Jack";

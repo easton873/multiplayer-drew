@@ -17,11 +17,11 @@ manager.waitingScreen.startButton.onclick = startGame;
 manager.gameScreen.upgradeButton.onclick = attemptUpgradeEra;
 
 function joinRoom() {
-  emitJoinRoom(socket, manager.joinScreen.roomInput.value, manager.joinScreen.nameInput.value);
+  emitJoinRoom(socket, manager.joinScreen.roomInput.value, manager.joinScreen.nameInput.value, manager.joinScreen.colorSelect.value);
 }
 
 function createRoom() {
-  emitCreateRoom(socket, manager.joinScreen.nameInput.value);
+  emitCreateRoom(socket, manager.joinScreen.nameInput.value, manager.joinScreen.colorSelect.value);
 }
 
 function startGame() {

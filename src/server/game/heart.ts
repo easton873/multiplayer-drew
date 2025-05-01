@@ -7,7 +7,7 @@ export const HEART_NAME = "Heart";
 
 export class Heart extends ResourceUnit {
     constructor(player : Player, pos : Pos, info : EraHeartInfo) {
-        super(player, pos, HEART_NAME, info.hp, info.speed, info.resources, null);
+        super(player, pos, HEART_NAME, info.hp, info.speed, info.resources, null, player.getColor());
     }
 }
 

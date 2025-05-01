@@ -23,14 +23,20 @@ export abstract class ObservableUnit {
     }
 
     notifyObserversDeath() {
-        this.observers.forEach((o : UnitObserver) => {
+        let currLength = this.observers.length;
+        for (let i = 0; i < this.observers.length; ++i) {
+            let o = this.observers[i];
             o.notifyDeath(this);
-        });
+            if (currLength != this.observers.length) { // this check will ensure we don't go into an infinite loop probably
+                currLength = this.observers.length;
+                i--;
+            }
+        }
     }
 }
 
 export interface UnitObserver {
-    notifyDeath(unit : ObservableUnit);
+    notifyDeath(unit : ObservableUnit); // when implementing this, unregister the observer
 }
 
 export abstract class Unit extends ObservableUnit {
@@ -42,8 +48,9 @@ export abstract class Unit extends ObservableUnit {
     counter : number;
     team : Player;
     cost : Resources;
+    color : string;
 
-    constructor(player : Player, pos : Pos, hp : number, speed : number, cost : Resources) {
+    constructor(player : Player, pos : Pos, hp : number, speed : number, cost : Resources, color : string) {
         super();
         this.team = player;
         this.pos = pos;
@@ -52,6 +59,7 @@ export abstract class Unit extends ObservableUnit {
         this.speed = speed;
         this.counter = speed;
         this.cost = cost;
+        this.color = color;
     }
 
     move(board : Board) {
@@ -83,7 +91,7 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
             return;
         }
         if (this.inRange(this._target)) {
-            this.inRangeMove();
+            this.inRangeMove(board);
         } else {
             this.pos.moveTowards(this._target.pos);
         }
@@ -91,12 +99,12 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
 
     abstract inRange(other : Unit) : boolean;
 
-    abstract inRangeMove();
+    abstract inRangeMove(board : Board);
 
     findNewTarget(board : Board) {
-        if (this.hasTarget()) {
-            return;
-        }
+        // if (this.hasTarget()) {
+        //     return;
+        // }
         let currDist = -1;
         board.entities.forEach((unit : Unit) => {
             let dist = this.pos.distanceTo(unit.pos);
@@ -108,7 +116,7 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
     }
 
     notifyDeath(unit: ObservableUnit) {
-        if (unit == this.target) {
+        if (unit == this._target) {
             this._target = null;
             unit.unregisterObserver(this);
         }
@@ -123,6 +131,9 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
     }
 
     set target(target : Unit) {
+        if (this._target) {
+            this._target.unregisterObserver(this);
+        }
         this._target = target;
         target.registerObserver(this);
     }

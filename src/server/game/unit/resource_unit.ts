@@ -6,8 +6,8 @@ import { Resources } from "../resources.js";
 import { Unit } from "./unit.js";
 
 export class ResourceUnit extends Unit {
-    constructor(player : Player, pos : Pos, name : string, hp : number, speed : number, private resources : Resources, cost : Resources) {
-        super(player, pos, hp, speed, cost);
+    constructor(player : Player, pos : Pos, name : string, hp : number, speed : number, private resources : Resources, cost : Resources, color : string) {
+        super(player, pos, hp, speed, cost, color);
         this.name = name;
     }
     doMove(_ : Board) {
@@ -15,18 +15,24 @@ export class ResourceUnit extends Unit {
     }
 }
 
+const MERCHANT_COLOR = "#ffff00";
+const LUMBER_JACK_COLOR = "#009900";
+const MINER_COLOR = "#666699";
+
+export const MINER_SPEED = 10;
+
 export class ResourceUnitFactory {
     constructor(private player : Player) {}
 
     NewMerchant(pos : Pos) : ResourceUnit {
-        return new ResourceUnit(this.player, pos, MERCHANT_NAME, 1, 5, new Resources(1, 0, 0), new Resources(3, 0, 0));
+        return new ResourceUnit(this.player, pos, MERCHANT_NAME, 1, 10, new Resources(1, 0, 0), new Resources(3, 0, 0), MERCHANT_COLOR);
     }
 
     NewLumberJack(pos : Pos) : ResourceUnit {
-        return new ResourceUnit(this.player, pos, LUMBER_JACK_NAME, 1, 5, new Resources(0, 1, 0), new Resources(5, 0, 0));
+        return new ResourceUnit(this.player, pos, LUMBER_JACK_NAME, 1, 10, new Resources(0, 1, 0), new Resources(5, 0, 0), LUMBER_JACK_COLOR);
     }
 
     NewMiner(pos : Pos) : ResourceUnit {
-        return new ResourceUnit(this.player, pos, MINER_NAME, 1, 5, new Resources(0, 0, 1), new Resources(8, 3, 0));
+        return new ResourceUnit(this.player, pos, MINER_NAME, 1, MINER_SPEED, new Resources(0, 0, 1), new Resources(8, 3, 0), MINER_COLOR);
     }
 }

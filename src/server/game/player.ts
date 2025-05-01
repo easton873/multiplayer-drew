@@ -7,36 +7,40 @@ import { Unit } from "./unit/unit.js";
 import { UnitFactory } from "./unit_factory.js";
 import { Pos } from "./pos.js";
 import { Era } from "./era.js";
-import { LUMBER_JACK_NAME, MERCHANT_NAME, MINER_NAME, SOLDIER_NAME } from "../../shared/types.js";
+import { ARCHER_NAME, KAMAKAZE_NAME, LUMBER_JACK_NAME, MERCHANT_NAME, MINER_NAME, SOLDIER_NAME } from "../../shared/types.js";
 
 export class Player {
-    resources : Resources = new Resources(5, 0, 0);
-    private unitFactory : UnitFactory = new UnitFactory(this);
-    board : Board;
-    era : Era = new Era();
+    resources: Resources = new Resources(5, 0, 0);
+    private unitFactory: UnitFactory = new UnitFactory(this);
+    board: Board;
+    era: Era = new Era();
 
-    heart : ResourceUnit;
+    heart: ResourceUnit;
 
-    constructor(private team : number, pos : Pos, board : Board, private id : string, private name : string) {
+    constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string) {
         this.board = board;
         this.heart = new Heart(this, pos, this.era.currEra.getHeart());
         this.board.addEntity(this.heart);
     }
 
-    getTeam() : number {
+    getColor() : string {
+        return this.color;
+    }
+
+    getTeam(): number {
         return this.team;
     }
 
-    NewUnit(unitType : string, pos : Pos) {
-        let unit : Unit = this.whichUnit(unitType, pos);
+    NewUnit(unitType: string, pos: Pos) {
+        let unit: Unit = this.whichUnit(unitType, pos);
         if (this.resources.canAfford(unit.cost)) {
             this.resources.spend(unit.cost);
             this.board.addEntity(unit);
         }
     }
 
-    whichUnit(s : string, pos : Pos) : Unit {
-        switch(s) {
+    whichUnit(s: string, pos: Pos): Unit {
+        switch (s) {
             case MERCHANT_NAME:
                 return this.unitFactory.NewMerchant(pos);
             case LUMBER_JACK_NAME:
@@ -45,27 +49,31 @@ export class Player {
                 return this.unitFactory.NewMiner(pos);
             case SOLDIER_NAME:
                 return this.unitFactory.NewSoldier(pos);
+            case ARCHER_NAME:
+                return this.unitFactory.NewArcher(pos);
+            case KAMAKAZE_NAME:
+                return this.unitFactory.NewKamakaze(pos);
             default:
                 console.log("unrecognized unit type");
         }
     }
 
-    isDead() : Boolean {
+    isDead(): Boolean {
         return this.heart.currHp <= 0;
     }
 
-    attemptUpgradeEra() : boolean {
+    attemptUpgradeEra(): boolean {
         return this.era.advanceToNextEra(this.resources);
     }
 
-    getID() : string {
+    getID(): string {
         return this.id;
     }
 }
 
 export class PlayerProxy extends Player {
-    constructor(team : number, pos : Pos, board : Board, id : string, name : string) {
-        super(team, pos, board, id, name);
+    constructor(team: number, pos: Pos, board: Board, id: string, name: string, color: string) {
+        super(team, pos, board, id, name, color);
     }
 
     NewUnit(unitType: string, pos: Pos): void {
@@ -76,9 +84,9 @@ export class PlayerProxy extends Player {
         super.NewUnit(unitType, pos);
     }
 
-    private countUnits() : number {
+    private countUnits(): number {
         let count = 0;
-        this.board.entities.forEach((unit : Unit) => {
+        this.board.entities.forEach((unit: Unit) => {
             if (unit.team == this) {
                 count++;
             }

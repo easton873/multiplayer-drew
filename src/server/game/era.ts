@@ -1,6 +1,6 @@
 import { EraHeartInfo } from "./heart.js";
 import { Resources } from "./resources.js";
-import { EraData, LUMBER_JACK_NAME, MERCHANT_NAME, SOLDIER_NAME } from "../../shared/types.js";
+import { ARCHER_NAME, EraData, KAMAKAZE_NAME, LUMBER_JACK_NAME, MERCHANT_NAME, SOLDIER_NAME } from "../../shared/types.js";
 
 const STARTING_COST : Resources = new Resources(10, 0 ,0);
 const STARTING_RESOURCES : Resources = new Resources(1, 0, 0);
@@ -124,7 +124,7 @@ class SecondEra extends BaseEra implements EraState {
         return 20;
     }
     getAvailableUnits(): string[] {
-        return [SOLDIER_NAME, MERCHANT_NAME, LUMBER_JACK_NAME];
+        return [SOLDIER_NAME, MERCHANT_NAME, LUMBER_JACK_NAME, ARCHER_NAME, KAMAKAZE_NAME];
     }
     getUnitLimmit(): number {
         return 20;

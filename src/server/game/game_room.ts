@@ -12,8 +12,8 @@ export class GameRoom {
     private game : Game;
     constructor(public roomCode : string){}
 
-    addPlayer(id : string, name : string, client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) {
-        this.players.set(id, new SetupPlayer(id, name, client));
+    addPlayer(id : string, name : string, client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, color : string) {
+        this.players.set(id, new SetupPlayer(id, name, client, color));
     }
 
     addPlayerPos(id : string, pos : Pos) {
@@ -25,8 +25,12 @@ export class GameRoom {
         return {roomCode: this.roomCode, players: this.getPlayerJoinData()};
     }
 
-    setupData() : GameSetupData {
-        return {boardX: this.boardX, boardY: this.boardY, players: this.getPlayerSetupData()};
+    setupData(id : string) : GameSetupData {
+        let player = this.players.get(id);
+        if (!player) {
+            return {boardX: this.boardX, boardY: this.boardY, players: this.getPlayerSetupData(), currPlayer: null};
+        }
+        return {boardX: this.boardX, boardY: this.boardY, players: this.getPlayerSetupData(), currPlayer: player.getSetupData()};
     }
 
     setBoardXY(width : number, height : number) {
@@ -94,7 +98,7 @@ export class GameRoom {
 class SetupPlayer {
     static team : number = 0;
     private pos : Pos = null;
-    constructor(private id : string, private name: string, private client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) {}
+    constructor(private id : string, private name: string, private client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, private color : string) {}
 
     getClient() : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any> {
         return this.client;
@@ -117,15 +121,11 @@ class SetupPlayer {
     }
 
     getSetupData() : PlayerSetupData {
-        return {name : this.name, pos : this.pos ? this.pos.getPosData() : null};
-    }
-
-    getPlayerSetupData() : PlayerSetupData {
-        return {name: this.name, pos: this.pos.getPosData()};
+        return {name : this.name, pos : this.pos ? this.pos.getPosData() : null, color: this.color};
     }
 
     createPlayer(board : Board) : Player {
-        return new PlayerProxy(SetupPlayer.team++, this.pos, board, this.id, this.name);
+        return new PlayerProxy(SetupPlayer.team++, this.pos, board, this.id, this.name, this.color);
     }
 }
 

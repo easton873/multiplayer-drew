@@ -19,16 +19,16 @@ export abstract class RouteReceiver {
         protected io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
         protected rooms : Map<string, GameRoom>, 
         protected playerRoomLookup : Map<string, GameRoom>) {        
-        client.on(JOIN_ROOM_KEY, (roomCode : string, playerName : string) => this.handleJoinRoom(roomCode, playerName));
-        client.on(CREATE_ROOM_KEY, (playerName : string) => this.handleCreateRoom(playerName));
+        client.on(JOIN_ROOM_KEY, (roomCode : string, playerName : string, color : string) => this.handleJoinRoom(roomCode, playerName, color));
+        client.on(CREATE_ROOM_KEY, (playerName : string, color : string) => this.handleCreateRoom(playerName, color));
         client.on(START_GAME_KEY, () => this.handleStartGame());
         client.on(SUBMIT_START_POS_KEY, (pos : PosData) => this.handleSubmitStartPos(pos));
         client.on(UNIT_SPAWN_KEY, (pos : PosData, unitType : string) => this.handleSpawnUnit(pos, unitType));
         client.on(UPGRADE_ERA_KEY, () => this.handleEraUpgrade());
         client.on(DISCONNECT_KEY, () => this.handleDisconnect());
     }
-    abstract handleJoinRoom(roomCode : string, playerName : string);
-    abstract handleCreateRoom(playerName : string);
+    abstract handleJoinRoom(roomCode : string, playerName : string, color : string);
+    abstract handleCreateRoom(playerName : string, color : string);
     abstract handleStartGame();
     abstract handleSubmitStartPos(pos : PosData);
     abstract handleSpawnUnit(pos : PosData, unitType : string);
@@ -36,12 +36,12 @@ export abstract class RouteReceiver {
     abstract handleDisconnect();
 }
 
-export function emitJoinRoom(socket : any, roomCode : string, playerName : string) {
-  socket.emit(JOIN_ROOM_KEY, roomCode, playerName);
+export function emitJoinRoom(socket : any, roomCode : string, playerName : string, color : string) {
+  socket.emit(JOIN_ROOM_KEY, roomCode, playerName, color);
 }
 
-export function emitCreateRoom(socket : any, playerName : string) {
-  socket.emit(CREATE_ROOM_KEY, playerName);
+export function emitCreateRoom(socket : any, playerName : string, color : string) {
+  socket.emit(CREATE_ROOM_KEY, playerName, color);
 }
 
 export function emitStartGme(socket : any){

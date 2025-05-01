@@ -9,8 +9,15 @@ export class GameScreen {
     public upgradeButton = document.getElementById('upgradeButton') as HTMLButtonElement;
     public eraNameLabel = document.getElementById('eraNameLabel') as HTMLLabelElement;
     public nextEraLabel = document.getElementById('nextEraLabel') as HTMLLabelElement;
+    public zoomSelect = document.getElementById('zoomList') as HTMLSelectElement;
     public ctx : CanvasRenderingContext2D = this.canvas.getContext('2d')!;
     public SIZE : number = 10;
+
+    constructor() {
+      this.zoomSelect.onclick = () => {
+        this.setSize();
+      }
+    }
 
     drawSetupGame(data : GameSetupData) {
       if (!data) {
@@ -18,7 +25,7 @@ export class GameScreen {
       }
       data.players.forEach((player : PlayerSetupData) => {
         if (player.pos) {
-          this.drawUnitByPos(player.pos);
+          this.drawUnitByPos(player.pos, player.color);
         }
       });
     }
@@ -38,24 +45,22 @@ export class GameScreen {
     }
     
     drawUnit(unit : UnitData, team : number) {
-      if (unit.team == team) {
-        this.drawBorder(unit.pos);
-      }
-      this.drawUnitByPos(unit.pos);
+      this.drawBorder(unit.pos, unit.playerColor);
+      this.drawUnitByPos(unit.pos, unit.color);
     }
 
-    drawUnitByPos(pos : PosData) {
+    drawUnitByPos(pos : PosData, color : string) {
       let x : number = pos.x * this.SIZE;
       let y : number = pos.y * this.SIZE;
-      this.ctx.fillStyle = 'black';
+      this.ctx.fillStyle = color;
       this.ctx.fillRect(x, y, this.SIZE, this.SIZE);
     }
 
-    drawBorder(pos : PosData) {
+    drawBorder(pos : PosData, color : string) {
       let x : number = pos.x * this.SIZE;
       let y : number = pos.y * this.SIZE;
-      this.ctx.fillStyle = '#00FF00';
-      this.ctx.fillRect(x - 1, y - 1, this.SIZE + 2, this.SIZE + 2);
+      this.ctx.fillStyle = color;
+      this.ctx.fillRect(x - 2, y - 2, this.SIZE + 4, this.SIZE + 4);
     }
 
     drawCircle(x : number, y : number, radius : number, color : string) {
@@ -89,4 +94,8 @@ export class GameScreen {
       this.eraNameLabel.innerText = 'Era: ' + era.eraName;
       this.nextEraLabel.innerText = 'Next Era Cost:' + era.nextEraCost.gold + 'g' + era.nextEraCost.wood + 'w' + era.nextEraCost.stone + 's'
     }
-} 
+
+    setSize() {
+      this.SIZE = parseInt(this.zoomSelect.value);
+    }
+}

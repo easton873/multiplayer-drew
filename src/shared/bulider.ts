@@ -14,9 +14,11 @@ export interface GameSetupData {
     boardX : number
     boardY : number
     players : PlayerSetupData[]
+    currPlayer : PlayerSetupData
 }
 
 export interface PlayerSetupData {
     name : string
     pos : PosData
+    color : string
 }

@@ -21,21 +21,21 @@ export class ClientHandler extends RouteReceiver {
         this.playerClients.set(this.client.id, this.client);
     }   
 
-    handleCreateRoom(name : string) {
+    handleCreateRoom(name : string, color : string) {
         console.log("creating game");
         let roomCode = randomRoomID(4);
         this.rooms.set(roomCode, new GameRoom(roomCode));
-        this.handleJoinRoom(roomCode, name);
+        this.handleJoinRoom(roomCode, name, color); // TODO make a create room success
     }
 
-    handleJoinRoom(roomCode : string, name : string){
+    handleJoinRoom(roomCode : string, name : string, color : string){
         let currGame : GameRoom = this.rooms.get(roomCode);
         if (!currGame) {
             return;
         }
         this.playerRoomLookup.set(this.client.id, currGame);
         this.client.join(roomCode);
-        currGame.addPlayer(this.client.id, name, this.client);
+        currGame.addPlayer(this.client.id, name, this.client, color);
         emitJoinSuccess(this.io, roomCode, currGame.joinRoomData());
         console.log("Client " + this.client.id + " joined room " + roomCode);
     }
@@ -45,8 +45,9 @@ export class ClientHandler extends RouteReceiver {
         if (!gameRoom) {
             return;
         }
-        emitStartSuccess(this.io, gameRoom.roomCode, gameRoom.setupData());
-        emitYourTurn(gameRoom.getPoslessPlayer().getClient(), gameRoom.setupData());
+        emitStartSuccess(this.io, gameRoom.roomCode, gameRoom.setupData(this.client.id));
+        let player = gameRoom.getPoslessPlayer().getClient()
+        emitYourTurn(player, gameRoom.setupData(player.id));
     }
 
     handleSubmitStartPos(pos: PosData) {
@@ -56,7 +57,7 @@ export class ClientHandler extends RouteReceiver {
         }
         gameRoom.addPlayerPos(this.client.id, Pos.FromPosData(pos));
         emitSetPosSuccess(this.client);
-        emitStartSuccess(this.io, gameRoom.roomCode, gameRoom.setupData());
+        emitStartSuccess(this.io, gameRoom.roomCode, gameRoom.setupData(this.client.id));
         if (gameRoom.allPlayersHavePos()) {
             let game : Game = gameRoom.buildGame();
             game.players.forEach((player : Player) => {
@@ -88,7 +89,8 @@ export class ClientHandler extends RouteReceiver {
             }, 1000 / FRAME_RATE);
             return;
         }
-        emitYourTurn(gameRoom.getPoslessPlayer().getClient(), gameRoom.setupData());
+        let nextPlayer = gameRoom.getPoslessPlayer().getClient()
+        emitYourTurn(nextPlayer, gameRoom.setupData(nextPlayer.id));
     }
 
     handleDisconnect(){
