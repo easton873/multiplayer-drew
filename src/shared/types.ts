@@ -18,7 +18,12 @@ export interface PlayerSpecificData {
 export interface EraData {
   eraName : string
   nextEraCost : ResourceData
-  availableUnits : string[]
+  availableUnits : UnitCreationData[]
+}
+
+export interface UnitCreationData {
+  name : string
+  cost : ResourceData
 }
 
 export interface ResourceData {

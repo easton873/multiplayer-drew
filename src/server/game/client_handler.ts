@@ -42,7 +42,7 @@ export class ClientHandler extends RouteReceiver {
 
     handleStartGame() {
         let gameRoom = this.playerRoomLookup.get(this.client.id);
-        if (!gameRoom) {
+        if (!gameRoom || !gameRoom.isLeader(this.client.id)) {
             return;
         }
         emitStartSuccess(this.io, gameRoom.roomCode, gameRoom.setupData(this.client.id));

@@ -69,7 +69,7 @@ export class FrontendClientHandler extends ClientReceiver {
             const x = Math.floor((event.clientX - rect.left) / this.manager.gameScreen.SIZE);
             const y = Math.floor((event.clientY - rect.top) / this.manager.gameScreen.SIZE);
             const posData : PosData = {x:x, y:y};
-            emitSpawnUnit(this.socket, posData, this.manager.gameScreen.unitSelect.value);
+            emitSpawnUnit(this.socket, posData, this.manager.gameScreen.getUnitSelect().name);
           }
         this.manager.gameScreen.canvas.addEventListener('click', temp);
         this.unitPlaceFn = temp;

@@ -4,7 +4,6 @@ import { DefaultEventsMap, Server, Socket } from 'socket.io';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { Game } from './game/game.js';
 import { ClientHandler } from './game/client_handler.js';
 import { GameRoom } from './game/game_room.js';
 

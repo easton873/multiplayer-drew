@@ -2,18 +2,18 @@ import { Board } from "./board.js";
 import { Heart } from "./heart.js";
 import { Resources } from "./resources.js";
 import { ResourceUnit } from "./unit/resource_unit.js";
-import { Unit } from "./unit/unit.js";
-import { UnitFactory } from "./unit_factory.js";
+import { ObservableUnit, Unit, UnitObserver } from "./unit/unit.js";
 import { Pos } from "./pos.js";
 import { Era } from "./era.js";
-import { ARCHER_NAME, KAMAKAZE_NAME, LUMBER_JACK_NAME, MERCHANT_NAME, MINER_NAME, PlayerSpecificData, SOLDIER_NAME } from "../../shared/types.js";
+import { PlayerSpecificData } from "../../shared/types.js";
+import { GameUnit } from "./unit/game_unit.js";
+import { UNIT_MAP } from "./unit/all_units.js";
 
-export class Player {
+export class Player implements UnitObserver {
     resources: Resources = new Resources(5, 0, 0);
-    private unitFactory: UnitFactory = new UnitFactory(this);
     board: Board;
     era: Era = new Era();
-    protected unitCount = 0;
+    unitCount = 0;
 
     heart: ResourceUnit;
 
@@ -21,6 +21,11 @@ export class Player {
         this.board = board;
         this.heart = new Heart(this, pos, this.era.currEra.getHeart());
         this.board.addEntity(this.heart);
+    }
+
+    notifyDeath(unit: ObservableUnit) {
+        unit.unregisterObserver(this);
+        this.unitCount--;
     }
 
     getColor() : string {
@@ -32,30 +37,27 @@ export class Player {
     }
 
     NewUnit(unitType: string, pos: Pos) {
-        let unit: Unit = this.whichUnit(unitType, pos);
-        if (this.resources.canAfford(unit.cost)) {
-            this.resources.spend(unit.cost);
+        let gameUnit: GameUnit = this.whichUnit(unitType);
+        if (!gameUnit) {
+            return;
+        }
+        let unitCost = gameUnit.getUnitCreationInfo().getCost()
+        if (this.resources.canAfford(unitCost)) {
+            this.resources.spend(unitCost);
+            let unit = gameUnit.construct(this, pos);
+            unit.registerObserver(this);
             this.board.addEntity(unit);
+            this.unitCount++;
         }
     }
 
-    whichUnit(s: string, pos: Pos): Unit {
-        switch (s) {
-            case MERCHANT_NAME:
-                return this.unitFactory.NewMerchant(pos);
-            case LUMBER_JACK_NAME:
-                return this.unitFactory.NewLumberJack(pos);
-            case MINER_NAME:
-                return this.unitFactory.NewMiner(pos);
-            case SOLDIER_NAME:
-                return this.unitFactory.NewSoldier(pos);
-            case ARCHER_NAME:
-                return this.unitFactory.NewArcher(pos);
-            case KAMAKAZE_NAME:
-                return this.unitFactory.NewKamakaze(pos);
-            default:
-                console.log("unrecognized unit type");
+    whichUnit(s: string): GameUnit {
+        let unitInfo = UNIT_MAP.get(s);
+        if (!unitInfo) {
+            console.log("unrecognized unit type");
+            return null;
         }
+        return unitInfo;
     }
 
     isDead(): Boolean {
@@ -93,16 +95,5 @@ export class PlayerProxy extends Player {
             return;
         }
         super.NewUnit(unitType, pos);
-        this.unitCount = this.countUnits();
-    }
-
-    private countUnits(): number {
-        let count = 0;
-        this.board.entities.forEach((unit: Unit) => {
-            if (unit.team == this) {
-                count++;
-            }
-        });
-        return count;
     }
 }

@@ -1,7 +1,6 @@
 import { Board } from "../board.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
-import { Resources } from "../resources.js";
 
 export abstract class ObservableUnit {
     private observers : UnitObserver[] = [];
@@ -47,18 +46,17 @@ export abstract class Unit extends ObservableUnit {
     speed : number;
     counter : number;
     team : Player;
-    cost : Resources;
     color : string;
 
-    constructor(player : Player, pos : Pos, hp : number, speed : number, cost : Resources, color : string) {
+    constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string) {
         super();
         this.team = player;
+        this.name = name;
         this.pos = pos;
         this.hp = hp;
         this.currHp = hp;
         this.speed = speed;
         this.counter = speed;
-        this.cost = cost;
         this.color = color;
     }
 
@@ -83,7 +81,6 @@ export abstract class Unit extends ObservableUnit {
 
 export abstract class UnitWithTarget extends Unit implements UnitObserver {
     private _target : Unit;
-    range : number;
 
     doMove(board : Board) {
         this.findNewTarget(board);

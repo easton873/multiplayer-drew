@@ -8,6 +8,7 @@ export interface GameWaitingData {
 export interface PlayerWaitingData {
     name : string
     ready : boolean
+    leader : boolean
 }
 
 export interface GameSetupData {

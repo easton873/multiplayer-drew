@@ -1,14 +1,11 @@
 import { Board } from "../board.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
-import { Resources } from "../resources.js";
 import { UnitWithTarget } from "./unit.js";
 
 export abstract class MeleeUnit extends UnitWithTarget {
-    protected damage;
-    constructor(player : Player, pos : Pos, hp : number, speed : number, cost : Resources, color : string) {
-        super(player, pos, hp, speed, cost, color);
-        this.range = 1;
+    constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string, protected damage : number) {
+        super(player, name, pos, hp, speed, color);
     }
     inRangeMove(board : Board) {
         this.target.doDamage(this.damage);

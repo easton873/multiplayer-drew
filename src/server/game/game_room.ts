@@ -13,7 +13,8 @@ export class GameRoom {
     constructor(public roomCode : string){}
 
     addPlayer(id : string, name : string, client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, color : string) {
-        this.players.set(id, new SetupPlayer(id, name, client, color));
+        let isLeader : boolean = this.players.size == 0; // first to join is leader
+        this.players.set(id, new SetupPlayer(id, name, client, color, isLeader));
     }
 
     addPlayerPos(id : string, pos : Pos) {
@@ -48,6 +49,14 @@ export class GameRoom {
             throw new Error("no posless players");
         }
         return this.getRandomPlayer(players);
+    }
+
+    isLeader(id : string) : boolean {
+        let player = this.players.get(id);
+        if (!player) {
+            return false;
+        }
+        return player.getIsLeader();
     }
 
     private getPoslessPlayers() : SetupPlayer[] {
@@ -98,7 +107,7 @@ export class GameRoom {
 class SetupPlayer {
     static team : number = 0;
     private pos : Pos = null;
-    constructor(private id : string, private name: string, private client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, private color : string) {}
+    constructor(private id : string, private name: string, private client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, private color : string, private isLeader : boolean) {}
 
     getClient() : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any> {
         return this.client;
@@ -116,8 +125,12 @@ class SetupPlayer {
         this.pos = pos;
     }
 
+    getIsLeader() : boolean {
+        return this.isLeader;
+    }
+
     getJoinData() : PlayerWaitingData {
-        return {ready: true, name: this.name};
+        return {ready: true, name: this.name, leader: this.isLeader};
     }
 
     getSetupData() : PlayerSetupData {

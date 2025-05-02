@@ -1,5 +1,5 @@
 import { GameSetupData, PlayerSetupData } from "../../shared/bulider";
-import { EraData, GameData, PosData, UnitData } from "../../shared/types";
+import { EraData, GameData, PosData, UnitCreationData, UnitData } from "../../shared/types";
 
 export class GameScreen {
     public div = document.getElementById("gameScreen")!;
@@ -7,6 +7,7 @@ export class GameScreen {
     public resourceLabel = document.getElementById('resourceLabel') as HTMLLabelElement;
     public heartProgress = document.getElementById('heartProgress') as HTMLProgressElement;
     public unitSelect = document.getElementById('unitSelect') as HTMLSelectElement;
+    public unitCostLabel = document.getElementById('unitCostLabel') as HTMLLabelElement;
     public unitCountLabel = document.getElementById('unitCountLabel') as HTMLLabelElement;
     public upgradeButton = document.getElementById('upgradeButton') as HTMLButtonElement;
     public eraNameLabel = document.getElementById('eraNameLabel') as HTMLLabelElement;
@@ -16,8 +17,12 @@ export class GameScreen {
     public SIZE : number = 10;
 
     constructor() {
-      this.zoomSelect.onclick = () => {
+      this.zoomSelect.onchange = () => {
         this.setSize();
+      }
+      this.unitSelect.onchange = () => {
+        let cost = this.getUnitSelect().cost
+        this.unitCostLabel.innerText = cost.gold + "g" + cost.wood + "w" + cost.stone + "s";
       }
     }
 
@@ -85,12 +90,12 @@ export class GameScreen {
       ctx.stroke();
     }
 
-    fillSelect(selectElement : HTMLSelectElement, units : string[]) {
+    fillSelect(selectElement : HTMLSelectElement, units : UnitCreationData[]) {
       this.removeOptions(selectElement);
-      units.forEach(unitType => {
+      units.forEach((data : UnitCreationData) => {
         const optionElement = document.createElement('option');
-        optionElement.value = unitType;
-        optionElement.text = unitType;
+        optionElement.value = JSON.stringify(data);
+        optionElement.text = data.name;
         selectElement.add(optionElement);
       });
     }
@@ -110,5 +115,9 @@ export class GameScreen {
 
     setSize() {
       this.SIZE = parseInt(this.zoomSelect.value);
+    }
+
+    getUnitSelect() : UnitCreationData {
+      return JSON.parse(this.unitSelect.value);
     }
 }
