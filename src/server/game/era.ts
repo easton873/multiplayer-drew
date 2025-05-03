@@ -3,6 +3,7 @@ import { Resources } from "./resources.js";
 import { EraData, UnitCreationData } from "../../shared/types.js";
 import { GameUnit } from "./unit/game_unit.js";
 import { ALL_UNITS } from "./unit/all_units.js";
+import { MINER_GAME_UNIT } from "./unit/resource_unit.js";
 
 const STARTING_COST : Resources = new Resources(100, 0 ,0);
 const STARTING_RESOURCES : Resources = new Resources(1, 0, 0);
@@ -146,7 +147,9 @@ class SecondEra extends BaseEra implements EraState {
         return "The Second Era";
     }
     getAvailableUnits(): GameUnit[] {
-        return ALL_UNITS;
+        return ALL_UNITS.slice(0, ALL_UNITS.findIndex((unit : GameUnit) => {
+            return unit === MINER_GAME_UNIT
+        }));
     }
 }
 

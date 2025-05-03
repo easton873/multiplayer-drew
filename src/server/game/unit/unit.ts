@@ -83,7 +83,7 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
     private _target : Unit;
 
     doMove(board : Board) {
-        this.findNewTarget(board);
+        this.findNewTarget(board.entities);
         if (this.hasNoTarget()) {
             return;
         }
@@ -98,14 +98,20 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
 
     abstract inRangeMove(board : Board);
 
-    findNewTarget(board : Board) {
+    findNewTarget(units : Unit[]) {
         // if (this.hasTarget()) {
         //     return;
         // }
+        this.findTargetWithPredicate(units, (unit : Unit) => {
+            return unit.team != this.team;
+        });
+    }
+
+    findTargetWithPredicate(units : Unit[], predicate : (unit : Unit) => boolean) {
         let currDist = -1;
-        board.entities.forEach((unit : Unit) => {
+        units.forEach((unit : Unit) => {
             let dist = this.pos.distanceTo(unit.pos);
-            if (unit.team != this.team && (currDist == -1 || dist < currDist)) {
+            if (predicate(unit) && (currDist == -1 || dist < currDist)) {
                 this.target = unit;
                 currDist = dist;
             }

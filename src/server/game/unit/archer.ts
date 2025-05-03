@@ -2,11 +2,19 @@ import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
 import { GameUnit } from "./game_unit.js";
-import { Kamakaze } from "./kamakaze.js";
 import { MeleeUnit } from "./melee_unit.js";
 import { Unit } from "./unit.js";
 
 export class Archer extends MeleeUnit {
+    constructor(player : Player, pos : Pos, private range : number = ArcherUnit.RANGE) {
+        super(player, ArcherUnit.NAME, pos, ArcherUnit.HP, ArcherUnit.SPEED, ArcherUnit.COLOR, ArcherUnit.DAMAGE);
+    }
+    inRange(other: Unit) : boolean {
+        return this.pos.distanceTo(other.pos) <= this.range;
+    }
+}
+
+export class ArcherUnit extends GameUnit {
     static NAME = "Archer";
     static COST = new Resources(15, 5, 0);
     static SPEED = 10;
@@ -14,17 +22,8 @@ export class Archer extends MeleeUnit {
     static HP = 1;
     static COLOR = "#66ffff";
     static RANGE = 16;
-    constructor(player : Player, pos : Pos) {
-        super(player, Archer.NAME, pos, Archer.HP, Archer.SPEED, Archer.COLOR, Archer.DAMAGE);
-    }
-    inRange(other: Unit) : boolean {
-        return this.pos.distanceTo(other.pos) <= Archer.RANGE;
-    }
-}
-
-export class ArcherUnit extends GameUnit {
     constructor() {
-        super(Archer.NAME, Archer.COST);
+        super(ArcherUnit.NAME, ArcherUnit.COST);
     }
     construct(player: Player, pos: Pos): Unit {
         return new Archer(player, pos);

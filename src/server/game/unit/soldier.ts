@@ -6,25 +6,24 @@ import { Resources } from "../resources.js";
 import { GameUnit } from "./game_unit.js";
 
 export class Soldier extends MeleeUnit {
-    static COST = new Resources(5, 0, 0);
-    static SPEED = 10;
-    static DAMAGE = 1;
-    static HP = 3;
-    static COLOR = "#000000";
-    static NAME = "Soldier";
     inRange(other: Unit): boolean {
         return this.pos.isAdjacent(other.pos);
     }
 
     constructor(player : Player, pos : Pos) {
-        super(player, Soldier.NAME, pos, Soldier.HP, Soldier.SPEED, Soldier.COLOR, Soldier.DAMAGE);
-        this.damage = Soldier.DAMAGE;
+        super(player, SoldierUnit.NAME, pos, SoldierUnit.HP, SoldierUnit.SPEED, SoldierUnit.COLOR, SoldierUnit.DAMAGE);
     }
 }
 
 export class SoldierUnit extends GameUnit {
+    static NAME = "Soldier";
+    static COST = new Resources(5, 0, 0);
+    static SPEED = 10;
+    static DAMAGE = 1;
+    static HP = 3;
+    static COLOR = "#000000";
     constructor() {
-        super(Soldier.NAME, Soldier.COST);
+        super(SoldierUnit.NAME, SoldierUnit.COST);
     }
     construct(player : Player, pos : Pos): Unit {
         return new Soldier(player, pos);

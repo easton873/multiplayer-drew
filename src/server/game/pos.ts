@@ -12,6 +12,10 @@ export class Pos {
         return {x: this._x, y: this._y};
     }
 
+    clone() : Pos {
+        return new Pos(this._x, this._y);
+    }
+
     get x() : number {
         return this._x;
     }
