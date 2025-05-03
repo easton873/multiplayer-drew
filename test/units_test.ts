@@ -10,6 +10,7 @@ import { Tank, TankUnit } from "../src/server/game/unit/tank.js";
 import { Goblin } from "../src/server/game/unit/goblin.js";
 import { Summoner } from "../src/server/game/unit/summoner.js";
 import { Healer, HealerUnit } from "../src/server/game/unit/healer.js";
+import { FireballThrower, FireballThrowerUnit } from "../src/server/game/unit/fireball_thrower.js";
 
 describe('Units Test', () => {
     it('archer test', () => {
@@ -150,5 +151,33 @@ describe('Units Test', () => {
         board.addEntity(soldier3);
         unit.move(board);
         assert.strictEqual(unit.target, soldier3);
+    });
+
+    it('fireball thrower test', () => {
+        let board : Board = new Board(10, 10);
+        let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
+        let unit : FireballThrower = new FireballThrower(player, new Pos(5, 5), FireballThrowerUnit.EXPLOSION_RANGE);
+        let soldier : Soldier = new Soldier(p2, new Pos(9, 5));
+        let soldier2 : Soldier = new Soldier(p2, new Pos(9, 5));
+        let soldier3 : Soldier = new Soldier(p2, new Pos(10, 5));
+        let soldier4 : Soldier = new Soldier(p2, new Pos(11, 5));
+        board.addEntity(unit);
+        board.addEntity(soldier);
+        board.addEntity(soldier2);
+        board.addEntity(soldier3);
+        board.addEntity(soldier4);
+        assert.strictEqual(board.entities.length, 7);
+        unit.target = soldier;
+        
+        unit.speed = 0;
+        unit.counter = 0;
+        assert.strictEqual(unit.pos.equals(new Pos(5, 5)), true);
+        unit.move(board);
+        assert.strictEqual(soldier.currHp, soldier.hp - unit.damage);
+        assert.strictEqual(soldier2.currHp, soldier2.hp - unit.damage);
+        assert.strictEqual(soldier3.currHp, soldier3.hp - unit.damage);
+        assert.strictEqual(soldier4.currHp, soldier4.hp);
+        assert.strictEqual(unit.currHp, unit.hp);
     });
 });

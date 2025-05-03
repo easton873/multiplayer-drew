@@ -73,9 +73,13 @@ export abstract class Unit extends ObservableUnit {
 
     doDamage(damage : number) {
         this.currHp -= damage;
-        if (this.currHp <= 0) {
+        if (this.isDead()) {
             this.notifyObserversDeath();
         }
+    }
+
+    isDead() : boolean {
+        return this.currHp <= 0;
     }
 }
 
@@ -118,6 +122,18 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
         });
     }
 
+    doDamageInArea(board : Board, pos : Pos, range : number, damage : number) {
+        for (let i = 0; i < board.entities.length; ++i) {
+            let unit = board.entities[i];
+            if (this.inRangeFromPoint(unit, range, pos)) {
+                unit.doDamage(damage);
+            }
+            if (unit.isDead()) { // if doDamage killed them, then this list is shorter
+                i--;
+            }
+        }
+    }
+
     notifyDeath(unit: ObservableUnit) {
         if (unit == this._target) {
             this._target = null;
@@ -126,7 +142,11 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
     }
 
     inRangeForDistance(other : Unit, range : number) : boolean {
-        return this.pos.distanceTo(other.pos) <= range;
+        return this.inRangeFromPoint(other, range, this.pos);
+    }
+
+    inRangeFromPoint(other : Unit, range : number, pos : Pos) : boolean {
+        return pos.distanceTo(other.pos) <= range;
     }
 
     isAdjacent(other : Unit) : boolean {

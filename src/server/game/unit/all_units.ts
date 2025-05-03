@@ -1,4 +1,5 @@
 import { ArcherUnit } from "./archer.js";
+import { FireballThrower, FireballThrowerUnit } from "./fireball_thrower.js";
 import { GameUnit } from "./game_unit.js";
 import { GoblinUnit } from "./goblin.js";
 import { HealerUnit } from "./healer.js";
@@ -19,6 +20,7 @@ export const ALL_UNITS : GameUnit[] = [
     new TankUnit(),
     new SummonerUnit(),
     new HealerUnit(),
+    new FireballThrowerUnit(),
     // lure
     // stationary turret
 ];

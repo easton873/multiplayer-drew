@@ -19,20 +19,9 @@ export class Kamakaze extends UnitWithTarget {
         }
     }
 
-    inExplosionRange(other : Unit) : boolean {
-        return this.inRangeForDistance(other, this.range);
-    }
-
     explode(board : Board) {
-        board.entities.forEach((unit : Unit) => {
-            if (unit === this) {
-                return;
-            }
-            if (this.inExplosionRange(unit)) {
-                unit.doDamage(this.damage);
-            }
-        });
-        this.doDamage(this.currHp);
+        this.doDamageInArea(board, this.pos, this.range, this.damage);
+        this.doDamage(this.currHp); // make sure this unit died too
     }
 }
 
