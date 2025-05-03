@@ -7,18 +7,25 @@ import { GameUnit } from "./game_unit.js";
 import { Unit, UnitWithTarget } from "./unit.js";
 
 export class Healer extends UnitWithTarget {
+    constructor(player: Player, pos: Pos, public range : number) {
+        super(player, HealerUnit.NAME, pos, HealerUnit.HP, HealerUnit.SPEED, HealerUnit.COLOR);
+    }
     inRange(other: Unit): boolean {
         return this.inRangeForDistance(other, this.range);
     }
     inRangeMove(board: Board) {
         if (this.target.currHp < this.target.hp) {
-            this.target.currHp++;
+            this.target.currHp += 2;
+            if (this.target.currHp > this.target.hp) {
+                this.target.currHp = this.target.hp;
+            }
         }
     }
     findNewTarget(units: Unit[]): void {
-        if (this.hasTarget() && this.target.currHp <= this.target.hp) {
+        if (this.hasTarget() && this.target.currHp < this.target.hp) {
             return;
         }
+        
         // either have no target or target is at full health
         this.target = null;
         // now no target
@@ -40,9 +47,6 @@ export class Healer extends UnitWithTarget {
                 !(unit instanceof Healer);
         });
     }
-    constructor(player: Player, pos: Pos, private range : number) {
-        super(player, HealerUnit.NAME, pos, HealerUnit.HP, HealerUnit.SPEED, HealerUnit.COLOR);
-    }
 }
 
 export class HealerUnit extends GameUnit {
@@ -50,7 +54,7 @@ export class HealerUnit extends GameUnit {
     static COST = new Resources(20, 100, 20);
     static HP = 5;
     static SPEED = 8;
-    static COLOR = "#222222";
+    static COLOR = "#DDDDDD";
     static RANGE = 9;
     constructor() {
         super(HealerUnit.NAME, HealerUnit.COST);

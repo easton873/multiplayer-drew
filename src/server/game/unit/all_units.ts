@@ -1,6 +1,7 @@
 import { ArcherUnit } from "./archer.js";
 import { GameUnit } from "./game_unit.js";
 import { GoblinUnit } from "./goblin.js";
+import { HealerUnit } from "./healer.js";
 import { KamakazeUnit } from "./kamakaze.js";
 import { LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT } from "./resource_unit.js";
 import { SoldierUnit } from "./soldier.js";
@@ -17,7 +18,7 @@ export const ALL_UNITS : GameUnit[] = [
     MINER_GAME_UNIT,
     new TankUnit(),
     new SummonerUnit(),
-    // healer
+    new HealerUnit(),
     // lure
     // stationary turret
 ];

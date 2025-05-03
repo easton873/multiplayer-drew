@@ -7,7 +7,7 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "test": "npx --enable-source-maps mocha",
+        "test": "npx mocha",
         "start": "npm run build && node --enable-source-maps --trace-warnings --trace-deprecation --loader ts-node/esm src/server/server.ts"
     },
     "author": "",

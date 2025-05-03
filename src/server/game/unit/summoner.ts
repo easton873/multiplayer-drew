@@ -49,7 +49,6 @@ export class Summoner extends UnitWithTarget  {
         }
         this.findTargetWithPredicate(units, (unit : Unit) => {
             return unit.team == this.team && unit != this &&
-             !(unit instanceof Summonee) &&
               !(unit instanceof Heart) &&
               !(unit instanceof Summoner);
         });

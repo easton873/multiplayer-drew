@@ -146,7 +146,9 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
             this._target.unregisterObserver(this);
         }
         this._target = target;
-        target.registerObserver(this);
+        if (this._target) {
+            target.registerObserver(this);
+        }
     }
 
     get target() {
