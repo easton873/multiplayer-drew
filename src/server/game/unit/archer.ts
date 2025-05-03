@@ -2,15 +2,12 @@ import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
 import { GameUnit } from "./game_unit.js";
-import { MeleeUnit } from "./melee_unit.js";
+import { RangedUnit } from "./ranged_unit.js";
 import { Unit } from "./unit.js";
 
-export class Archer extends MeleeUnit {
-    constructor(player : Player, pos : Pos, private range : number = ArcherUnit.RANGE) {
-        super(player, ArcherUnit.NAME, pos, ArcherUnit.HP, ArcherUnit.SPEED, ArcherUnit.COLOR, ArcherUnit.DAMAGE);
-    }
-    inRange(other: Unit) : boolean {
-        return this.pos.distanceTo(other.pos) <= this.range;
+export class Archer extends RangedUnit {
+    constructor(player : Player, pos : Pos) {
+        super(player, ArcherUnit.NAME, pos, ArcherUnit.HP, ArcherUnit.SPEED, ArcherUnit.COLOR, ArcherUnit.DAMAGE, ArcherUnit.RANGE);
     }
 }
 

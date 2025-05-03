@@ -9,6 +9,7 @@ import { Kamakaze, KamakazeUnit } from "../src/server/game/unit/kamakaze.js";
 import { Tank, TankUnit } from "../src/server/game/unit/tank.js";
 import { Goblin } from "../src/server/game/unit/goblin.js";
 import { Summoner } from "../src/server/game/unit/summoner.js";
+import { Healer, HealerUnit } from "../src/server/game/unit/healer.js";
 
 describe('Units Test', () => {
     it('archer test', () => {
@@ -115,12 +116,31 @@ describe('Units Test', () => {
         unit.summonTimer = 0;
         unit.range = 0;
         unit.move(board);
-        assert.strictEqual(unit.target.name, soldier.name);
+        assert.strictEqual(unit.target, soldier);
         assert.strictEqual(board.entities.length, 6);
         assert.strictEqual(unit.summonTimer, unit.summonTimerTime);
         assert.strictEqual(unit.numSummons, 2);
         assert.strictEqual(unit.pos.equals(soldier.pos), true);
         unit.move(board);
         assert.strictEqual(unit.summonTimer, unit.summonTimerTime - 1);
+    });
+
+    it('healer test', () => {
+        let board : Board = new Board(10, 10);
+        let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
+        let unit : Healer = new Healer(player, new Pos(7, 5), HealerUnit.RANGE);
+        let soldier : Soldier = new Soldier(player, new Pos(8, 5));
+        let soldier2 : Soldier = new Soldier(player, new Pos(8, 5));
+        board.addEntity(unit);
+        board.addEntity(soldier);
+        board.addEntity(soldier2);
+        assert.strictEqual(board.entities.length, 5);
+        
+        unit.speed = 0;
+        unit.counter = 0;
+        unit.move(board);
+        assert.strictEqual(unit.target, soldier);
+        unit.move(board);
     });
 });

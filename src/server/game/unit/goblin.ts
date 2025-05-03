@@ -10,9 +10,6 @@ export class Goblin extends MeleeUnit {
     constructor(player: Player, pos: Pos) {
         super(player, GoblinUnit.NAME, pos, GoblinUnit.HP, GoblinUnit.SPEED, GoblinUnit.COLOR, GoblinUnit.DAMAGE);
     }
-    inRange(other: Unit): boolean {
-        return this.pos.isAdjacent(other.pos);
-    }
     findNewTarget(units: Unit[]): void {
         if (this.hasTarget()) {
             return;

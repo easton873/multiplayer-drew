@@ -6,10 +6,6 @@ import { Resources } from "../resources.js";
 import { GameUnit } from "./game_unit.js";
 
 export class Soldier extends MeleeUnit {
-    inRange(other: Unit): boolean {
-        return this.pos.isAdjacent(other.pos);
-    }
-
     constructor(player : Player, pos : Pos) {
         super(player, SoldierUnit.NAME, pos, SoldierUnit.HP, SoldierUnit.SPEED, SoldierUnit.COLOR, SoldierUnit.DAMAGE);
     }

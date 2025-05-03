@@ -38,7 +38,7 @@ export class Summoner extends UnitWithTarget  {
         }
     }
     inRange(other: Unit): boolean {
-        return this.pos.distanceTo(other.pos) <= this.range;
+        return this.inRangeForDistance(other, this.range);
     }
     inRangeMove(board: Board) {
         return;

@@ -3,8 +3,8 @@ import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Unit, UnitWithTarget } from "./unit.js";
 
-export abstract class MeleeUnit extends UnitWithTarget {
-    constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string, protected damage : number) {
+export abstract class RangedUnit extends UnitWithTarget {
+    constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string, protected damage : number, protected range : number) {
         super(player, name, pos, hp, speed, color);
     }
     inRangeMove(board : Board) {
@@ -12,6 +12,6 @@ export abstract class MeleeUnit extends UnitWithTarget {
     }
 
     inRange(other: Unit): boolean {
-        return this.isAdjacent(other);
+        return this.inRangeForDistance(other, this.range);
     }
 }

@@ -10,7 +10,7 @@ export class Kamakaze extends UnitWithTarget {
         super(player, KamakazeUnit.NAME, pos, KamakazeUnit.HP, KamakazeUnit.SPEED, KamakazeUnit.COLOR);
     }
     inRange(other: Unit): boolean {
-        return this.pos.isAdjacent(other.pos);
+        return this.isAdjacent(other);
     }
 
     inRangeMove(board : Board) {
@@ -20,8 +20,7 @@ export class Kamakaze extends UnitWithTarget {
     }
 
     inExplosionRange(other : Unit) : boolean {
-        let dist =  this.pos.distanceTo(other.pos);
-        return dist <= this.range;
+        return this.inRangeForDistance(other, this.range);
     }
 
     explode(board : Board) {

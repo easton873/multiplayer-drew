@@ -17,6 +17,9 @@ export const ALL_UNITS : GameUnit[] = [
     MINER_GAME_UNIT,
     new TankUnit(),
     new SummonerUnit(),
+    // healer
+    // lure
+    // stationary turret
 ];
 
 function buildUnitMap() : Map<string, GameUnit> {

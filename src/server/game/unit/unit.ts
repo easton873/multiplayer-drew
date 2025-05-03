@@ -125,6 +125,14 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
         }
     }
 
+    inRangeForDistance(other : Unit, range : number) : boolean {
+        return this.pos.distanceTo(other.pos) <= range;
+    }
+
+    isAdjacent(other : Unit) : boolean {
+        return this.pos.isAdjacent(other.pos);
+    }
+
     hasNoTarget() : boolean {
         return this._target == null || this._target == undefined;
     }

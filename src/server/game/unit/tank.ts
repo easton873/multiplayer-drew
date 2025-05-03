@@ -9,9 +9,6 @@ export class Tank extends MeleeUnit {
     constructor(player: Player, pos: Pos) {
         super(player, TankUnit.NAME, pos, TankUnit.HP, TankUnit.SPEED, TankUnit.COLOR, TankUnit.DAMAGE);
     }
-    inRange(other: Unit): boolean {
-        return this.pos.isAdjacent(other.pos);
-    }
 }
 
 export class TankUnit extends GameUnit {
