@@ -37,6 +37,8 @@ export interface UnitData {
   team : number
   color : string
   playerColor : string
+  hp : number
+  totalHP : number
 }
 
 export interface BoardData {
@@ -48,12 +50,3 @@ export interface PosData {
   x : number
   y : number
 }
-
-// units
-export const SOLDIER_NAME = "Soldier";
-export const ARCHER_NAME = "Archer";
-export const KAMAKAZE_NAME = "Kamakaze";
-// resource units
-export const MERCHANT_NAME = "Merchant";
-export const LUMBER_JACK_NAME = "Lumber Jack";
-export const MINER_NAME = "Miner";

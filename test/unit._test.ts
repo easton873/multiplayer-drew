@@ -6,7 +6,6 @@ import { Soldier } from "../src/server/game/unit/soldier.js";
 import { Pos } from "../src/server/game/pos.js";
 import { MINER_SPEED, ResourceUnitFactory } from "../src/server/game/unit/resource_unit.js";
 import { Resources } from "../src/server/game/resources.js";
-import { SOLDIER_NAME } from "../src/shared/types.js";
 import { StartingEra } from "../src/server/game/era.js";
 
 describe('Unit Test', () => {
@@ -14,8 +13,8 @@ describe('Unit Test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : UnitWithTarget = new Soldier(player, "", new Pos(0, 0));
-        let targetUnit : Unit = new Soldier(p2, "", new Pos(5, 5));
+        let unit : UnitWithTarget = new Soldier(player, new Pos(0, 0));
+        let targetUnit : Unit = new Soldier(p2, new Pos(5, 5));
         unit.target = targetUnit;
         assert.strictEqual(targetUnit.TESTObservers.length, 1);
         targetUnit.notifyObserversDeath();
@@ -27,8 +26,8 @@ describe('Unit Test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : UnitWithTarget = new Soldier(player, "", new Pos(0, 0));
-        let targetUnit : Unit = new Soldier(p2, "", new Pos(3, 3));
+        let unit : UnitWithTarget = new Soldier(player, new Pos(0, 0));
+        let targetUnit : Unit = new Soldier(p2, new Pos(3, 3));
         unit.target = targetUnit;
         assert.strictEqual(targetUnit.TESTObservers.length, 1);
         targetUnit.currHp = 1;
@@ -41,8 +40,8 @@ describe('Unit Test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : UnitWithTarget = new Soldier(player, "", new Pos(3, 2));
-        let targetUnit : Unit = new Soldier(p2, "", new Pos(4, 4));
+        let unit : UnitWithTarget = new Soldier(player, new Pos(3, 2));
+        let targetUnit : Unit = new Soldier(p2, new Pos(4, 4));
         board.addEntity(unit);
         board.addEntity(targetUnit);
         assert.strictEqual(unit.target, undefined);
@@ -54,9 +53,9 @@ describe('Unit Test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : UnitWithTarget = new Soldier(player, "", new Pos(3, 2));
-        let unit2 : UnitWithTarget = new Soldier(player, "", new Pos(3, 2));
-        let targetUnit : Unit = new Soldier(p2, "", new Pos(4, 4));
+        let unit : UnitWithTarget = new Soldier(player, new Pos(3, 2));
+        let unit2 : UnitWithTarget = new Soldier(player, new Pos(3, 2));
+        let targetUnit : Unit = new Soldier(p2, new Pos(4, 4));
         unit.speed = 0;
         unit.counter = 0;
         unit2.speed = 0;
@@ -110,19 +109,19 @@ describe('Unit Test', () => {
         // range test
         player.resources.add(Soldier.COST);
         assert.strictEqual(board.entities.length, 1);
-        player.NewUnit(SOLDIER_NAME, new Pos(1, 0));
+        player.NewUnit(Soldier.NAME, new Pos(1, 0));
         assert.strictEqual(board.entities.length, 1);
         radius++;
-        player.NewUnit(SOLDIER_NAME, new Pos(1, 0));
+        player.NewUnit(Soldier.NAME, new Pos(1, 0));
         assert.strictEqual(board.entities.length, 2);
 
         // unit limit test
         player.resources.add(Soldier.COST);
         assert.strictEqual(board.entities.length, 2);
-        player.NewUnit(SOLDIER_NAME, new Pos(0, 0));
+        player.NewUnit(Soldier.NAME, new Pos(0, 0));
         assert.strictEqual(board.entities.length, 2);
         unitLimit++;
-        player.NewUnit(SOLDIER_NAME, new Pos(0, 0));
+        player.NewUnit(Soldier.NAME, new Pos(0, 0));
         assert.strictEqual(board.entities.length, 3);
     });
 
@@ -144,14 +143,14 @@ describe('Unit Test', () => {
         p2.era.currEra = new testEra();
         player.resources.add(Soldier.COST);
         assert.strictEqual(board.entities.length, 2);
-        player.NewUnit(SOLDIER_NAME, new Pos(1, 0));
+        player.NewUnit(Soldier.NAME, new Pos(1, 0));
         assert.strictEqual(board.entities.length, 3);
         assert.strictEqual(player.unitCount, 1);
         let target : Unit = board.entities[2];
         assert.strictEqual(target.TESTObservers.length, 2);
 
         p2.resources.add(Soldier.COST);
-        p2.NewUnit(SOLDIER_NAME, new Pos(1, 1));
+        p2.NewUnit(Soldier.NAME, new Pos(1, 1));
         assert.strictEqual(board.entities.length, 4);
         let attacker : UnitWithTarget = (board.entities[3] as UnitWithTarget);
         attacker.target = target;

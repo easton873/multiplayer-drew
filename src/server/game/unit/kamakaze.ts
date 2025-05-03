@@ -1,4 +1,3 @@
-import { KAMAKAZE_NAME } from "../../../shared/types.js";
 import { Board } from "../board.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
@@ -7,15 +6,15 @@ import { GameUnit } from "./game_unit.js";
 import { Unit, UnitWithTarget } from "./unit.js";
 
 export class Kamakaze extends UnitWithTarget {
+    static NAME = "Kamakaze";
     static COST = new Resources(50, 30, 0);
     static SPEED = 9;
     static DAMAGE = 10;
     static HP = 3;
     static COLOR = "#DD0000";
     static RANGE = 16;
-    constructor(player : Player, name : string, pos : Pos) {
-        super(player, name, pos, Kamakaze.HP, Kamakaze.SPEED, Kamakaze.COLOR);
-        this.name = KAMAKAZE_NAME;
+    constructor(player : Player, pos : Pos) {
+        super(player, Kamakaze.NAME, pos, Kamakaze.HP, Kamakaze.SPEED, Kamakaze.COLOR);
     }
     inRange(other: Unit): boolean {
         return this.pos.isAdjacent(other.pos);
@@ -47,9 +46,9 @@ export class Kamakaze extends UnitWithTarget {
 
 export class KamakazeUnit extends GameUnit {
     constructor() {
-        super(KAMAKAZE_NAME, Kamakaze.COST);
+        super(Kamakaze.NAME, Kamakaze.COST);
     }
     construct(player: Player, pos: Pos): Unit {
-        return new Kamakaze(player, KAMAKAZE_NAME, pos);
+        return new Kamakaze(player, pos);
     }
 }

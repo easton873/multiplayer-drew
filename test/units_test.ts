@@ -12,8 +12,8 @@ describe('Units Test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : UnitWithTarget = new Archer(player, "", new Pos(10, 5));
-        let targetUnit : Unit = new Soldier(p2, "", new Pos(5, 5));
+        let unit : UnitWithTarget = new Archer(player, new Pos(10, 5));
+        let targetUnit : Unit = new Soldier(p2, new Pos(5, 5));
         unit.target = targetUnit;
         board.addEntity(unit);
         board.addEntity(targetUnit);
@@ -35,8 +35,8 @@ describe('Units Test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : UnitWithTarget = new Kamakaze(player, "", new Pos(7, 5));
-        let targetUnit : Unit = new Soldier(p2, "", new Pos(5, 5));
+        let unit : UnitWithTarget = new Kamakaze(player, new Pos(7, 5));
+        let targetUnit : Unit = new Soldier(p2, new Pos(5, 5));
         unit.target = targetUnit;
         board.addEntity(unit);
         board.addEntity(targetUnit);

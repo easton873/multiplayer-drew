@@ -1,6 +1,4 @@
 import { emitCreateRoom, emitEraUpgrade, emitJoinRoom, emitStartGme } from '../shared/routes';
-import { GameWaitingData, PlayerWaitingData, PlayerSetupData } from '../shared/bulider';
-import { EraData, GameData, MERCHANT_NAME, PosData, SOLDIER_NAME, UnitData } from '../shared/types';
 import { io, Socket } from 'socket.io-client';
 import { DefaultEventsMap } from 'socket.io';
 import { ScreenManager } from './screen/manager';

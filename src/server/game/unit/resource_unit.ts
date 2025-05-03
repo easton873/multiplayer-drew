@@ -1,4 +1,3 @@
-import { LUMBER_JACK_NAME, MERCHANT_NAME, MINER_NAME } from "../../../shared/types.js";
 import { Board } from "../board.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
@@ -25,6 +24,10 @@ export class GameResourceUnit extends GameUnit {
         return new ResourceUnit(player, pos, this.creationInfo.getName(), this.hp, this.speed, this.resources, this.color);
     }
 }
+
+export const MERCHANT_NAME = "Merchant";
+export const LUMBER_JACK_NAME = "Lumber Jack";
+export const MINER_NAME = "Miner";
 
 const MERCHANT_COLOR = "#ffff00";
 const LUMBER_JACK_COLOR = "#009900";

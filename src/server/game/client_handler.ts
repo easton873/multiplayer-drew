@@ -29,6 +29,7 @@ export class ClientHandler extends RouteReceiver {
     }
 
     handleJoinRoom(roomCode : string, name : string, color : string){
+        roomCode = roomCode.toUpperCase(); // make case insensitive
         let currGame : GameRoom = this.rooms.get(roomCode);
         if (!currGame) {
             return;

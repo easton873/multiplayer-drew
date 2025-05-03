@@ -4,20 +4,20 @@ import { Pos } from "../src/server/game/pos.js";
 import { Board } from "../src/server/game/board.js";
 import { Player } from "../src/server/game/player.js";
 import { Game } from "../src/server/game/game.js";
-import { SOLDIER_NAME } from "../src/shared/types.js";
+import { Soldier } from "../src/server/game/unit/soldier.js";
 
 describe('Game Test', () => {
     it('Remove all units of player', () => {
         let [game, board, p1, p2, p3] = newThreePlayerGame();
         p1.resources.add(new Resources(20, 0, 0));
         
-        p1.NewUnit(SOLDIER_NAME, new Pos(0, 0));
-        p1.NewUnit(SOLDIER_NAME, new Pos(0, 0));
-        p1.NewUnit(SOLDIER_NAME, new Pos(0, 0));
+        p1.NewUnit(Soldier.NAME, new Pos(0, 0));
+        p1.NewUnit(Soldier.NAME, new Pos(0, 0));
+        p1.NewUnit(Soldier.NAME, new Pos(0, 0));
 
-        p2.NewUnit(SOLDIER_NAME, new Pos(0, 0));
+        p2.NewUnit(Soldier.NAME, new Pos(0, 0));
         
-        p3.NewUnit(SOLDIER_NAME, new Pos(0, 0));
+        p3.NewUnit(Soldier.NAME, new Pos(0, 0));
 
         assert.strictEqual(board.entities.length, 8);
         p1.heart.currHp = 0;
@@ -48,7 +48,7 @@ it('Short Game', () => {
 
     assert.strictEqual(board.entities.length, 3);
 
-    p1.NewUnit(SOLDIER_NAME, new Pos(0, 4));
+    p1.NewUnit(Soldier.NAME, new Pos(0, 4));
 
     assert.strictEqual(board.entities.length, 4);
 

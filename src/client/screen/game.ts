@@ -65,6 +65,7 @@ export class GameScreen {
     drawUnit(unit : UnitData, team : number) {
       this.drawBorder(unit.pos, unit.playerColor);
       this.drawUnitByPos(unit.pos, unit.color);
+      this.drawUnitHealthBar(unit);
     }
 
     drawUnitByPos(pos : PosData, color : string) {
@@ -72,6 +73,22 @@ export class GameScreen {
       let y : number = pos.y * this.SIZE;
       this.ctx.fillStyle = color;
       this.ctx.fillRect(x, y, this.SIZE, this.SIZE);
+    }
+
+    drawUnitHealthBar(unit : UnitData) {
+      let x : number = unit.pos.x * this.SIZE;
+      let y : number = unit.pos.y * this.SIZE;
+      if (unit.hp == unit.totalHP) {
+        return;
+      }
+      let healthBarThickness = Math.floor(this.SIZE * .3);
+      let heatlhY = y - healthBarThickness;
+      let healthPercentage = unit.hp / unit.totalHP;
+      let healthBarLength = Math.floor(healthPercentage * this.SIZE);
+      this.ctx.fillStyle = "red";
+      this.ctx.fillRect(x, heatlhY, this.SIZE, healthBarThickness);
+      this.ctx.fillStyle = "green";
+      this.ctx.fillRect(x, heatlhY, healthBarLength, healthBarThickness);
     }
 
     drawBorder(pos : PosData, color : string) {

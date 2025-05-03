@@ -1,6 +1,6 @@
 import { EraHeartInfo } from "./heart.js";
 import { Resources } from "./resources.js";
-import { ARCHER_NAME, EraData, KAMAKAZE_NAME, LUMBER_JACK_NAME, MERCHANT_NAME, SOLDIER_NAME, UnitCreationData } from "../../shared/types.js";
+import { EraData, UnitCreationData } from "../../shared/types.js";
 import { GameUnit } from "./unit/game_unit.js";
 import { ALL_UNITS } from "./unit/all_units.js";
 
