@@ -8,8 +8,8 @@ export abstract class GameUnit {
     protected creationInfo : UnitCreationInfo;
     abstract construct(player : Player, pos : Pos) : Unit;
 
-    constructor(name : string, cost : Resources) {
-            this.creationInfo = new UnitCreationInfo(name, cost);
+    constructor(name : string, cost : Resources, blurb : string) {
+            this.creationInfo = new UnitCreationInfo(name, cost, blurb);
     }
 
     getUnitCreationInfo() : UnitCreationInfo {

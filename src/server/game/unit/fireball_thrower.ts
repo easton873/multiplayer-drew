@@ -23,10 +23,11 @@ export class FireballThrowerUnit extends GameUnit {
     static DAMAGE = 3;
     static HP = 3;
     static COLOR = "#cc7a00";
+    static BLURB = "Throws fireballs dealing 3 damage to anything adjacent to its target";
     static RANGE = 16;
     static EXPLOSION_RANGE = 1;
     constructor() {
-        super(FireballThrowerUnit.NAME, FireballThrowerUnit.COST);
+        super(FireballThrowerUnit.NAME, FireballThrowerUnit.COST, FireballThrowerUnit.BLURB);
     }
     construct(player: Player, pos: Pos): Unit {
         return new FireballThrower(player, pos, FireballThrowerUnit.EXPLOSION_RANGE);

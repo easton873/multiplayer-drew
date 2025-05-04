@@ -23,6 +23,14 @@ export const ALL_UNITS : GameUnit[] = [
     new FireballThrowerUnit(),
     // lure
     // stationary turret
+    // assassain
+    // wizard (chain lightning)
+    // random
+    // heavey hitter: hit everything on target spot
+    // area turret
+    // longbowman
+    // quick soldier
+    // regen soldier
 ];
 
 function buildUnitMap() : Map<string, GameUnit> {

@@ -41,8 +41,8 @@ export interface UnitObserver {
 export abstract class Unit extends ObservableUnit {
     name : string;
     pos : Pos;
+    totalHP : number;
     hp : number;
-    currHp : number;
     speed : number;
     counter : number;
     team : Player;
@@ -53,8 +53,8 @@ export abstract class Unit extends ObservableUnit {
         this.team = player;
         this.name = name;
         this.pos = pos;
+        this.totalHP = hp;
         this.hp = hp;
-        this.currHp = hp;
         this.speed = speed;
         this.counter = speed;
         this.color = color;
@@ -72,14 +72,14 @@ export abstract class Unit extends ObservableUnit {
     abstract doMove(board : Board);
 
     doDamage(damage : number) {
-        this.currHp -= damage;
+        this.hp -= damage;
         if (this.isDead()) {
             this.notifyObserversDeath();
         }
     }
 
     isDead() : boolean {
-        return this.currHp <= 0;
+        return this.hp <= 0;
     }
 }
 

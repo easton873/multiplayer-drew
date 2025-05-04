@@ -72,8 +72,8 @@ export class Game {
                 team: unit.team.getTeam(),
                 color: unit.color,
                 playerColor: unit.team.getColor(),
-                hp : unit.currHp,
-                totalHP: unit.hp,
+                hp : unit.hp,
+                totalHP: unit.totalHP,
             };
             units.push(unitData);
         })

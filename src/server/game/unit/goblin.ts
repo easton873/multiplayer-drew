@@ -34,8 +34,9 @@ export class GoblinUnit extends GameUnit {
     static DAMAGE = 1;
     static HP = 1;
     static COLOR = "#008800";
+    static BLURB = "Goes straight for the closest enemy heart, ignoring all other units";
     constructor() {
-        super(GoblinUnit.NAME, GoblinUnit.COST);
+        super(GoblinUnit.NAME, GoblinUnit.COST, GoblinUnit.BLURB);
     }
     construct(player: Player, pos: Pos): Unit {
         return new Goblin(player, pos);

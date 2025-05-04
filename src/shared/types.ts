@@ -24,6 +24,7 @@ export interface EraData {
 export interface UnitCreationData {
   name : string
   cost : ResourceData
+  blurb : string
 }
 
 export interface ResourceData {

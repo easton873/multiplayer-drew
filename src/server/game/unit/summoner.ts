@@ -5,6 +5,7 @@ import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
 import { GameUnit } from "./game_unit.js";
 import { MeleeUnit } from "./melee_unit.js";
+import { ResourceUnit } from "./resource_unit.js";
 import { ObservableUnit, Unit, UnitWithTarget } from "./unit.js";
 
 export class Summoner extends UnitWithTarget  {
@@ -50,6 +51,7 @@ export class Summoner extends UnitWithTarget  {
         this.findTargetWithPredicate(units, (unit : Unit) => {
             return unit.team == this.team && unit != this &&
               !(unit instanceof Heart) &&
+              !(unit instanceof ResourceUnit) &&
               !(unit instanceof Summoner);
         });
     }
@@ -76,8 +78,9 @@ export class SummonerUnit extends GameUnit {
     static HP = 3;
     static SPEED = 10;
     static COLOR = "#880088";
+    static BLURB = "Summons 3 minions to fight for him, follows his allies into battle";
     constructor() {
-        super(SummonerUnit.NAME, SummonerUnit.COST);
+        super(SummonerUnit.NAME, SummonerUnit.COST, SummonerUnit.BLURB);
     }
     construct(player: Player, pos: Pos): Unit {
         return new Summoner(player, pos)

@@ -17,11 +17,14 @@ export class ResourceUnit extends Unit {
 }
 
 export class GameResourceUnit extends GameUnit {
-    constructor(name : string, cost : Resources, private hp : number, private speed : number, private resources : Resources, private color : string) {
-        super(name, cost);
+    constructor(name : string, cost : Resources, private hp : number, private speed : number, private resources : Resources, private color : string, private blurb : string) {
+        super(name, cost, blurb);
     }
     construct(player: Player, pos: Pos): Unit {
         return new ResourceUnit(player, pos, this.creationInfo.getName(), this.hp, this.speed, this.resources, this.color);
+    }
+    getBlurb(): string {
+        return this.blurb
     }
 }
 
@@ -33,6 +36,10 @@ const MERCHANT_COLOR = "#ffff00";
 const LUMBER_JACK_COLOR = "#009900";
 const MINER_COLOR = "#666699";
 
+export const MERCHANT_BLURB = "Produces 1 gold a second";
+export const LUMBER_JACK_BLURB = "Produces 1 wood a second";
+export const MINER_BLURB = "Produces 1 stone a second";
+
 const MERCHANT_PRODUCTION = new Resources(1, 0, 0);
 const LUMBER_JACK_PRODUCTION = new Resources(0, 1, 0);
 const MINER_PRODUCTION = new Resources(0, 0, 1);
@@ -43,9 +50,9 @@ export const MINER_COST = new Resources(100, 25, 0);
 
 export const MINER_SPEED = 10;
 
-export const MERCHANT_GAME_UNIT = new GameResourceUnit(MERCHANT_NAME, MERCHANT_COST, 1, 10, MERCHANT_PRODUCTION, MERCHANT_COLOR);
-export const LUMBER_JACK_GAME_UNIT = new GameResourceUnit(LUMBER_JACK_NAME, LUMBER_JACK_COST, 1, 10, LUMBER_JACK_PRODUCTION, LUMBER_JACK_COLOR);
-export const MINER_GAME_UNIT = new GameResourceUnit(MINER_NAME, MINER_COST, 1, MINER_SPEED, MINER_PRODUCTION, MINER_COLOR);
+export const MERCHANT_GAME_UNIT = new GameResourceUnit(MERCHANT_NAME, MERCHANT_COST, 1, 10, MERCHANT_PRODUCTION, MERCHANT_COLOR, MERCHANT_BLURB);
+export const LUMBER_JACK_GAME_UNIT = new GameResourceUnit(LUMBER_JACK_NAME, LUMBER_JACK_COST, 1, 10, LUMBER_JACK_PRODUCTION, LUMBER_JACK_COLOR, LUMBER_JACK_BLURB);
+export const MINER_GAME_UNIT = new GameResourceUnit(MINER_NAME, MINER_COST, 1, MINER_SPEED, MINER_PRODUCTION, MINER_COLOR, MINER_BLURB);
 
 export class ResourceUnitFactory {
     constructor(private player : Player) {}

@@ -26,12 +26,12 @@ describe('Units Test', () => {
         unit.speed = 0;
         unit.counter = 0;
         unit.move(board);
-        assert.strictEqual(targetUnit.currHp, SoldierUnit.HP);
+        assert.strictEqual(targetUnit.hp, SoldierUnit.HP);
         assert.strictEqual(unit.pos.equals(new Pos(9, 5)), true);
         assert.strictEqual(unit.target, targetUnit);
 
         unit.move(board);
-        assert.strictEqual(targetUnit.currHp, SoldierUnit.HP - 1);
+        assert.strictEqual(targetUnit.hp, SoldierUnit.HP - 1);
         assert.strictEqual(unit.pos.equals(new Pos(9, 5)), true);
         assert.strictEqual(unit.target, targetUnit);
     });
@@ -50,12 +50,12 @@ describe('Units Test', () => {
         unit.speed = 0;
         unit.counter = 0;
         unit.move(board);
-        assert.strictEqual(targetUnit.currHp, SoldierUnit.HP);
+        assert.strictEqual(targetUnit.hp, SoldierUnit.HP);
         assert.strictEqual(unit.pos.equals(new Pos(6, 5)), true);
         assert.strictEqual(unit.target, targetUnit);
 
         unit.move(board);
-        assert.strictEqual(targetUnit.currHp, SoldierUnit.HP - KamakazeUnit.DAMAGE);
+        assert.strictEqual(targetUnit.hp, SoldierUnit.HP - KamakazeUnit.DAMAGE);
         assert.strictEqual(board.entities.length, 2);
     });
 
@@ -76,9 +76,9 @@ describe('Units Test', () => {
         assert.strictEqual(unit.pos.equals(new Pos(6, 5)), true);
         assert.strictEqual(unit.target, targetUnit);
 
-        let beforeHP = targetUnit.currHp;
+        let beforeHP = targetUnit.hp;
         unit.move(board);
-        assert.strictEqual(targetUnit.currHp, beforeHP - TankUnit.DAMAGE);
+        assert.strictEqual(targetUnit.hp, beforeHP - TankUnit.DAMAGE);
     });
 
     it('goblin test', () => {
@@ -144,10 +144,10 @@ describe('Units Test', () => {
         unit.move(board);
         assert.strictEqual(unit.target, soldier);
         board.addEntity(soldier2);
-        soldier2.currHp = soldier2.hp - 1;
+        soldier2.hp = soldier2.totalHP - 1;
         unit.move(board);
         assert.strictEqual(unit.target, soldier2);
-        assert.strictEqual(soldier2.currHp, soldier2.hp);
+        assert.strictEqual(soldier2.hp, soldier2.totalHP);
         board.addEntity(soldier3);
         unit.move(board);
         assert.strictEqual(unit.target, soldier3);
@@ -174,10 +174,10 @@ describe('Units Test', () => {
         unit.counter = 0;
         assert.strictEqual(unit.pos.equals(new Pos(5, 5)), true);
         unit.move(board);
-        assert.strictEqual(soldier.currHp, soldier.hp - unit.damage);
-        assert.strictEqual(soldier2.currHp, soldier2.hp - unit.damage);
-        assert.strictEqual(soldier3.currHp, soldier3.hp - unit.damage);
-        assert.strictEqual(soldier4.currHp, soldier4.hp);
-        assert.strictEqual(unit.currHp, unit.hp);
+        assert.strictEqual(soldier.hp, soldier.totalHP - unit.damage);
+        assert.strictEqual(soldier2.hp, soldier2.totalHP - unit.damage);
+        assert.strictEqual(soldier3.hp, soldier3.totalHP - unit.damage);
+        assert.strictEqual(soldier4.hp, soldier4.totalHP);
+        assert.strictEqual(unit.hp, unit.totalHP);
     });
 });

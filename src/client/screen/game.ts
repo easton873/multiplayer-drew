@@ -7,6 +7,7 @@ export class GameScreen {
     public resourceLabel = document.getElementById('resourceLabel') as HTMLLabelElement;
     public heartProgress = document.getElementById('heartProgress') as HTMLProgressElement;
     public unitSelect = document.getElementById('unitSelect') as HTMLSelectElement;
+    public unitInfoLabel = document.getElementById('unitInfoLabel') as HTMLLabelElement;
     public unitCostLabel = document.getElementById('unitCostLabel') as HTMLLabelElement;
     public unitCountLabel = document.getElementById('unitCountLabel') as HTMLLabelElement;
     public upgradeButton = document.getElementById('upgradeButton') as HTMLButtonElement;
@@ -23,6 +24,7 @@ export class GameScreen {
       this.unitSelect.onchange = () => {
         let cost = this.getUnitSelect().cost
         this.unitCostLabel.innerText = cost.gold + "g" + cost.wood + "w" + cost.stone + "s";
+        this.unitInfoLabel.title = this.getUnitSelect().blurb;
       }
     }
 

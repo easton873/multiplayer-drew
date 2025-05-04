@@ -18,8 +18,9 @@ export class TankUnit extends GameUnit {
     static DAMAGE = 1;
     static HP = 50;
     static COLOR = "#AAAAAA";
+    static BLURB = "50 HP, moves once every 3 seconds and does 1 damage to its target when adjacent to it";
     constructor() {
-        super(TankUnit.NAME, TankUnit.COST);
+        super(TankUnit.NAME, TankUnit.COST, TankUnit.BLURB);
     }
     construct(player: Player, pos: Pos): Unit {
         return new Tank(player, pos);

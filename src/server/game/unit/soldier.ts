@@ -18,8 +18,9 @@ export class SoldierUnit extends GameUnit {
     static DAMAGE = 1;
     static HP = 3;
     static COLOR = "#000000";
+    static BLURB = "Moves once a second and does one damage to its target when adjacent to it";
     constructor() {
-        super(SoldierUnit.NAME, SoldierUnit.COST);
+        super(SoldierUnit.NAME, SoldierUnit.COST, SoldierUnit.BLURB);
     }
     construct(player : Player, pos : Pos): Unit {
         return new Soldier(player, pos);

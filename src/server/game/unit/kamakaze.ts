@@ -21,7 +21,7 @@ export class Kamakaze extends UnitWithTarget {
 
     explode(board : Board) {
         this.doDamageInArea(board, this.pos, this.range, this.damage);
-        this.doDamage(this.currHp); // make sure this unit died too
+        this.doDamage(this.hp); // make sure this unit died too
     }
 }
 
@@ -32,9 +32,10 @@ export class KamakazeUnit extends GameUnit {
     static DAMAGE = 10;
     static HP = 3;
     static COLOR = "#DD0000";
+    static BLURB = "Explodes once adjacent to its target, hurting all units around it for 4 blocks with 10 points of damage";
     static RANGE = 16;
     constructor() {
-        super(KamakazeUnit.NAME, KamakazeUnit.COST);
+        super(KamakazeUnit.NAME, KamakazeUnit.COST, KamakazeUnit.BLURB);
     }
     construct(player: Player, pos: Pos): Unit {
         return new Kamakaze(player, pos);

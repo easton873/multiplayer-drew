@@ -61,7 +61,7 @@ export class Player implements UnitObserver {
     }
 
     isDead(): Boolean {
-        return this.heart.currHp <= 0;
+        return this.heart.hp <= 0;
     }
 
     attemptUpgradeEra(): boolean {
@@ -76,8 +76,8 @@ export class Player implements UnitObserver {
         return {
             pos: this.heart.pos.getPosData(), 
             radius: this.era.getRadius(), 
-            health: this.heart.currHp, 
-            totalHealth: this.heart.hp,
+            health: this.heart.hp, 
+            totalHealth: this.heart.totalHP,
             numUnits: this.unitCount,
             maxUnits: this.era.getUnitLimit()
         }

@@ -18,9 +18,10 @@ export class ArcherUnit extends GameUnit {
     static DAMAGE = 1;
     static HP = 1;
     static COLOR = "#66ffff";
+    static BLURB = "With 1 HP, shoots its target from 4 blocks away for 1 damage";
     static RANGE = 16;
     constructor() {
-        super(ArcherUnit.NAME, ArcherUnit.COST);
+        super(ArcherUnit.NAME, ArcherUnit.COST, ArcherUnit.BLURB);
     }
     construct(player: Player, pos: Pos): Unit {
         return new Archer(player, pos);
