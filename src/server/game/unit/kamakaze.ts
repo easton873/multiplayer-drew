@@ -3,9 +3,9 @@ import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
 import { GameUnit } from "./game_unit.js";
-import { Unit, UnitWithTarget } from "./unit.js";
+import { Unit, TargetChasingUnit } from "./unit.js";
 
-export class Kamakaze extends UnitWithTarget {
+export class Kamakaze extends TargetChasingUnit {
     constructor(player : Player, pos : Pos, private damage : number = KamakazeUnit.DAMAGE, private range : number = KamakazeUnit.RANGE) {
         super(player, KamakazeUnit.NAME, pos, KamakazeUnit.HP, KamakazeUnit.SPEED, KamakazeUnit.COLOR);
     }

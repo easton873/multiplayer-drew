@@ -81,26 +81,50 @@ export abstract class Unit extends ObservableUnit {
     isDead() : boolean {
         return this.hp <= 0;
     }
+
+    inRangeForDistance(other : Unit, range : number) : boolean {
+        return this.inRangeFromPoint(other, range, this.pos);
+    }
+
+    inRangeFromPoint(other : Unit, range : number, pos : Pos) : boolean {
+        return pos.distanceTo(other.pos) <= range;
+    }
+
+    isAdjacent(other : Unit) : boolean {
+        return this.pos.isAdjacent(other.pos);
+    }
 }
 
 export abstract class UnitWithTarget extends Unit implements UnitObserver {
-    private _target : Unit;
-
-    doMove(board : Board) {
-        this.findNewTarget(board.entities);
-        if (this.hasNoTarget()) {
-            return;
-        }
-        if (this.inRange(this._target)) {
-            this.inRangeMove(board);
-        } else {
-            this.pos.moveTowards(this._target.pos);
+    private _target : Unit = null;
+    notifyDeath(unit: ObservableUnit) {
+        if (unit == this._target) {
+            this._target = null;
+            unit.unregisterObserver(this);
         }
     }
 
-    abstract inRange(other : Unit) : boolean;
+    hasNoTarget() : boolean {
+        return this._target == null || this._target == undefined;
+    }
 
-    abstract inRangeMove(board : Board);
+    hasTarget() : boolean {
+        return !this.hasNoTarget();
+    }
+
+    set target(target : Unit) {
+        if (this._target) {
+            this._target.unregisterObserver(this);
+        }
+        this._target = target;
+        if (this._target) {
+            target.registerObserver(this);
+        }
+    }
+
+    get target() {
+        return this._target;
+    }
 
     findNewTarget(units : Unit[]) {
         // if (this.hasTarget()) {
@@ -133,45 +157,22 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
             }
         }
     }
+}
 
-    notifyDeath(unit: ObservableUnit) {
-        if (unit == this._target) {
-            this._target = null;
-            unit.unregisterObserver(this);
+export abstract class TargetChasingUnit extends UnitWithTarget {
+    doMove(board : Board) {
+        this.findNewTarget(board.entities);
+        if (this.hasNoTarget()) {
+            return;
+        }
+        if (this.inRange(this.target)) {
+            this.inRangeMove(board);
+        } else {
+            this.pos.moveTowards(this.target.pos);
         }
     }
 
-    inRangeForDistance(other : Unit, range : number) : boolean {
-        return this.inRangeFromPoint(other, range, this.pos);
-    }
+    abstract inRange(other : Unit) : boolean;
 
-    inRangeFromPoint(other : Unit, range : number, pos : Pos) : boolean {
-        return pos.distanceTo(other.pos) <= range;
-    }
-
-    isAdjacent(other : Unit) : boolean {
-        return this.pos.isAdjacent(other.pos);
-    }
-
-    hasNoTarget() : boolean {
-        return this._target == null || this._target == undefined;
-    }
-
-    hasTarget() : boolean {
-        return !this.hasNoTarget();
-    }
-
-    set target(target : Unit) {
-        if (this._target) {
-            this._target.unregisterObserver(this);
-        }
-        this._target = target;
-        if (this._target) {
-            target.registerObserver(this);
-        }
-    }
-
-    get target() {
-        return this._target;
-    }
+    abstract inRangeMove(board : Board);
 }

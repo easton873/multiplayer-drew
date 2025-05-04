@@ -6,9 +6,9 @@ import { Resources } from "../resources.js";
 import { GameUnit } from "./game_unit.js";
 import { MeleeUnit } from "./melee_unit.js";
 import { ResourceUnit } from "./resource_unit.js";
-import { ObservableUnit, Unit, UnitWithTarget } from "./unit.js";
+import { ObservableUnit, Unit, TargetChasingUnit } from "./unit.js";
 
-export class Summoner extends UnitWithTarget  {
+export class Summoner extends TargetChasingUnit  {
     numSummons = 3;
     summonTimerTime = 4;
     summonTimer = this.summonTimerTime;

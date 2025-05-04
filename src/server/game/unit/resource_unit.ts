@@ -44,7 +44,7 @@ const MERCHANT_PRODUCTION = new Resources(1, 0, 0);
 const LUMBER_JACK_PRODUCTION = new Resources(0, 1, 0);
 const MINER_PRODUCTION = new Resources(0, 0, 1);
 
-export const MERCHANT_COST = new Resources(35, 0, 0);
+export const MERCHANT_COST = new Resources(25, 0, 0);
 export const LUMBER_JACK_COST = new Resources(50, 0, 0);
 export const MINER_COST = new Resources(100, 25, 0);
 

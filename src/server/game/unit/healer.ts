@@ -5,16 +5,31 @@ import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
 import { GameUnit } from "./game_unit.js";
 import { ResourceUnit } from "./resource_unit.js";
-import { Unit, UnitWithTarget } from "./unit.js";
+import { Unit, TargetChasingUnit } from "./unit.js";
 
-export class Healer extends UnitWithTarget {
-    constructor(player: Player, pos: Pos, public range : number) {
+export class Healer extends TargetChasingUnit {
+    constructor(player: Player, pos: Pos, public range : number, public healRange) {
         super(player, HealerUnit.NAME, pos, HealerUnit.HP, HealerUnit.SPEED, HealerUnit.COLOR);
     }
     inRange(other: Unit): boolean {
         return this.inRangeForDistance(other, this.range);
     }
     inRangeMove(board: Board) {
+        return
+        if (this.target.hp < this.target.totalHP) {
+            this.target.hp += 2;
+            if (this.target.hp > this.target.totalHP) {
+                this.target.hp = this.target.totalHP;
+            }
+        }
+    }
+    doMove(board: Board): void {
+        super.doMove(board);
+        if (this.inRangeForDistance(this.target, this.healRange)) {
+            this.healTarget();
+        }
+    }
+    healTarget() {
         if (this.target.hp < this.target.totalHP) {
             this.target.hp += 2;
             if (this.target.hp > this.target.totalHP) {
@@ -58,12 +73,13 @@ export class HealerUnit extends GameUnit {
     static SPEED = 8;
     static COLOR = "#DDDDDD";
     static BLURB = "Targets friendly non-building units and heals them 2 hp every second or so";
-    static RANGE = 9;
+    static RANGE = 16;
+    static HEAL_RANGE = 25;
     constructor() {
         super(HealerUnit.NAME, HealerUnit.COST, HealerUnit.BLURB);
     }
     construct(player: Player, pos: Pos): Unit {
-        return new Healer(player, pos, HealerUnit.RANGE);
+        return new Healer(player, pos, HealerUnit.RANGE, HealerUnit.HEAL_RANGE);
     }
 
 }
