@@ -10,12 +10,12 @@ import { GameUnit } from "./unit/game_unit.js";
 import { UNIT_MAP } from "./unit/all_units.js";
 
 export class Player implements UnitObserver {
-    resources: Resources = new Resources(2000, 2000, 2000);
+    resources: Resources = new Resources(10, 0, 0);
     board: Board;
     era: Era = new Era();
     unitCount = 0;
 
-    heart: ResourceUnit;
+    heart: Heart;
 
     constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string) {
         this.board = board;
@@ -65,7 +65,11 @@ export class Player implements UnitObserver {
     }
 
     attemptUpgradeEra(): boolean {
-        return this.era.advanceToNextEra(this.resources);
+        if (this.era.advanceToNextEra(this.resources)) {
+            this.heart.updateHeart(this.era.currEra.getHeart());
+            return true;
+        }
+        return false
     }
 
     getID(): string {

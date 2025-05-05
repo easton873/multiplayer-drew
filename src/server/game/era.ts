@@ -13,14 +13,14 @@ const STARTING_NUM_UNITS : number = 10;
 const STARTING_RADIUS : number = 16;
 
 const SECOND_COST : Resources = new Resources(200, 40, 0);
-const SECOND_RESOURCES : Resources = new Resources(2, 1, 0);
+const SECOND_RESOURCES : Resources = new Resources(2, 0, 0);
 const SECOND_SPEED : number = 10;
 const SECOND_HP : number = 20;
 const SECOND_NUM_UNITS : number = 25;
 const SECOND_RADIUS : number = 25;
 
 const THIRD_COST : Resources = new Resources(600, 200, 0);
-const THIRD_RESOURCES : Resources = new Resources(3, 2, 0);
+const THIRD_RESOURCES : Resources = new Resources(3, 1, 0);
 const THIRD_SPEED : number = 10;
 const THIRD_HP : number = 30;
 const THIRD_NUM_UNITS : number = 45;
@@ -91,7 +91,7 @@ export class Era {
     }
 }
 
-interface EraState {
+export interface EraState {
     nextState() : EraState;
     nextEraCost() : Resources;
     getName() : string;

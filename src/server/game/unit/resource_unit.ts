@@ -7,7 +7,7 @@ import { GameUnit } from "./game_unit.js";
 import { Unit } from "./unit.js";
 
 export class ResourceUnit extends Unit {
-    constructor(player : Player, pos : Pos, name : string, hp : number, speed : number, private resources : Resources, color : string) {
+    constructor(player : Player, pos : Pos, name : string, hp : number, speed : number, protected resources : Resources, color : string) {
         super(player, name, pos, hp, speed, color);
         this.name = name;
     }

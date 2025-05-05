@@ -9,6 +9,13 @@ export class Heart extends ResourceUnit {
     constructor(player : Player, pos : Pos, info : EraHeartInfo) {
         super(player, pos, HEART_NAME, info.hp, info.speed, info.resources, player.getColor());
     }
+
+    updateHeart(info : EraHeartInfo) {
+        this.hp = info.hp;
+        this.totalHP = this.hp;
+        this.speed = info.speed;
+        this.resources = info.resources;
+    }
 }
 
 export class EraHeartInfo {
