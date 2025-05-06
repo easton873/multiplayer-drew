@@ -37,7 +37,7 @@ export class Game {
 
     removeAllUnitsFromAPlayer(player : Player) {
         for (let i = 0; i < this.board.entities.length; ++i) {
-            if (this.board.entities[i].team == player) {
+            if (this.board.entities[i].owner == player) {
                 this.board.entities[i].notifyObserversDeath()
                 --i; // the board is one of the observers and is going to remove it
             }
@@ -69,9 +69,9 @@ export class Game {
             const unitPos : PosData = unit.pos.getPosData();
             const unitData : UnitData = {
                 pos : unitPos,
-                team: unit.team.getTeam(),
+                team: unit.team,
                 color: unit.color,
-                playerColor: unit.team.getColor(),
+                playerColor: unit.owner.getColor(),
                 hp : unit.hp,
                 totalHP: unit.totalHP,
             };

@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-import { GameSetupData, GameWaitingData, PlayerSetupData } from "../shared/bulider";
+import { GameSetupData, GameWaitingData, PlayerSetupData, PlayerWaitingData } from "../shared/bulider";
 import { ClientReceiver } from "../shared/client";
 import { ScreenManager } from "./screen/manager";
 import { DefaultEventsMap } from "socket.io";
@@ -16,8 +16,16 @@ export class FrontendClientHandler extends ClientReceiver {
     }
     handleJoinSuccess(data: GameWaitingData) {
         this.manager.toWaitingScreen();
-        this.manager.waitingScreen.drawListFirstTime(data.players);
+        this.manager.waitingScreen.drawPlayerList(data.players);
         this.manager.waitingScreen.roomCodeLabel.innerText = "Room Code: " + data.roomCode;
+    }
+    handlePlayerWaitingInfo(data: PlayerWaitingData) {
+        console.log(data);
+        this.manager.waitingScreen.drawPlayerControls(data);
+    }
+    handleWaitingRoomUpdate(data: GameWaitingData) {
+        console.log(data);
+        this.manager.waitingScreen.drawPlayerList(data.players);
     }
     handleStartSuccess(data: GameSetupData) {
         this.manager.toGameScreen();

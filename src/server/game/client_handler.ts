@@ -1,12 +1,13 @@
 import { PosData } from "../../shared/types.js";
-import { CREATE_ROOM_KEY, DISCONNECT_KEY, JOIN_ROOM_KEY, RouteReceiver, START_GAME_KEY, UNIT_SPAWN_KEY, UPGRADE_ERA_KEY } from "../../shared/routes.js";
+import { CREATE_ROOM_KEY, DISCONNECT_KEY, emitUpdateSetupPlayer, JOIN_ROOM_KEY, RouteReceiver, START_GAME_KEY, UNIT_SPAWN_KEY, UPGRADE_ERA_KEY } from "../../shared/routes.js";
 import { Era } from "./era.js";
 import { Game } from "./game.js";
 import { GameRoom, randomRoomID } from "./game_room.js";
-import { emitGameBuilt, emitGameState, emitJoinSuccess, emitSetPosSuccess, emitStartSuccess, emitUpgradeEraSuccess, emitYourTurn, START_SUCCESS_KEY } from "../../shared/client.js";
+import { emitGameBuilt, emitGameState, emitJoinSuccess, emitPlayerWaitingInfo, emitSetPosSuccess, emitStartSuccess, emitUpgradeEraSuccess, emitWaitingRoomUpdate, emitYourTurn, START_SUCCESS_KEY } from "../../shared/client.js";
 import { Pos } from "./pos.js";
 import { DefaultEventsMap, Server, Socket } from "socket.io";
 import { Player } from "./player.js";
+import { PlayerWaitingData } from "../../shared/bulider.js";
 
 const FRAME_RATE = 10;
 
@@ -38,7 +39,18 @@ export class ClientHandler extends RouteReceiver {
         this.client.join(roomCode);
         currGame.addPlayer(this.client.id, name, this.client, color);
         emitJoinSuccess(this.io, roomCode, currGame.joinRoomData());
+        emitPlayerWaitingInfo(this.client, currGame.getPlayerJoinDataById(this.client.id));
         console.log("Client " + this.client.id + " joined room " + roomCode);
+    }
+
+    handleUpdateSetupPlayer(player: PlayerWaitingData) {
+        let gameRoom = this.playerRoomLookup.get(this.client.id);
+        if (!gameRoom) {
+            return;
+        }
+        gameRoom.updatePlayer(this.client.id, player);
+        emitWaitingRoomUpdate(this.io, gameRoom.roomCode, gameRoom.joinRoomData());
+        // emitPlayerWaitingInfo(this.client, gameRoom.getPlayerJoinDataById(this.client.id));
     }
 
     handleStartGame() {

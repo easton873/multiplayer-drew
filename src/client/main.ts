@@ -6,7 +6,7 @@ import { ClientReceiver } from '../shared/client';
 import { FrontendClientHandler } from './handler';
 
 const socket : Socket<DefaultEventsMap, DefaultEventsMap> = io();
-const manager : ScreenManager = new ScreenManager();
+const manager : ScreenManager = new ScreenManager(socket);
 const clientHandler : ClientReceiver = new FrontendClientHandler(socket, manager);
 
 manager.joinScreen.joinButton.onclick = joinRoom;

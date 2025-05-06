@@ -9,6 +9,8 @@ export interface PlayerWaitingData {
     name : string
     ready : boolean
     leader : boolean
+    team : number
+    color : string
 }
 
 export interface GameSetupData {

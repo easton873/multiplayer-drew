@@ -162,3 +162,16 @@ describe('Unit Test', () => {
         assert.strictEqual(player.unitCount, 0);
     });
 });
+
+it('doesn\'t target team test', () => {
+    let board : Board = new Board(10, 10);
+    let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+    let p2 : Player = new Player(0, new Pos(0, 0), board, "1", "", "");
+    let unit : TargetChasingUnit = new Soldier(player, new Pos(3, 2));
+    let targetUnit : Unit = new Soldier(p2, new Pos(4, 4));
+    board.addEntity(unit);
+    board.addEntity(targetUnit);
+    assert.strictEqual(unit.target, null);
+    unit.findNewTarget(board.entities);
+    assert.strictEqual(unit.target, null);   
+});

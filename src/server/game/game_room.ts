@@ -17,9 +17,21 @@ export class GameRoom {
         this.players.set(id, new SetupPlayer(id, name, client, color, isLeader));
     }
 
+    updatePlayer(id : string, data : PlayerWaitingData) {
+        let player = this.players.get(id);
+        if (!player) {
+            return;
+        }
+        player.update(data);
+    }
+
     addPlayerPos(id : string, pos : Pos) {
         this.players.get(id).setPos(pos);
         
+    }
+
+    getPlayerJoinDataById(id : string) : PlayerWaitingData {
+        return this.players.get(id).getJoinData();
     }
 
     joinRoomData() : GameWaitingData {
@@ -105,9 +117,17 @@ export class GameRoom {
 }
 
 class SetupPlayer {
-    static team : number = 0;
+    static DefaultTeam = -1;
+    private team : number = null;
     private pos : Pos = null;
+    ready : boolean = true;
     constructor(private id : string, private name: string, private client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, private color : string, private isLeader : boolean) {}
+
+    update(other : PlayerWaitingData) {
+        this.team = other.team;
+        this.color = other.color;
+        this.ready = other.ready;
+    }
 
     getClient() : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any> {
         return this.client;
@@ -130,7 +150,7 @@ class SetupPlayer {
     }
 
     getJoinData() : PlayerWaitingData {
-        return {ready: true, name: this.name, leader: this.isLeader};
+        return {ready: this.ready, name: this.name, leader: this.isLeader, color: this.color, team: this.team};
     }
 
     getSetupData() : PlayerSetupData {
@@ -138,7 +158,10 @@ class SetupPlayer {
     }
 
     createPlayer(board : Board) : Player {
-        return new PlayerProxy(SetupPlayer.team++, this.pos, board, this.id, this.name, this.color);
+        if (this.team == null) {
+            this.team = SetupPlayer.DefaultTeam--;
+        }
+        return new PlayerProxy(this.team, this.pos, board, this.id, this.name, this.color);
     }
 }
 

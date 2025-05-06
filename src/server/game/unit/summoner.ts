@@ -23,7 +23,7 @@ export class Summoner extends TargetChasingUnit  {
     summon(board : Board) {
         if (this.summonTimer <= 0 && this.numSummons > 0) {
             this.summonTimer = this.summonTimerTime;
-            let unit : Summonee = new Summonee(this.team, this.pos.clone(), this);
+            let unit : Summonee = new Summonee(this.owner, this.pos.clone(), this);
             board.addEntity(unit);
             unit.registerObserver(this);
             this.numSummons--;

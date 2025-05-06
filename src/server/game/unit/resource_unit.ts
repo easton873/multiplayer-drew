@@ -12,7 +12,7 @@ export class ResourceUnit extends Unit {
         this.name = name;
     }
     doMove(_ : Board) {
-        this.team.resources.add(this.resources);
+        this.owner.resources.add(this.resources);
     }
 }
 

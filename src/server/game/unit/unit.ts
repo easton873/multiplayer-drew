@@ -45,12 +45,14 @@ export abstract class Unit extends ObservableUnit {
     hp : number;
     speed : number;
     counter : number;
-    team : Player;
+    team : number;
+    owner : Player;
     color : string;
 
     constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string) {
         super();
-        this.team = player;
+        this.team = player.getTeam();
+        this.owner = player;
         this.name = name;
         this.pos = pos;
         this.totalHP = hp;
