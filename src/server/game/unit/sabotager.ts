@@ -1,3 +1,4 @@
+import { Heart } from "../heart.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
@@ -17,7 +18,7 @@ export class Sabotager extends MeleeUnit {
             super.findNewTarget(this.getResources(units));
         }
         getResources(units : Unit[]) : Unit[] {
-            return units.filter((unit : Unit) => unit instanceof ResourceUnit);
+            return units.filter((unit : Unit) => unit instanceof ResourceUnit && !(unit instanceof Heart));
         }
 }
 

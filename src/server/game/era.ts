@@ -23,8 +23,22 @@ const THIRD_COST : Resources = new Resources(600, 200, 0);
 const THIRD_RESOURCES : Resources = new Resources(3, 1, 0);
 const THIRD_SPEED : number = 10;
 const THIRD_HP : number = 30;
-const THIRD_NUM_UNITS : number = 45;
+const THIRD_NUM_UNITS : number = 50;
 const THIRD_RADIUS : number = 36;
+
+const FOURTH_COST : Resources = new Resources(2000, 1000, 700);
+const FOURTH_RESOURCES : Resources = new Resources(3, 1, 1);
+const FOURTH_SPEED : number = 10;
+const FOURTH_HP : number = 45;
+const FOURTH_NUM_UNITS : number = 100;
+const FOURTH_RADIUS : number = 100;
+
+const FIFTH_COST : Resources = new Resources(5000, 3000, 2000);
+const FIFTH_RESOURCES : Resources = new Resources(5, 3, 2);
+const FIFTH_SPEED : number = 10;
+const FIFTH_HP : number = 70;
+const FIFTH_NUM_UNITS : number = 200;
+const FIFTH_RADIUS : number = 256;
 
 export class Era {
     nextEraCost : Resources;
@@ -160,10 +174,40 @@ class ThirdEra extends BaseEra implements EraState {
         super(THIRD_HP, THIRD_SPEED, THIRD_RESOURCES, THIRD_COST, THIRD_RADIUS, THIRD_NUM_UNITS);
     }
     nextState(): EraState {
-        return null;
+        return new FourthEra();
     }
     getName(): string {
         return "Third Era";
+    }
+    getAvailableUnits(): GameUnit[] {
+        return ALL_UNITS;
+    }
+}
+
+class FourthEra extends BaseEra implements EraState {
+    constructor() {
+        super(FOURTH_HP, FOURTH_SPEED, FOURTH_RESOURCES, FOURTH_COST, FOURTH_RADIUS, FOURTH_NUM_UNITS);
+    }
+    nextState(): EraState {
+        return new FifthEra();
+    }
+    getName(): string {
+        return "Fourth Era";
+    }
+    getAvailableUnits(): GameUnit[] {
+        return ALL_UNITS;
+    }
+}
+
+class FifthEra extends BaseEra implements EraState {
+    constructor() {
+        super(FIFTH_HP, FIFTH_SPEED, FIFTH_RESOURCES, FIFTH_COST, FIFTH_RADIUS, FIFTH_NUM_UNITS);
+    }
+    nextState(): EraState {
+        return null;
+    }
+    getName(): string {
+        return "Fifth Era";
     }
     getAvailableUnits(): GameUnit[] {
         return ALL_UNITS;
