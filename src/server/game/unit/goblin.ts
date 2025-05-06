@@ -17,13 +17,7 @@ export class Goblin extends MeleeUnit {
         super.findNewTarget(this.getHearts(units));
     }
     getHearts(units : Unit[]) : Unit[] {
-        let result : Unit[] = [];
-        units.forEach((unit : Unit) => {
-            if (unit instanceof Heart) {
-                result.push(unit);
-            }
-        });
-        return result
+        return units.filter((unit : Unit) => unit instanceof Heart);
     }
 }
 
@@ -41,5 +35,4 @@ export class GoblinUnit extends GameUnit {
     construct(player: Player, pos: Pos): Unit {
         return new Goblin(player, pos);
     }
-
 }

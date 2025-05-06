@@ -4,8 +4,10 @@ import { GameUnit } from "./game_unit.js";
 import { GoblinUnit } from "./goblin.js";
 import { HealerUnit } from "./healer.js";
 import { KamakazeUnit } from "./kamakaze.js";
+import { QuickAttacker, QuickAttackerUnit } from "./quick_attacker.js";
 import { RandomMover, RandomMoverUnit } from "./random_mover.js";
 import { LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT } from "./resource_unit.js";
+import { Sabotager, SabotagerUnit } from "./sabotager.js";
 import { ScarecrowUnit } from "./scarecrow.js";
 import { SoldierUnit } from "./soldier.js";
 import { SummonerUnit } from "./summoner.js";
@@ -17,9 +19,11 @@ export const ALL_UNITS : GameUnit[] = [
     new SoldierUnit(),
     new ScarecrowUnit(),
     LUMBER_JACK_GAME_UNIT,
+    new QuickAttackerUnit(),
     new ArcherUnit(),
     new KamakazeUnit(),
     new GoblinUnit(),
+    new SabotagerUnit(),
     new RandomMoverUnit(),
     new TurretUnit(),
     MINER_GAME_UNIT,

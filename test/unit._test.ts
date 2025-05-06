@@ -7,8 +7,19 @@ import { Pos } from "../src/server/game/pos.js";
 import { MINER_SPEED, ResourceUnitFactory } from "../src/server/game/unit/resource_unit.js";
 import { Resources } from "../src/server/game/resources.js";
 import { StartingEra } from "../src/server/game/era.js";
+import { ALL_UNITS } from "../src/server/game/unit/all_units.js";
+import { GameUnit } from "../src/server/game/unit/game_unit.js";
 
 describe('Unit Test', () => {
+    it ('spawn all units', () => {
+        let board : Board = new Board(10, 10);
+        let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        ALL_UNITS.forEach((unit : GameUnit) => {
+            player.resources.add(unit.getUnitCreationInfo().getCost());
+            player.NewUnit(unit.getName(), new Pos(0, 0));
+        });
+    });
+
     it('removal test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");

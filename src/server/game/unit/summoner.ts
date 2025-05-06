@@ -3,6 +3,7 @@ import { Heart } from "../heart.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
+import { Defense } from "./defense.js";
 import { GameUnit } from "./game_unit.js";
 import { MeleeUnit } from "./melee_unit.js";
 import { ResourceUnit } from "./resource_unit.js";
@@ -52,6 +53,7 @@ export class Summoner extends TargetChasingUnit  {
             return unit.team == this.team && unit != this &&
               !(unit instanceof Heart) &&
               !(unit instanceof ResourceUnit) &&
+              !(unit instanceof Defense) &&
               !(unit instanceof Summoner);
         });
     }
