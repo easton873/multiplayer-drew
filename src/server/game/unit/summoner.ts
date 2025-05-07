@@ -5,7 +5,7 @@ import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
 import { Defense } from "./defense.js";
 import { GameUnit } from "./game_unit.js";
-import { MeleeUnit } from "./melee_unit.js";
+import { Melee } from "./melee_unit.js";
 import { ResourceUnit } from "./resource_unit.js";
 import { ObservableUnit, Unit, TargetChasingUnit } from "./unit.js";
 
@@ -59,7 +59,7 @@ export class Summoner extends TargetChasingUnit  {
     }
 }
 
-export class Summonee extends MeleeUnit {
+export class Summonee extends Melee {
     static NAME = "Summonee";
     static HP = 2;
     static SPEED = 5;

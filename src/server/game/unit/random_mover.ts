@@ -4,10 +4,10 @@ import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
 import { GameUnit } from "./game_unit.js";
-import { MeleeUnit } from "./melee_unit.js";
+import { Melee } from "./melee_unit.js";
 import { Unit } from "./unit.js";
 
-export class RandomMover extends MeleeUnit {
+export class RandomMover extends Melee {
     constructor(player: Player, pos: Pos) {
         super(player, RandomMoverUnit.NAME, pos, RandomMoverUnit.HP, RandomMoverUnit.SPEED, RandomMoverUnit.COLOR, RandomMoverUnit.DAMAGE);
     }

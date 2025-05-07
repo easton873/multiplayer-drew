@@ -3,10 +3,10 @@ import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
 import { GameUnit } from "./game_unit.js";
-import { MeleeUnit } from "./melee_unit.js";
+import { Melee } from "./melee_unit.js";
 import { Unit } from "./unit.js";
 
-export class Goblin extends MeleeUnit {
+export class Goblin extends Melee {
     constructor(player: Player, pos: Pos) {
         super(player, GoblinUnit.NAME, pos, GoblinUnit.HP, GoblinUnit.SPEED, GoblinUnit.COLOR, GoblinUnit.DAMAGE);
     }

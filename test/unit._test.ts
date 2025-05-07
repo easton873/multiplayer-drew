@@ -2,13 +2,13 @@ import * as assert from "assert";
 import { Board } from "../src/server/game/board.js";
 import { Player, PlayerProxy } from "../src/server/game/player.js";
 import { Unit, TargetChasingUnit } from "../src/server/game/unit/unit.js";
-import { Soldier, SoldierUnit } from "../src/server/game/unit/soldier.js";
 import { Pos } from "../src/server/game/pos.js";
 import { MINER_SPEED, ResourceUnitFactory } from "../src/server/game/unit/resource_unit.js";
 import { Resources } from "../src/server/game/resources.js";
 import { StartingEra } from "../src/server/game/era.js";
 import { ALL_UNITS } from "../src/server/game/unit/all_units.js";
 import { GameUnit } from "../src/server/game/unit/game_unit.js";
+import { SoldierUnit } from "../src/server/game/unit/melee_unit.js";
 
 describe('Unit Test', () => {
     it ('spawn all units', () => {
@@ -24,8 +24,8 @@ describe('Unit Test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : TargetChasingUnit = new Soldier(player, new Pos(0, 0));
-        let targetUnit : Unit = new Soldier(p2, new Pos(5, 5));
+        let unit : TargetChasingUnit = SoldierUnit.construct(player, new Pos(0, 0)) as TargetChasingUnit;
+        let targetUnit : Unit = SoldierUnit.construct(p2, new Pos(5, 5));
         unit.target = targetUnit;
         assert.strictEqual(targetUnit.TESTObservers.length, 1);
         targetUnit.notifyObserversDeath();
@@ -37,8 +37,8 @@ describe('Unit Test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : TargetChasingUnit = new Soldier(player, new Pos(0, 0));
-        let targetUnit : Unit = new Soldier(p2, new Pos(3, 3));
+        let unit : TargetChasingUnit = SoldierUnit.construct(player, new Pos(0, 0)) as TargetChasingUnit;
+        let targetUnit : Unit = SoldierUnit.construct(p2, new Pos(3, 3));
         unit.target = targetUnit;
         assert.strictEqual(targetUnit.TESTObservers.length, 1);
         targetUnit.hp = 1;
@@ -51,8 +51,8 @@ describe('Unit Test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : TargetChasingUnit = new Soldier(player, new Pos(3, 2));
-        let targetUnit : Unit = new Soldier(p2, new Pos(4, 4));
+        let unit : TargetChasingUnit = SoldierUnit.construct(player, new Pos(3, 2)) as TargetChasingUnit;
+        let targetUnit : Unit = SoldierUnit.construct(p2, new Pos(4, 4));
         board.addEntity(unit);
         board.addEntity(targetUnit);
         assert.strictEqual(unit.target, null);
@@ -64,9 +64,9 @@ describe('Unit Test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : TargetChasingUnit = new Soldier(player, new Pos(3, 2));
-        let unit2 : TargetChasingUnit = new Soldier(player, new Pos(3, 2));
-        let targetUnit : Unit = new Soldier(p2, new Pos(4, 4));
+        let unit : TargetChasingUnit = SoldierUnit.construct(player, new Pos(3, 2)) as TargetChasingUnit;
+        let unit2 : TargetChasingUnit = SoldierUnit.construct(player, new Pos(3, 2)) as TargetChasingUnit;
+        let targetUnit : Unit = SoldierUnit.construct(p2, new Pos(4, 4));
         unit.speed = 0;
         unit.counter = 0;
         unit2.speed = 0;
@@ -119,21 +119,21 @@ describe('Unit Test', () => {
         player.era.currEra = new testEra();
 
         // range test
-        player.resources.add(SoldierUnit.COST);
+        player.resources.add(SoldierUnit.getUnitCreationInfo().getCost());
         assert.strictEqual(board.entities.length, 1);
-        player.NewUnit(SoldierUnit.NAME, new Pos(1, 0));
+        player.NewUnit(SoldierUnit.name, new Pos(1, 0));
         assert.strictEqual(board.entities.length, 1);
         radius++;
-        player.NewUnit(SoldierUnit.NAME, new Pos(1, 0));
+        player.NewUnit(SoldierUnit.name, new Pos(1, 0));
         assert.strictEqual(board.entities.length, 2);
 
         // unit limit test
-        player.resources.add(SoldierUnit.COST);
+        player.resources.add(SoldierUnit.getUnitCreationInfo().getCost());
         assert.strictEqual(board.entities.length, 2);
-        player.NewUnit(SoldierUnit.NAME, new Pos(0, 0));
+        player.NewUnit(SoldierUnit.name, new Pos(0, 0));
         assert.strictEqual(board.entities.length, 2);
         unitLimit++;
-        player.NewUnit(SoldierUnit.NAME, new Pos(0, 0));
+        player.NewUnit(SoldierUnit.name, new Pos(0, 0));
         assert.strictEqual(board.entities.length, 3);
     });
 
@@ -153,16 +153,16 @@ describe('Unit Test', () => {
         let p2 : Player = new PlayerProxy(0, new Pos(0, 0), board, "1", "", "");
         player.era.currEra = new testEra();
         p2.era.currEra = new testEra();
-        player.resources.add(SoldierUnit.COST);
+        player.resources.add(SoldierUnit.getUnitCreationInfo().getCost());
         assert.strictEqual(board.entities.length, 2);
-        player.NewUnit(SoldierUnit.NAME, new Pos(1, 0));
+        player.NewUnit(SoldierUnit.name, new Pos(1, 0));
         assert.strictEqual(board.entities.length, 3);
         assert.strictEqual(player.unitCount, 1);
         let target : Unit = board.entities[2];
         assert.strictEqual(target.TESTObservers.length, 2);
 
-        p2.resources.add(SoldierUnit.COST);
-        p2.NewUnit(SoldierUnit.NAME, new Pos(1, 1));
+        p2.resources.add(SoldierUnit.getUnitCreationInfo().getCost());
+        p2.NewUnit(SoldierUnit.name, new Pos(1, 1));
         assert.strictEqual(board.entities.length, 4);
         let attacker : TargetChasingUnit = (board.entities[3] as TargetChasingUnit);
         attacker.target = target;
@@ -178,8 +178,8 @@ it('doesn\'t target team test', () => {
     let board : Board = new Board(10, 10);
     let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
     let p2 : Player = new Player(0, new Pos(0, 0), board, "1", "", "");
-    let unit : TargetChasingUnit = new Soldier(player, new Pos(3, 2));
-    let targetUnit : Unit = new Soldier(p2, new Pos(4, 4));
+    let unit : TargetChasingUnit = SoldierUnit.construct(player, new Pos(3, 2)) as TargetChasingUnit;
+    let targetUnit : Unit = SoldierUnit.construct(p2, new Pos(4, 4));
     board.addEntity(unit);
     board.addEntity(targetUnit);
     assert.strictEqual(unit.target, null);

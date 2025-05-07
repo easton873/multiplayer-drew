@@ -3,15 +3,14 @@ import { Board } from "../src/server/game/board.js";
 import { Player } from "../src/server/game/player.js";
 import { Unit, TargetChasingUnit } from "../src/server/game/unit/unit.js";
 import { Pos } from "../src/server/game/pos.js";
-import { Soldier, SoldierUnit } from "../src/server/game/unit/soldier.js";
 import { Archer } from "../src/server/game/unit/archer.js";
 import { Kamakaze, KamakazeUnit } from "../src/server/game/unit/kamakaze.js";
-import { Tank, TankUnit } from "../src/server/game/unit/tank.js";
 import { Goblin } from "../src/server/game/unit/goblin.js";
 import { Summoner } from "../src/server/game/unit/summoner.js";
 import { Healer, HealerUnit } from "../src/server/game/unit/healer.js";
 import { FireballThrower, FireballThrowerUnit } from "../src/server/game/unit/fireball_thrower.js";
 import { Turret, TurretUnit } from "../src/server/game/unit/turret.js";
+import { MeleeUnit, SoldierUnit, TankUnit } from "../src/server/game/unit/melee_unit.js";
 
 describe('Units Test', () => {
     it('archer test', () => {
@@ -19,7 +18,7 @@ describe('Units Test', () => {
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
         let unit : TargetChasingUnit = new Archer(player, new Pos(10, 5));
-        let targetUnit : Unit = new Soldier(p2, new Pos(5, 5));
+        let targetUnit : Unit = SoldierUnit.construct(p2, new Pos(5, 5));
         unit.target = targetUnit;
         board.addEntity(unit);
         board.addEntity(targetUnit);
@@ -27,12 +26,12 @@ describe('Units Test', () => {
         unit.speed = 0;
         unit.counter = 0;
         unit.move(board);
-        assert.strictEqual(targetUnit.hp, SoldierUnit.HP);
+        assert.strictEqual(targetUnit.hp, SoldierUnit.hp);
         assert.strictEqual(unit.pos.equals(new Pos(9, 5)), true);
         assert.strictEqual(unit.target, targetUnit);
 
         unit.move(board);
-        assert.strictEqual(targetUnit.hp, SoldierUnit.HP - 1);
+        assert.strictEqual(targetUnit.hp, SoldierUnit.hp - 1);
         assert.strictEqual(unit.pos.equals(new Pos(9, 5)), true);
         assert.strictEqual(unit.target, targetUnit);
     });
@@ -42,7 +41,7 @@ describe('Units Test', () => {
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
         let unit : TargetChasingUnit = new Kamakaze(player, new Pos(7, 5));
-        let targetUnit : Unit = new Soldier(p2, new Pos(5, 5));
+        let targetUnit : Unit = SoldierUnit.construct(p2, new Pos(5, 5));
         unit.target = targetUnit;
         board.addEntity(unit);
         board.addEntity(targetUnit);
@@ -51,12 +50,12 @@ describe('Units Test', () => {
         unit.speed = 0;
         unit.counter = 0;
         unit.move(board);
-        assert.strictEqual(targetUnit.hp, SoldierUnit.HP);
+        assert.strictEqual(targetUnit.hp, SoldierUnit.hp);
         assert.strictEqual(unit.pos.equals(new Pos(6, 5)), true);
         assert.strictEqual(unit.target, targetUnit);
 
         unit.move(board);
-        assert.strictEqual(targetUnit.hp, SoldierUnit.HP - KamakazeUnit.DAMAGE);
+        assert.strictEqual(targetUnit.hp, SoldierUnit.hp - KamakazeUnit.DAMAGE);
         assert.strictEqual(board.entities.length, 2);
     });
 
@@ -64,8 +63,8 @@ describe('Units Test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : TargetChasingUnit = new Tank(player, new Pos(7, 5));
-        let targetUnit : Unit = new Soldier(p2, new Pos(5, 5));
+        let unit : TargetChasingUnit = TankUnit.construct(player, new Pos(7, 5)) as TargetChasingUnit;
+        let targetUnit : Unit = SoldierUnit.construct(p2, new Pos(5, 5));
         unit.target = targetUnit;
         board.addEntity(unit);
         board.addEntity(targetUnit);
@@ -79,7 +78,7 @@ describe('Units Test', () => {
 
         let beforeHP = targetUnit.hp;
         unit.move(board);
-        assert.strictEqual(targetUnit.hp, beforeHP - TankUnit.DAMAGE);
+        assert.strictEqual(targetUnit.hp, beforeHP - TankUnit.damage);
     });
 
     it('goblin test', () => {
@@ -87,7 +86,7 @@ describe('Units Test', () => {
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
         let unit : TargetChasingUnit = new Goblin(player, new Pos(7, 5));
-        let targetUnit : Unit = new Soldier(p2, new Pos(5, 5));
+        let targetUnit : Unit = SoldierUnit.construct(p2, new Pos(5, 5));
         board.addEntity(unit);
         board.addEntity(targetUnit);
         assert.strictEqual(board.entities.length, 4);
@@ -106,8 +105,8 @@ describe('Units Test', () => {
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
         let unit : Summoner = new Summoner(player, new Pos(7, 5));
-        let soldier : Soldier = new Soldier(player, new Pos(8, 5));
-        let targetUnit : Unit = new Soldier(p2, new Pos(5, 5));
+        let soldier = SoldierUnit.construct(player, new Pos(8, 5));
+        let targetUnit : Unit = SoldierUnit.construct(p2, new Pos(5, 5));
         board.addEntity(unit);
         board.addEntity(targetUnit);
         board.addEntity(soldier);
@@ -132,9 +131,9 @@ describe('Units Test', () => {
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
         let unit : Healer = new Healer(player, new Pos(7, 5), HealerUnit.RANGE, HealerUnit.HEAL_RANGE);
-        let soldier : Soldier = new Soldier(player, new Pos(9, 5));
-        let soldier2 : Soldier = new Soldier(player, new Pos(9, 5));
-        let soldier3 : Soldier = new Soldier(player, new Pos(8, 5));
+        let soldier = SoldierUnit.construct(player, new Pos(9, 5));
+        let soldier2 = SoldierUnit.construct(player, new Pos(9, 5));
+        let soldier3 = SoldierUnit.construct(player, new Pos(8, 5));
         board.addEntity(unit);
         board.addEntity(soldier);
         assert.strictEqual(board.entities.length, 4);
@@ -167,10 +166,10 @@ describe('Units Test', () => {
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
         let unit : FireballThrower = new FireballThrower(player, new Pos(5, 5), FireballThrowerUnit.EXPLOSION_RANGE);
-        let soldier : Soldier = new Soldier(p2, new Pos(9, 5));
-        let soldier2 : Soldier = new Soldier(p2, new Pos(9, 5));
-        let soldier3 : Soldier = new Soldier(p2, new Pos(10, 5));
-        let soldier4 : Soldier = new Soldier(p2, new Pos(11, 5));
+        let soldier = SoldierUnit.construct(p2, new Pos(9, 5));
+        let soldier2 = SoldierUnit.construct(p2, new Pos(9, 5));
+        let soldier3 = SoldierUnit.construct(p2, new Pos(10, 5));
+        let soldier4 = SoldierUnit.construct(p2, new Pos(11, 5));
         board.addEntity(unit);
         board.addEntity(soldier);
         board.addEntity(soldier2);
@@ -195,7 +194,7 @@ describe('Units Test', () => {
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
         let unit : Turret = new Turret(player, new Pos(5, 5));
-        let soldier : Soldier = new Soldier(p2, new Pos(11, 5));
+        let soldier = SoldierUnit.construct(p2, new Pos(11, 5));
         board.addEntity(unit);
         board.addEntity(soldier);
         assert.strictEqual(board.entities.length, 4);

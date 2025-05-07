@@ -1,36 +1,34 @@
 import { ArcherUnit } from "./archer.js";
-import { FireballThrower, FireballThrowerUnit } from "./fireball_thrower.js";
+import { FireballThrowerUnit } from "./fireball_thrower.js";
 import { GameUnit } from "./game_unit.js";
 import { GoblinUnit } from "./goblin.js";
 import { HealerUnit } from "./healer.js";
 import { KamakazeUnit } from "./kamakaze.js";
-import { QuickAttacker, QuickAttackerUnit } from "./quick_attacker.js";
-import { RandomMover, RandomMoverUnit } from "./random_mover.js";
+import { QuickAttackerUnit, SoldierUnit, TankUnit } from "./melee_unit.js";
+import { RandomMoverUnit } from "./random_mover.js";
 import { LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT } from "./resource_unit.js";
-import { Sabotager, SabotagerUnit } from "./sabotager.js";
+import { SabotagerUnit } from "./sabotager.js";
 import { ScarecrowUnit } from "./scarecrow.js";
-import { SoldierUnit } from "./soldier.js";
 import { SummonerUnit } from "./summoner.js";
-import { TankUnit } from "./tank.js";
 import { TurretUnit } from "./turret.js";
 
 export const ALL_UNITS : GameUnit[] = [
     MERCHANT_GAME_UNIT,
-    new SoldierUnit(),
+    SoldierUnit,
     new ScarecrowUnit(),
     LUMBER_JACK_GAME_UNIT,
-    new QuickAttackerUnit(),
+    QuickAttackerUnit,
     new ArcherUnit(),
     new KamakazeUnit(),
     new GoblinUnit(),
-    new SabotagerUnit(),
     new RandomMoverUnit(),
     new TurretUnit(),
     MINER_GAME_UNIT,
-    new TankUnit(),
+    TankUnit,
     new SummonerUnit(),
     new HealerUnit(),
     new FireballThrowerUnit(),
+    new SabotagerUnit(),
     // lure
     // assassain
     // wizard (chain lightning)
