@@ -5,12 +5,11 @@ import { Unit, TargetChasingUnit } from "../src/server/game/unit/unit.js";
 import { Pos } from "../src/server/game/pos.js";
 import { Archer } from "../src/server/game/unit/archer.js";
 import { Kamakaze, KamakazeUnit } from "../src/server/game/unit/kamakaze.js";
-import { Goblin } from "../src/server/game/unit/goblin.js";
 import { Summoner } from "../src/server/game/unit/summoner.js";
 import { Healer, HealerUnit } from "../src/server/game/unit/healer.js";
 import { FireballThrower, FireballThrowerUnit } from "../src/server/game/unit/fireball_thrower.js";
 import { Turret, TurretUnit } from "../src/server/game/unit/turret.js";
-import { MeleeUnit, SoldierUnit, TankUnit } from "../src/server/game/unit/melee_unit.js";
+import { SoldierUnit, TankUnit, GoblinUnit } from "../src/server/game/unit/melee_unit.js";
 
 describe('Units Test', () => {
     it('archer test', () => {
@@ -85,7 +84,7 @@ describe('Units Test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : TargetChasingUnit = new Goblin(player, new Pos(7, 5));
+        let unit : TargetChasingUnit = GoblinUnit.construct(player, new Pos(7, 5)) as TargetChasingUnit;
         let targetUnit : Unit = SoldierUnit.construct(p2, new Pos(5, 5));
         board.addEntity(unit);
         board.addEntity(targetUnit);
