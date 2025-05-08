@@ -1,9 +1,9 @@
-import { ArcherUnit } from "./archer.js";
-import { FireballThrowerUnit } from "./fireball_thrower.js";
 import { GameUnit } from "./game_unit.js";
+import { GorillaWarfareUnit } from "./gorilla_warfare.js";
 import { HealerUnit } from "./healer.js";
 import { KamakazeUnit } from "./kamakaze.js";
 import { GoblinUnit, QuickAttackerUnit, RandomMoverUnit, SabotagerUnit, SoldierUnit, TankUnit } from "./melee_unit.js";
+import { ArcherUnit, FireballThrowerUnit } from "./ranged_unit.js";
 import { LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT } from "./resource_unit.js";
 import { ScarecrowUnit } from "./scarecrow.js";
 import { SummonerUnit } from "./summoner.js";
@@ -15,7 +15,7 @@ export const ALL_UNITS : GameUnit[] = [
     new ScarecrowUnit(),
     LUMBER_JACK_GAME_UNIT,
     QuickAttackerUnit,
-    new ArcherUnit(),
+    ArcherUnit,
     new KamakazeUnit(),
     GoblinUnit,
     RandomMoverUnit,
@@ -24,15 +24,15 @@ export const ALL_UNITS : GameUnit[] = [
     TankUnit,
     new SummonerUnit(),
     new HealerUnit(),
-    new FireballThrowerUnit(),
+    FireballThrowerUnit,
     SabotagerUnit,
+    GorillaWarfareUnit,
     // lure
     // assassain
     // wizard (chain lightning)
     // heavey hitter: hit everything on target spot
     // area turret
     // longbowman
-    // quick soldier
     // regen soldier
     // teleporter
 ];

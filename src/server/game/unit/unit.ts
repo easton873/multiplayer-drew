@@ -1,4 +1,5 @@
 import { Board } from "../board.js";
+import { Counter } from "../move/counter.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 
@@ -43,8 +44,7 @@ export abstract class Unit extends ObservableUnit {
     pos : Pos;
     totalHP : number;
     hp : number;
-    speed : number;
-    counter : number;
+    moveCounter : Counter;
     team : number;
     owner : Player;
     color : string;
@@ -57,17 +57,13 @@ export abstract class Unit extends ObservableUnit {
         this.pos = pos;
         this.totalHP = hp;
         this.hp = hp;
-        this.speed = speed;
-        this.counter = speed;
+        this.moveCounter = new Counter(speed);
         this.color = color;
     }
 
     move(board : Board) {
-        if (this.counter <= 0) {
+        if (this.moveCounter.tick()) {
             this.doMove(board);
-            this.counter = this.speed;
-        } else {
-            this.counter--;
         }
     }
 
@@ -95,6 +91,10 @@ export abstract class Unit extends ObservableUnit {
     isAdjacent(other : Unit) : boolean {
         return this.pos.isAdjacent(other.pos);
     }
+
+    set speed(newSpeed : number) {
+        this.moveCounter.setSpeed(newSpeed);
+    } 
 }
 
 export abstract class UnitWithTarget extends Unit implements UnitObserver {

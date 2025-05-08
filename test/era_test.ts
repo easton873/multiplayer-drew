@@ -7,6 +7,7 @@ import { Board } from "../src/server/game/board.js";
 import { Player } from "../src/server/game/player.js";
 import { PlayerProxy } from "../src/server/game/player.js";
 import { Pos } from "../src/server/game/pos.js";
+import { Counter } from "../src/server/game/move/counter.js";
 
 describe('Era Test', () => {
     it('era test', () => {
@@ -53,7 +54,7 @@ describe('Era Test', () => {
         player.era.prepareNewEra(player.era.currEra);
         player.heart.updateHeart(player.era.currEra.getHeart());
         let startResources = player.resources.copy();
-        player.heart.counter = 0;
+        player.heart.moveCounter = new Counter(0);
         player.heart.move(board);
         startResources.add(firstHeartInfo);
         assert.strictEqual(player.resources.equals(startResources), true);

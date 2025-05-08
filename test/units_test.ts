@@ -3,27 +3,27 @@ import { Board } from "../src/server/game/board.js";
 import { Player } from "../src/server/game/player.js";
 import { Unit, TargetChasingUnit } from "../src/server/game/unit/unit.js";
 import { Pos } from "../src/server/game/pos.js";
-import { Archer } from "../src/server/game/unit/archer.js";
 import { Kamakaze, KamakazeUnit } from "../src/server/game/unit/kamakaze.js";
 import { Summoner } from "../src/server/game/unit/summoner.js";
 import { Healer, HealerUnit } from "../src/server/game/unit/healer.js";
-import { FireballThrower, FireballThrowerUnit } from "../src/server/game/unit/fireball_thrower.js";
 import { Turret, TurretUnit } from "../src/server/game/unit/turret.js";
 import { SoldierUnit, TankUnit, GoblinUnit } from "../src/server/game/unit/melee_unit.js";
+import { ArcherUnit, FireballThrowerUnit, Ranged } from "../src/server/game/unit/ranged_unit.js";
+import { Counter } from "../src/server/game/move/counter.js";
+import { GorillaWarfarer, GorillaWarfareUnit } from "../src/server/game/unit/gorilla_warfare.js";
 
 describe('Units Test', () => {
     it('archer test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : TargetChasingUnit = new Archer(player, new Pos(10, 5));
+        let unit : TargetChasingUnit = ArcherUnit.construct(player, new Pos(10, 5)) as TargetChasingUnit;
         let targetUnit : Unit = SoldierUnit.construct(p2, new Pos(5, 5));
         unit.target = targetUnit;
         board.addEntity(unit);
         board.addEntity(targetUnit);
         
-        unit.speed = 0;
-        unit.counter = 0;
+        unit.moveCounter = new Counter(0);
         unit.move(board);
         assert.strictEqual(targetUnit.hp, SoldierUnit.hp);
         assert.strictEqual(unit.pos.equals(new Pos(9, 5)), true);
@@ -46,8 +46,7 @@ describe('Units Test', () => {
         board.addEntity(targetUnit);
         assert.strictEqual(board.entities.length, 4);
         
-        unit.speed = 0;
-        unit.counter = 0;
+        unit.moveCounter = new Counter(0);
         unit.move(board);
         assert.strictEqual(targetUnit.hp, SoldierUnit.hp);
         assert.strictEqual(unit.pos.equals(new Pos(6, 5)), true);
@@ -69,8 +68,7 @@ describe('Units Test', () => {
         board.addEntity(targetUnit);
         assert.strictEqual(board.entities.length, 4);
         
-        unit.speed = 0;
-        unit.counter = 0;
+        unit.moveCounter = new Counter(0);
         unit.move(board);
         assert.strictEqual(unit.pos.equals(new Pos(6, 5)), true);
         assert.strictEqual(unit.target, targetUnit);
@@ -90,8 +88,7 @@ describe('Units Test', () => {
         board.addEntity(targetUnit);
         assert.strictEqual(board.entities.length, 4);
         
-        unit.speed = 0;
-        unit.counter = 0;
+        unit.moveCounter = new Counter(0);
         unit.move(board);
         assert.strictEqual(unit.target, p2.heart);
 
@@ -111,8 +108,7 @@ describe('Units Test', () => {
         board.addEntity(soldier);
         assert.strictEqual(board.entities.length, 5);
         
-        unit.speed = 0;
-        unit.counter = 0;
+        unit.moveCounter = new Counter(0);
         unit.summonTimer = 0;
         unit.range = 0;
         unit.move(board);
@@ -137,8 +133,7 @@ describe('Units Test', () => {
         board.addEntity(soldier);
         assert.strictEqual(board.entities.length, 4);
         
-        unit.speed = 0;
-        unit.counter = 0;
+        unit.moveCounter = new Counter(0);
         unit.range = 9;
         unit.move(board);
         assert.strictEqual(unit.target, soldier);
@@ -164,7 +159,7 @@ describe('Units Test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : FireballThrower = new FireballThrower(player, new Pos(5, 5), FireballThrowerUnit.EXPLOSION_RANGE);
+        let unit : Ranged = FireballThrowerUnit.construct(player, new Pos(5, 5)) as Ranged;
         let soldier = SoldierUnit.construct(p2, new Pos(9, 5));
         let soldier2 = SoldierUnit.construct(p2, new Pos(9, 5));
         let soldier3 = SoldierUnit.construct(p2, new Pos(10, 5));
@@ -177,8 +172,7 @@ describe('Units Test', () => {
         assert.strictEqual(board.entities.length, 7);
         unit.target = soldier;
         
-        unit.speed = 0;
-        unit.counter = 0;
+        unit.moveCounter = new Counter(0);
         assert.strictEqual(unit.pos.equals(new Pos(5, 5)), true);
         unit.move(board);
         assert.strictEqual(soldier.hp, soldier.totalHP - unit.damage);
@@ -198,8 +192,7 @@ describe('Units Test', () => {
         board.addEntity(soldier);
         assert.strictEqual(board.entities.length, 4);
         
-        unit.speed = 0;
-        unit.counter = 0;
+        unit.moveCounter = new Counter(0);
         unit.move(board);
         assert.strictEqual(unit.pos.equals(new Pos(5, 5)), true);
         assert.strictEqual(soldier.hp, soldier.totalHP);
@@ -207,6 +200,37 @@ describe('Units Test', () => {
         soldier.pos = new Pos(10, 5);
         unit.move(board);
         assert.strictEqual(unit.target, soldier);
-        assert.strictEqual(soldier.hp, soldier.totalHP - unit.damage);
+        let hpAfterOneShot = soldier.totalHP - unit.damage;
+        assert.strictEqual(soldier.hp, hpAfterOneShot);
+        soldier.pos = new Pos(11, 5);
+        unit.move(board);
+        assert.strictEqual(unit.target, null);
+        assert.strictEqual(soldier.hp, hpAfterOneShot);
+    });
+
+    it('Gorilla Warfare test', () => {
+        let board : Board = new Board(30, 30);
+        let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
+        let unit : GorillaWarfarer = GorillaWarfareUnit.construct(player, new Pos(18, 22)) as GorillaWarfarer;
+        let soldier = SoldierUnit.construct(p2, new Pos(18, 0));
+        board.addEntity(unit);
+        board.addEntity(soldier);
+        assert.strictEqual(board.entities.length, 4);
+        
+        unit.moveCounter = new Counter(0);
+        unit.move(board);
+        // assert.strictEqual(unit.target, soldier);
+        // assert.strictEqual(unit.retreatPos, null);
+        // unit.move(board);
+        // assert.strictEqual(unit.retreatPos.equals(new Pos(18, 16)), true);
+        // for (let i = 0; i < 12; ++i) {
+        //     unit.move(board);
+        // }
+        // assert.strictEqual(unit.retreating, true);
+        // assert.strictEqual(unit.pos.equals(new Pos(18, 5)), true);
+        // unit.move(board);
+        // unit.move(board);
+        // assert.strictEqual(unit.pos.equals(new Pos(18, 6)), true);
     });
 });

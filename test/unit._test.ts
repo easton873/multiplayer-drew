@@ -9,6 +9,7 @@ import { StartingEra } from "../src/server/game/era.js";
 import { ALL_UNITS } from "../src/server/game/unit/all_units.js";
 import { GameUnit } from "../src/server/game/unit/game_unit.js";
 import { SoldierUnit } from "../src/server/game/unit/melee_unit.js";
+import { Counter } from "../src/server/game/move/counter.js";
 
 describe('Unit Test', () => {
     it ('spawn all units', () => {
@@ -67,10 +68,8 @@ describe('Unit Test', () => {
         let unit : TargetChasingUnit = SoldierUnit.construct(player, new Pos(3, 2)) as TargetChasingUnit;
         let unit2 : TargetChasingUnit = SoldierUnit.construct(player, new Pos(3, 2)) as TargetChasingUnit;
         let targetUnit : Unit = SoldierUnit.construct(p2, new Pos(4, 4));
-        unit.speed = 0;
-        unit.counter = 0;
-        unit2.speed = 0;
-        unit2.counter = 0;
+        unit.moveCounter = new Counter(0);
+        unit2.moveCounter = new Counter(0);
         assert.strictEqual(targetUnit.TESTObservers.length, 0);  
         board.addEntity(unit);
         board.addEntity(unit2);
@@ -96,11 +95,11 @@ describe('Unit Test', () => {
         let factory : ResourceUnitFactory = new ResourceUnitFactory(player);
         let unit : Unit = factory.NewMiner(new Pos(0, 0));
         let startingResrouces = player.resources;
-        assert.strictEqual(unit.counter, MINER_SPEED);
+        assert.strictEqual(unit.moveCounter.remaining, MINER_SPEED);
         unit.move(board);
         startingResrouces.add(new Resources(0, 0, 1));
         assert.strictEqual(startingResrouces.equals(player.resources), true);
-        assert.strictEqual(unit.counter, MINER_SPEED - 1);
+        assert.strictEqual(unit.moveCounter.remaining, MINER_SPEED - 1);
     });
 
     it('unit placement restriction test', () => {

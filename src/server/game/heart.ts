@@ -1,3 +1,4 @@
+import { Counter } from "./move/counter.js";
 import { Player } from "./player.js";
 import { Pos } from "./pos.js";
 import { Resources } from "./resources.js";
@@ -13,7 +14,7 @@ export class Heart extends ResourceUnit {
     updateHeart(info : EraHeartInfo) {
         this.hp = info.hp;
         this.totalHP = this.hp;
-        this.speed = info.speed;
+        this.moveCounter = new Counter(info.speed);
         this.resources = info.resources;
     }
 }
