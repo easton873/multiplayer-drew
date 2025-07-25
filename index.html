@@ -54,15 +54,204 @@
     #controls {
       position: sticky;
       top: 0;
-      background: rgba(0, 0, 0, 0.9);
-      padding: 10px;
+      background: rgba(0, 0, 0, 0.95);
+      padding: 15px 20px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      border-bottom: 2px solid #00ff88;
+      gap: 20px;
+      border-bottom: 3px solid #00ff88;
       z-index: 10;
       font-family: 'Orbitron', monospace;
       color: #00ff88;
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .control-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid #00ff88;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .control-section:hover {
+      background: rgba(0, 255, 136, 0.2);
+      box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+    }
+
+    .control-section label {
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #00ff88;
+      text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
+    }
+
+    .control-section select {
+      background: rgba(0, 0, 0, 0.8);
+      border: 1px solid #00ff88;
+      color: #00ff88;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-family: 'Orbitron', monospace;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .control-section select:focus {
+      outline: none;
+      border-color: #00ffff;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+    }
+
+    .control-section button {
+      background: linear-gradient(45deg, #00ff88, #00ffff);
+      color: #000;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .control-section button:hover {
+      background: linear-gradient(45deg, #00ffff, #00ff88);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+    }
+
+    .resource-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid #ffd700;
+      border-radius: 8px;
+      color: #ffd700;
+    }
+
+    .resource-display .resource-icon {
+      font-size: 16px;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    }
+
+    .resource-display .resource-value {
+      font-weight: 700;
+      font-size: 14px;
+      text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    }
+
+    .heart-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid #ff4444;
+      border-radius: 8px;
+      color: #ff4444;
+    }
+
+    .heart-display .heart-icon {
+      font-size: 16px;
+      text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+    }
+
+    .heart-display progress {
+      width: 80px;
+      height: 12px;
+      border: 1px solid #ff4444;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .heart-display progress::-webkit-progress-bar {
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 6px;
+    }
+
+    .heart-display progress::-webkit-progress-value {
+      background: linear-gradient(45deg, #ff4444, #ff8888);
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    }
+
+    .unit-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid #00ffff;
+      border-radius: 8px;
+      color: #00ffff;
+    }
+
+    .unit-info .unit-icon {
+      font-size: 16px;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    }
+
+    .era-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(255, 0, 255, 0.1);
+      border: 1px solid #ff00ff;
+      border-radius: 8px;
+      color: #ff00ff;
+    }
+
+    .era-display .era-icon {
+      font-size: 16px;
+      text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
+    }
+
+    .game-title-bar {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 8px 15px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid #00ff88;
+      border-radius: 10px;
+      margin-right: 20px;
+    }
+
+    .game-title-bar h2 {
+      margin: 0;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 16px;
+      color: #00ff88;
+      text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    }
+
+    .zoom-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(128, 0, 255, 0.1);
+      border: 1px solid #8000ff;
+      border-radius: 8px;
+      color: #8000ff;
+    }
+
+    .zoom-controls .zoom-icon {
+      font-size: 16px;
+      text-shadow: 0 0 10px rgba(128, 0, 255, 0.8);
     }
 
     #canvasContainer {
@@ -384,23 +573,58 @@
   <!-- Main Game Screen -->
   <div id="gameScreen">
     <div id="controls">
-      <label id="resourceLabel">Multiplayer Drew</label>
-      <label for="heartProgress">Heart</label>
-      <progress id="heartProgress" value="10" max="10"></progress>
-      <select id="unitSelect"></select>
-      <label id="unitInfoLabel" title="unit info">&#9432;</label>
-      <label id="unitCostLabel">Unit Cost</label>
-      <label id="unitCountLabel">Units 0/0</label>
-      <label id="eraNameLabel">Current Era</label>
-      <button id="upgradeButton">Upgrade Era</button>
-      <label id="nextEraLabel">Next Era</label>
-      <select name="zoom" id="zoomList" value="10px">
-        <option value="30">30px</option>
-        <option value="20">20px</option>
-        <option value="10">10px</option>
-        <option value="5">5px</option>
-        <option value="1">1px</option>
-      </select>
+      <div class="game-title-bar">
+        <h2>🎮 Multiplayer Drew</h2>
+      </div>
+      
+      <div class="resource-display">
+        <span class="resource-icon">💰</span>
+        <span class="resource-value" id="resourceLabel">0</span>
+      </div>
+      
+      <div class="heart-display">
+        <span class="heart-icon">❤️</span>
+        <label for="heartProgress">HP</label>
+        <progress id="heartProgress" value="10" max="10"></progress>
+      </div>
+      
+      <div class="control-section">
+        <label for="unitSelect">⚔️ Unit</label>
+        <select id="unitSelect"></select>
+      </div>
+      
+      <div class="unit-info">
+        <span class="unit-icon">ℹ️</span>
+        <span id="unitInfoLabel" title="unit info">Info</span>
+        <span id="unitCostLabel">Cost: 0</span>
+        <span id="unitCountLabel">0/0</span>
+      </div>
+      
+      <div class="era-display">
+        <span class="era-icon">⚡</span>
+        <span id="eraNameLabel">Era: 1</span>
+      </div>
+      
+      <div class="control-section">
+        <button id="upgradeButton">🚀 Upgrade Era</button>
+      </div>
+      
+      <div class="era-display">
+        <span class="era-icon">🎯</span>
+        <span id="nextEraLabel">Next: Era 2</span>
+      </div>
+      
+      <div class="zoom-controls">
+        <span class="zoom-icon">🔍</span>
+        <label for="zoomList">Zoom</label>
+        <select name="zoom" id="zoomList" value="10px">
+          <option value="30">30px</option>
+          <option value="20">20px</option>
+          <option value="10">10px</option>
+          <option value="5">5px</option>
+          <option value="1">1px</option>
+        </select>
+      </div>
     </div>
     <div id="canvasContainer">
       <canvas id="game" width="1600" height="1200"></canvas>
