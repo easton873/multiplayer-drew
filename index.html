@@ -152,6 +152,80 @@
       text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
     }
 
+    /* Individual resource types */
+    .gold-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid #ffd700;
+      border-radius: 8px;
+      color: #ffd700;
+    }
+
+    .gold-display .resource-icon {
+      font-size: 16px;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    }
+
+    .gold-display .resource-value {
+      font-weight: 700;
+      font-size: 14px;
+      text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    }
+
+    .wood-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(139, 69, 19, 0.1);
+      border: 1px solid #8b4513;
+      border-radius: 8px;
+      color: #d2691e;
+    }
+
+    .wood-display .resource-icon {
+      font-size: 16px;
+      text-shadow: 0 0 10px rgba(139, 69, 19, 0.8);
+    }
+
+    .wood-display .resource-value {
+      font-weight: 700;
+      font-size: 14px;
+      text-shadow: 0 0 5px rgba(139, 69, 19, 0.5);
+    }
+
+    .stone-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(128, 128, 128, 0.1);
+      border: 1px solid #808080;
+      border-radius: 8px;
+      color: #a9a9a9;
+    }
+
+    .stone-display .resource-icon {
+      font-size: 16px;
+      text-shadow: 0 0 10px rgba(128, 128, 128, 0.8);
+    }
+
+    .stone-display .resource-value {
+      font-weight: 700;
+      font-size: 14px;
+      text-shadow: 0 0 5px rgba(128, 128, 128, 0.5);
+    }
+
+    /* Resource container for grouping */
+    .resources-container {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
     .heart-display {
       display: flex;
       align-items: center;
@@ -577,9 +651,21 @@
         <h2>🎮 Multiplayer Drew</h2>
       </div>
       
-      <div class="resource-display">
-        <span class="resource-icon">💰</span>
-        <span class="resource-value" id="resourceLabel">0</span>
+      <div class="resources-container">
+        <div class="gold-display">
+          <span class="resource-icon">💰</span>
+          <span class="resource-value" id="goldLabel">0</span>
+        </div>
+        <div class="wood-display">
+          <span class="resource-icon">🪵</span>
+          <span class="resource-value" id="woodLabel">0</span>
+        </div>
+        <div class="stone-display">
+          <span class="resource-icon">⚒️</span>
+          <span class="resource-value" id="stoneLabel">0</span>
+        </div>
+        <!-- Hidden fallback for compatibility -->
+        <span id="resourceLabel" style="display: none;">0</span>
       </div>
       
       <div class="heart-display">

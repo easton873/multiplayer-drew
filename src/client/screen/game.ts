@@ -5,6 +5,9 @@ export class GameScreen {
     public div = document.getElementById("gameScreen")!;
     public canvas = document.getElementById('game') as HTMLCanvasElement;
     public resourceLabel = document.getElementById('resourceLabel') as HTMLLabelElement;
+    public goldLabel = document.getElementById('goldLabel') as HTMLSpanElement;
+    public woodLabel = document.getElementById('woodLabel') as HTMLSpanElement;
+    public stoneLabel = document.getElementById('stoneLabel') as HTMLSpanElement;
     public heartProgress = document.getElementById('heartProgress') as HTMLProgressElement;
     public unitSelect = document.getElementById('unitSelect') as HTMLSelectElement;
     public unitInfoLabel = document.getElementById('unitInfoLabel') as HTMLLabelElement;
@@ -40,7 +43,14 @@ export class GameScreen {
     }
 
     drawGame(data : GameData, team : number) {
+      // Update individual resource labels
+      this.goldLabel.innerText = data.resources.gold.toString();
+      this.woodLabel.innerText = data.resources.wood.toString();
+      this.stoneLabel.innerText = data.resources.stone.toString();
+      
+      // Keep the old resourceLabel updated for compatibility
       this.resourceLabel.innerText = 'Gold: ' + data.resources.gold + ' Wood: ' + data.resources.wood + ' Stone: ' + data.resources.stone;
+      
       this.setCanvasSize(data.board.width, data.board.height);
       this.setHp(data);
       this.setUnitCount(data);
