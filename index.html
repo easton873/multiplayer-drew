@@ -5,23 +5,64 @@
   <title>MultiplayerDrew</title>
   <script type="module" crossorigin src="/src/client/main.ts"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Press+Start+2P&display=swap');
+    
     html, body {
       height: 100%;
       margin: 0;
       display: flex;
       flex-direction: column;
+      font-family: 'Orbitron', monospace;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 8s ease infinite;
+      overflow: hidden;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Animated background particles */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(2px 2px at 160px 30px, #fff, transparent);
+      background-repeat: repeat;
+      background-size: 200px 100px;
+      animation: sparkle 20s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes sparkle {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-100px); }
     }
 
     #controls {
       position: sticky;
       top: 0;
-      background: white;
+      background: rgba(0, 0, 0, 0.9);
       padding: 10px;
       display: flex;
       align-items: center;
       gap: 10px;
-      border-bottom: 1px solid #ccc;
-      z-index: 10; /* Ensure it stays above canvas */
+      border-bottom: 2px solid #00ff88;
+      z-index: 10;
+      font-family: 'Orbitron', monospace;
+      color: #00ff88;
     }
 
     #canvasContainer {
@@ -30,9 +71,10 @@
     }
 
     canvas {
-      border: 1px solid black;
+      border: 2px solid #00ff88;
       display: block;
-      margin: auto; /* Center the canvas horizontally */
+      margin: auto;
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
     }
 
     #formScreen {
@@ -40,6 +82,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
+      z-index: 2;
     }
 
     #waitingScreen {
@@ -47,13 +91,292 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
+      z-index: 2;
     }
 
     .centeredForm {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 25px;
+      background: rgba(0, 0, 0, 0.85);
+      padding: 50px;
+      border-radius: 20px;
+      box-shadow: 
+        0 0 30px rgba(0, 255, 136, 0.3),
+        inset 0 0 30px rgba(0, 255, 136, 0.1);
+      min-width: 350px;
+      border: 2px solid #00ff88;
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
+
+    .centeredForm::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #00ff88, #00ffff, #ff0080, #00ff88);
+      border-radius: 20px;
+      z-index: -1;
+      animation: borderGlow 3s linear infinite;
+    }
+
+    @keyframes borderGlow {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 12px;
+    }
+
+    .form-group label {
+      font-weight: 700;
+      color: #00ff88;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    }
+
+    .form-group input {
+      padding: 15px;
+      border: 2px solid #00ff88;
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: 'Orbitron', monospace;
+      background: rgba(0, 0, 0, 0.8);
+      color: #00ff88;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #00ffff;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+      transform: scale(1.02);
+    }
+
+    .form-group input::placeholder {
+      color: rgba(0, 255, 136, 0.5);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'Orbitron', monospace;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, #00ff88, #00ffff);
+      color: #000;
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(45deg, #00ffff, #00ff88);
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 10px 30px rgba(0, 255, 136, 0.6);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(45deg, #ff0080, #ff6b6b);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255, 0, 128, 0.4);
+    }
+
+    .btn-secondary:hover {
+      background: linear-gradient(45deg, #ff6b6b, #ff0080);
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 10px 30px rgba(255, 0, 128, 0.6);
+    }
+
+    .room-code-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+
+    .room-code-modal.show {
+      display: flex;
+      animation: modalFadeIn 0.3s ease;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-content {
+      background: rgba(0, 0, 0, 0.95);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 
+        0 0 40px rgba(0, 255, 136, 0.4),
+        inset 0 0 30px rgba(0, 255, 136, 0.1);
+      min-width: 350px;
+      border: 2px solid #00ff88;
+      position: relative;
+    }
+
+    .modal-content::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #00ff88, #00ffff, #ff0080, #00ff88);
+      border-radius: 20px;
+      z-index: -1;
+      animation: borderGlow 3s linear infinite;
+    }
+
+    .modal-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: #00ff88;
+      font-family: 'Orbitron', monospace;
+      font-size: 24px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+    }
+
+    .color-preview {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 3px solid #00ff88;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+    }
+
+    .color-preview:hover {
+      transform: scale(1.2) rotate(180deg);
+      box-shadow: 0 0 25px rgba(0, 255, 136, 0.6);
+    }
+
+    .game-title {
+      font-size: 36px;
+      font-weight: 900;
+      font-family: 'Press Start 2P', cursive;
+      color: #00ff88;
+      text-align: center;
+      margin-bottom: 30px;
+      text-shadow: 
+        0 0 20px rgba(0, 255, 136, 0.8),
+        0 0 40px rgba(0, 255, 136, 0.4),
+        0 0 60px rgba(0, 255, 136, 0.2);
+      animation: titleGlow 2s ease-in-out infinite alternate;
+      letter-spacing: 3px;
+    }
+
+    @keyframes titleGlow {
+      from { text-shadow: 0 0 20px rgba(0, 255, 136, 0.8), 0 0 40px rgba(0, 255, 136, 0.4), 0 0 60px rgba(0, 255, 136, 0.2); }
+      to { text-shadow: 0 0 30px rgba(0, 255, 136, 1), 0 0 60px rgba(0, 255, 136, 0.6), 0 0 90px rgba(0, 255, 136, 0.4); }
+    }
+
+    /* Color input styling */
+    input[type="color"] {
+      -webkit-appearance: none;
+      border: none;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    input[type="color"]:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
+    }
+
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+      border-radius: 50%;
+    }
+
+    input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 50%;
+    }
+
+    /* Waiting screen styling */
+    #waitingScreen .centeredForm h1 {
+      color: #00ff88;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 24px;
+      text-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+      margin-bottom: 20px;
+    }
+
+    #waitingScreen .centeredForm label {
+      color: #00ffff;
+    }
+
+    #waitingScreen .centeredForm button {
+      background: linear-gradient(45deg, #ff0080, #ff6b6b);
+      color: #fff;
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
   </style>
 </head>
@@ -84,17 +407,45 @@
     </div>
   </div>
 
-  <!-- Second Screen (Centered Form) -->
+  <!-- Initial Connection Screen -->
   <div id="formScreen">
     <div class="centeredForm">
-      <label for="nameInput">Player Name</label>
-      <input type="text" id="nameInput" autocomplete="off"/>
-      <label for="colorInput">Choose Color</label>
-      <input id="colorInput" type="color">
-      <label for="roomInput">Enter a room</label>
-      <input type="text" id="roomInput" autocomplete="off"/>
-      <button id="joinButton">Join</button>
-      <button id="createButton">Create Room</button>
+      <h1 class="game-title">Multiplayer Drew</h1>
+      
+      <div class="form-group">
+        <label for="nameInput">Player Name</label>
+        <input type="text" id="nameInput" placeholder="Enter your name" autocomplete="off"/>
+      </div>
+      
+      <div class="form-group">
+        <label for="colorInput">Choose Color</label>
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <input id="colorInput" type="color" value="#00ff88">
+          <div id="colorPreview" class="color-preview" style="background-color: #00ff88;"></div>
+        </div>
+      </div>
+      
+      <div class="button-group">
+        <button id="joinButton" class="btn btn-primary">Join Game</button>
+        <button id="createButton" class="btn btn-secondary">Create Game</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Room Code Modal -->
+  <div id="roomCodeModal" class="room-code-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Enter Room Code</h2>
+      </div>
+      <div class="form-group">
+        <label for="roomInput">Room Code</label>
+        <input type="text" id="roomInput" placeholder="Enter room code" autocomplete="off"/>
+      </div>
+      <div class="button-group">
+        <button id="confirmJoinButton" class="btn btn-primary">Join Room</button>
+        <button id="cancelJoinButton" class="btn btn-secondary">Cancel</button>
+      </div>
     </div>
   </div>
 

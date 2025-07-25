@@ -23,6 +23,7 @@ io.on('connection', (client : Socket<DefaultEventsMap, DefaultEventsMap, Default
   new ClientHandler(client, io, rooms, playerLookup, playerClients);
 });
 
+// Fix the path to serve static files from the correct location
 app.use(express.static(path.join(__dirname, '../../dist')));
 
 server.listen(3000, () => {
