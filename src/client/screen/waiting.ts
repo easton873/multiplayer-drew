@@ -5,8 +5,8 @@ import { DefaultEventsMap } from "socket.io";
 
 export class WaitingScreen {
     public div = document.getElementById("waitingScreen") as HTMLDivElement;
-    public playerList = document.getElementById("playerList") as HTMLUListElement;
-    public roomCodeLabel = document.getElementById("roomCodeLabel") as HTMLLabelElement;
+    public playerList = document.getElementById("playerList") as HTMLDivElement;
+    public roomCodeLabel = document.getElementById("roomCodeLabel") as HTMLSpanElement;
     public startButton = document.getElementById("waitingStartButton") as HTMLButtonElement;
     public widthInput = document.getElementById("widthInput") as HTMLInputElement;
     public heightInput = document.getElementById("heightInput") as HTMLInputElement;
@@ -17,19 +17,41 @@ export class WaitingScreen {
 
     drawPlayerControls(p : PlayerWaitingData) {
       this.waitingPlayerControls.innerHTML = '';
-      const playerNameLabel = document.createElement('label');
-      playerNameLabel.innerText = p.name;
-      // <input id="colorInput" type="color">
-      const colorSelect = document.createElement('input');
-      colorSelect.type = "color";
-      colorSelect.value = p.color;
-      colorSelect.onchange = () => {
-        p.color = colorSelect.value;
-        emitUpdateSetupPlayer(this.socket, p);
-      }
-
+      
+      const playerItem = document.createElement('div');
+      playerItem.className = 'player-item';
+      
+      // Player color indicator
+      const playerColor = document.createElement('div');
+      playerColor.className = 'player-color';
+      playerColor.style.backgroundColor = p.color;
+      
+      // Player info section
+      const playerInfo = document.createElement('div');
+      playerInfo.className = 'player-info';
+      
+      const playerName = document.createElement('div');
+      playerName.className = 'player-name';
+      playerName.innerText = p.name;
+      
+      // Team selection section
+      const teamSelection = document.createElement('div');
+      teamSelection.className = 'team-selection';
+      
+      const teamLabel = document.createElement('span');
+      teamLabel.className = 'team-label';
+      teamLabel.innerText = 'Team:';
+      
       const teamInput = document.createElement('input');
+      teamInput.className = 'team-input';
       teamInput.type = "number";
+      teamInput.placeholder = "0";
+      teamInput.min = "0";
+      teamInput.max = "10";
+      if (p.team !== null) {
+        teamInput.value = p.team.toString();
+      }
+      
       teamInput.onkeyup = () => {
         let team = null;
         if (teamInput.value != "") {
@@ -41,37 +63,80 @@ export class WaitingScreen {
         p.team = team;
         emitUpdateSetupPlayer(this.socket, p);
       };
-
-      const span = document.createElement('span');
-      span.appendChild(playerNameLabel);
-      span.appendChild(colorSelect);
-      span.appendChild(teamInput);
-
-      this.waitingPlayerControls.appendChild(span);
+      
+      // Color picker
+      const colorSelect = document.createElement('input');
+      colorSelect.type = "color";
+      colorSelect.value = p.color;
+      colorSelect.style.width = "30px";
+      colorSelect.style.height = "30px";
+      colorSelect.style.border = "2px solid #ffffff";
+      colorSelect.style.borderRadius = "50%";
+      colorSelect.style.cursor = "pointer";
+      
+      colorSelect.onchange = () => {
+        p.color = colorSelect.value;
+        playerColor.style.backgroundColor = p.color;
+        emitUpdateSetupPlayer(this.socket, p);
+      };
+      
+      // Assemble the player item
+      teamSelection.appendChild(teamLabel);
+      teamSelection.appendChild(teamInput);
+      
+      playerInfo.appendChild(playerName);
+      playerInfo.appendChild(teamSelection);
+      
+      playerItem.appendChild(playerColor);
+      playerItem.appendChild(playerInfo);
+      playerItem.appendChild(colorSelect);
+      
+      this.waitingPlayerControls.appendChild(playerItem);
     }
 
     drawPlayerList(data : PlayerWaitingData[]) {
       this.playerList.innerHTML = '';
       data.forEach((p : PlayerWaitingData) => {
-        const playerNameLabel = document.createElement('label');
-        playerNameLabel.innerText = p.name;
-        // <input id="colorInput" type="color">
-        const colorSelect = document.createElement('input');
-        colorSelect.type = "color";
-        colorSelect.value = p.color;
-        colorSelect.disabled = true;
-
-        const teamLabel = document.createElement('label');
-        teamLabel.innerText = p.team ? p.team.toString() : "";
-
-        const span = document.createElement('span');
-        span.appendChild(playerNameLabel);
-        span.appendChild(colorSelect);
-        span.appendChild(teamLabel);
-
-        const li = document.createElement('li');
-        li.appendChild(span);
-        this.playerList.appendChild(li);
-      })
+        const playerItem = document.createElement('div');
+        playerItem.className = 'player-item';
+        
+        // Player color indicator
+        const playerColor = document.createElement('div');
+        playerColor.className = 'player-color';
+        playerColor.style.backgroundColor = p.color;
+        
+        // Player info section
+        const playerInfo = document.createElement('div');
+        playerInfo.className = 'player-info';
+        
+        const playerName = document.createElement('div');
+        playerName.className = 'player-name';
+        playerName.innerText = p.name;
+        
+        // Team display
+        const teamDisplay = document.createElement('div');
+        teamDisplay.className = 'team-selection';
+        
+        const teamLabel = document.createElement('span');
+        teamLabel.className = 'team-label';
+        teamLabel.innerText = 'Team:';
+        
+        const teamValue = document.createElement('span');
+        teamValue.style.color = '#ffd700';
+        teamValue.style.fontWeight = '700';
+        teamValue.style.fontSize = '14px';
+        teamValue.innerText = p.team ? p.team.toString() : "None";
+        
+        teamDisplay.appendChild(teamLabel);
+        teamDisplay.appendChild(teamValue);
+        
+        playerInfo.appendChild(playerName);
+        playerInfo.appendChild(teamDisplay);
+        
+        playerItem.appendChild(playerColor);
+        playerItem.appendChild(playerInfo);
+        
+        this.playerList.appendChild(playerItem);
+      });
     }
 }

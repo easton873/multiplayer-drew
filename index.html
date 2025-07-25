@@ -363,7 +363,7 @@
       flex-direction: column;
       align-items: center;
       gap: 25px;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.92);
       padding: 50px;
       border-radius: 20px;
       box-shadow: 
@@ -402,11 +402,12 @@
 
     .form-group label {
       font-weight: 700;
-      color: #00ff88;
+      color: #ffffff;
       font-size: 16px;
       text-transform: uppercase;
       letter-spacing: 1px;
-      text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+      text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+      margin-bottom: 4px;
     }
 
     .form-group input {
@@ -415,8 +416,8 @@
       border-radius: 10px;
       font-size: 16px;
       font-family: 'Orbitron', monospace;
-      background: rgba(0, 0, 0, 0.8);
-      color: #00ff88;
+      background: rgba(0, 0, 0, 0.9);
+      color: #ffffff;
       transition: all 0.3s ease;
       box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
     }
@@ -426,10 +427,12 @@
       border-color: #00ffff;
       box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
       transform: scale(1.02);
+      background: rgba(0, 0, 0, 0.95);
     }
 
     .form-group input::placeholder {
-      color: rgba(0, 255, 136, 0.5);
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 400;
     }
 
     .button-group {
@@ -500,7 +503,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.9);
       display: none;
       justify-content: center;
       align-items: center;
@@ -550,12 +553,12 @@
 
     .modal-header h2 {
       margin: 0;
-      color: #00ff88;
+      color: #ffffff;
       font-family: 'Orbitron', monospace;
       font-size: 24px;
       text-transform: uppercase;
       letter-spacing: 2px;
-      text-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+      text-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
     }
 
     .color-preview {
@@ -577,7 +580,7 @@
       font-size: 36px;
       font-weight: 900;
       font-family: 'Press Start 2P', cursive;
-      color: #00ff88;
+      color: #ffffff;
       text-align: center;
       margin-bottom: 30px;
       text-shadow: 
@@ -622,24 +625,236 @@
 
     /* Waiting screen styling */
     #waitingScreen .centeredForm h1 {
-      color: #00ff88;
+      color: #ffffff;
       font-family: 'Press Start 2P', cursive;
       font-size: 24px;
-      text-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+      text-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
       margin-bottom: 20px;
     }
 
     #waitingScreen .centeredForm label {
-      color: #00ffff;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
     }
 
-    #waitingScreen .centeredForm button {
-      background: linear-gradient(45deg, #ff0080, #ff6b6b);
-      color: #fff;
+    /* Enhanced waiting room styling */
+    .waiting-room-header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: rgba(0, 255, 136, 0.1);
+      border: 2px solid #00ff88;
+      border-radius: 15px;
+    }
+
+    .room-code-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      padding: 15px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 2px solid #00ffff;
+      border-radius: 10px;
+      margin-bottom: 25px;
+    }
+
+    .room-code-display .room-code-icon {
+      font-size: 24px;
+      text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+    }
+
+    .room-code-display .room-code-text {
       font-family: 'Orbitron', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: #00ffff;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      letter-spacing: 2px;
+    }
+
+    .game-settings {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 25px;
+      padding: 20px;
+      background: rgba(255, 0, 255, 0.1);
+      border: 2px solid #ff00ff;
+      border-radius: 15px;
+    }
+
+    .game-settings .form-group {
+      margin: 0;
+    }
+
+    .game-settings label {
+      color: #ff00ff;
+      text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
+      font-size: 14px;
+    }
+
+    .game-settings input {
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid #ff00ff;
+      color: #ffffff;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .game-settings input:focus {
+      border-color: #ff6b6b;
+      box-shadow: 0 0 15px rgba(255, 0, 255, 0.4);
+    }
+
+    .players-section {
+      margin-bottom: 25px;
+    }
+
+    .players-section h2 {
+      color: #ffffff;
+      font-family: 'Orbitron', monospace;
+      font-size: 18px;
+      text-align: center;
+      margin-bottom: 15px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .player-list {
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #00ff88;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .player-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid #00ff88;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .player-item:hover {
+      background: rgba(0, 255, 136, 0.2);
+      transform: translateX(5px);
+    }
+
+    .player-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .player-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .player-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .player-name {
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+
+    .team-selection {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .team-label {
+      color: #ffd700;
+      font-size: 12px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
+      text-shadow: 0 0 5px rgba(255, 215, 0, 0.8);
+    }
+
+    .team-input {
+      width: 60px;
+      padding: 5px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid #ffd700;
+      border-radius: 5px;
+      color: #ffd700;
+      text-align: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .team-input:focus {
+      outline: none;
+      border-color: #ffffff;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    }
+
+    .start-game-section {
+      text-align: center;
+      padding: 20px;
+      background: rgba(255, 0, 128, 0.1);
+      border: 2px solid #ff0080;
+      border-radius: 15px;
+    }
+
+    .start-game-section h3 {
+      color: #ffffff;
+      font-family: 'Orbitron', monospace;
+      font-size: 16px;
+      margin-bottom: 15px;
+      text-shadow: 0 0 10px rgba(255, 0, 128, 0.8);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    #waitingStartButton {
+      background: linear-gradient(45deg, #ff0080, #ff6b6b);
+      color: #ffffff;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px rgba(255, 0, 128, 0.4);
+    }
+
+    #waitingStartButton:hover {
+      background: linear-gradient(45deg, #ff6b6b, #ff0080);
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 10px 30px rgba(255, 0, 128, 0.6);
+    }
+
+    #waitingStartButton:disabled {
+      background: rgba(128, 128, 128, 0.5);
+      color: rgba(255, 255, 255, 0.5);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
   </style>
 </head>
@@ -759,19 +974,43 @@
     </div>
   </div>
 
-  <!-- Third Screen (Centered Form) -->
+  <!-- Enhanced Waiting Room -->
   <div id="waitingScreen">
     <div class="centeredForm">
-      <h1>Waiting Room</h1>
-      <label id="roomCodeLabel">Room Code: </label>
-      <label for="widthInput">Board Width</label>
-      <input type="text" id="widthInput" autocomplete="off">
-      <label for="heightInput">Board Height</label>
-      <input type="text" id="heightInput" autocomplete="off">
-      <label for="playerList">Current Players</label>
-      <div id="playerControlsDiv"></div>
-      <ul id="playerList"></ul>
-      <button id="waitingStartButton">Start</button>
+      <div class="waiting-room-header">
+        <h1>🎮 Waiting Room</h1>
+      </div>
+      
+      <div class="room-code-display">
+        <span class="room-code-icon">🔑</span>
+        <span class="room-code-text" id="roomCodeLabel">Room Code: LOADING...</span>
+      </div>
+      
+      <div class="game-settings">
+        <div class="form-group">
+          <label for="widthInput">📐 Board Width</label>
+          <input type="number" id="widthInput" placeholder="Width" autocomplete="off" min="10" max="100">
+        </div>
+        <div class="form-group">
+          <label for="heightInput">📏 Board Height</label>
+          <input type="number" id="heightInput" placeholder="Height" autocomplete="off" min="10" max="100">
+        </div>
+      </div>
+      
+      <div class="players-section">
+        <h2>👥 Current Players</h2>
+        <div class="player-list" id="playerList">
+          <!-- Player items will be dynamically added here -->
+        </div>
+        <div id="playerControlsDiv">
+          <!-- Player controls will be dynamically added here -->
+        </div>
+      </div>
+      
+      <div class="start-game-section">
+        <h3>🚀 Ready to Launch?</h3>
+        <button id="waitingStartButton">Start Game</button>
+      </div>
     </div>
   </div>
 </body>
