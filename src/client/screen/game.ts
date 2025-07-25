@@ -25,9 +25,117 @@ export class GameScreen {
         this.setSize();
       }
       this.unitSelect.onchange = () => {
-        let cost = this.getUnitSelect().cost
-        this.unitCostLabel.innerText = cost.gold + "g" + cost.wood + "w" + cost.stone + "s";
-        this.unitInfoLabel.title = this.getUnitSelect().blurb;
+        this.updateUnitInfo();
+      }
+      // Don't call updateUnitInfo() here since no units are loaded yet
+      
+      // Add dynamic tooltip positioning
+      this.setupDynamicTooltips();
+    }
+
+    setupDynamicTooltips() {
+      const tooltip = this.unitInfoLabel;
+      
+      tooltip.addEventListener('mouseenter', (e) => {
+        const rect = tooltip.getBoundingClientRect();
+        const tooltipText = tooltip.title;
+        
+        if (!tooltipText || tooltipText === "Select a unit to see details") {
+          return; // Don't show tooltip for placeholder text
+        }
+        
+        // Create tooltip element
+        const tooltipEl = document.createElement('div');
+        tooltipEl.className = 'dynamic-tooltip';
+        tooltipEl.textContent = tooltipText;
+        tooltipEl.style.cssText = `
+          position: fixed;
+          background: rgba(0, 0, 0, 0.95);
+          color: #ffffff;
+          padding: 10px 15px;
+          border-radius: 8px;
+          font-size: 12px;
+          white-space: pre-wrap;
+          max-width: 300px;
+          z-index: 10000;
+          border: 2px solid #00ffff;
+          box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+          text-align: center;
+          line-height: 1.4;
+          pointer-events: none;
+          opacity: 0;
+          transition: opacity 0.2s ease;
+        `;
+        
+        document.body.appendChild(tooltipEl);
+        
+        // Calculate position
+        const tooltipRect = tooltipEl.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const viewportWidth = window.innerWidth;
+        
+        let top, left;
+        
+        // Try to position above first
+        if (rect.top > tooltipRect.height + 20) {
+          // Enough space above
+          top = rect.top - tooltipRect.height - 10;
+          left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+        } else if (rect.bottom + tooltipRect.height + 20 < viewportHeight) {
+          // Enough space below
+          top = rect.bottom + 10;
+          left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+        } else {
+          // Position to the side
+          if (rect.right + tooltipRect.width + 20 < viewportWidth) {
+            // Space to the right
+            top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
+            left = rect.right + 10;
+          } else {
+            // Space to the left
+            top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
+            left = rect.left - tooltipRect.width - 10;
+          }
+        }
+        
+        // Ensure tooltip stays within viewport
+        left = Math.max(10, Math.min(left, viewportWidth - tooltipRect.width - 10));
+        top = Math.max(10, Math.min(top, viewportHeight - tooltipRect.height - 10));
+        
+        tooltipEl.style.left = left + 'px';
+        tooltipEl.style.top = top + 'px';
+        
+        // Fade in
+        setTimeout(() => {
+          tooltipEl.style.opacity = '1';
+        }, 10);
+        
+        // Store reference for removal
+        (tooltip as any)._tooltipElement = tooltipEl;
+      });
+      
+      tooltip.addEventListener('mouseleave', () => {
+        const tooltipEl = (tooltip as any)._tooltipElement;
+        if (tooltipEl) {
+          tooltipEl.style.opacity = '0';
+          setTimeout(() => {
+            if (tooltipEl.parentNode) {
+              tooltipEl.parentNode.removeChild(tooltipEl);
+            }
+            (tooltip as any)._tooltipElement = null;
+          }, 200);
+        }
+      });
+    }
+
+    updateUnitInfo() {
+      const selectedUnit = this.getUnitSelect();
+      if (selectedUnit) {
+        this.unitCostLabel.innerText = selectedUnit.cost.gold + "g " + selectedUnit.cost.wood + "w " + selectedUnit.cost.stone + "s";
+        this.unitInfoLabel.title = selectedUnit.blurb || "No description available";
+      } else {
+        this.unitCostLabel.innerText = "Cost: 0";
+        this.unitInfoLabel.title = "Select a unit to see details";
       }
     }
 
@@ -139,14 +247,25 @@ export class GameScreen {
     upgradeEra(era : EraData) {
       this.fillSelect(this.unitSelect, era.availableUnits);
       this.eraNameLabel.innerText = 'Era: ' + era.eraName;
-      this.nextEraLabel.innerText = 'Next Era Cost:' + era.nextEraCost.gold + 'g' + era.nextEraCost.wood + 'w' + era.nextEraCost.stone + 's'
+      this.nextEraLabel.innerText = 'Next Era Cost:' + era.nextEraCost.gold + 'g' + era.nextEraCost.wood + 'w' + era.nextEraCost.stone + 's';
+      
+      // Update unit info to reflect the pre-selected unit (usually merchant)
+      this.updateUnitInfo();
     }
 
     setSize() {
       this.SIZE = parseInt(this.zoomSelect.value);
     }
 
-    getUnitSelect() : UnitCreationData {
-      return JSON.parse(this.unitSelect.value);
+    getUnitSelect() : UnitCreationData | null {
+      try {
+        if (!this.unitSelect.value || this.unitSelect.value === "") {
+          return null;
+        }
+        return JSON.parse(this.unitSelect.value);
+      } catch (error) {
+        console.warn("Error parsing unit select value:", error);
+        return null;
+      }
     }
 }

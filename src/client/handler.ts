@@ -15,6 +15,7 @@ export class FrontendClientHandler extends ClientReceiver {
         super(socket);
     }
     handleJoinSuccess(data: GameWaitingData) {
+        console.log("🟢 handleJoinSuccess called - transitioning to waiting screen");
         this.manager.toWaitingScreen();
         this.manager.waitingScreen.drawPlayerList(data.players);
         this.manager.waitingScreen.roomCodeLabel.innerText = "Room Code: " + data.roomCode;
@@ -28,6 +29,7 @@ export class FrontendClientHandler extends ClientReceiver {
         this.manager.waitingScreen.drawPlayerList(data.players);
     }
     handleStartSuccess(data: GameSetupData) {
+        console.log("🔴 handleStartSuccess called - transitioning to game screen");
         this.manager.toGameScreen();
         this.latestData = data;
         this.manager.gameScreen.setCanvasSize(data.boardX, data.boardY);

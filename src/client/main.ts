@@ -9,6 +9,28 @@ const socket : Socket<DefaultEventsMap, DefaultEventsMap> = io();
 const manager : ScreenManager = new ScreenManager(socket);
 const clientHandler : ClientReceiver = new FrontendClientHandler(socket, manager);
 
+// Ensure form screen is shown by default
+manager.joinScreen.div.style.display = "flex";
+manager.waitingScreen.div.style.display = "none";
+manager.gameScreen.div.style.display = "none";
+
+// Debug logging
+console.log("🔵 Initial screen setup:");
+console.log("Form screen display:", manager.joinScreen.div.style.display);
+console.log("Waiting screen display:", manager.waitingScreen.div.style.display);
+console.log("Game screen display:", manager.gameScreen.div.style.display);
+console.log("Form screen div:", manager.joinScreen.div);
+console.log("Waiting screen div:", manager.waitingScreen.div);
+console.log("Game screen div:", manager.gameScreen.div);
+
+// Add a small delay to ensure DOM is ready
+setTimeout(() => {
+    console.log("🔵 After delay - checking screen states:");
+    console.log("Form screen display:", manager.joinScreen.div.style.display);
+    console.log("Waiting screen display:", manager.waitingScreen.div.style.display);
+    console.log("Game screen display:", manager.gameScreen.div.style.display);
+}, 100);
+
 // Main screen buttons
 manager.joinScreen.joinButton.onclick = showJoinModal;
 manager.joinScreen.createButton.onclick = createRoom;

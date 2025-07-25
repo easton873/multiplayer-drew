@@ -856,6 +856,38 @@
       transform: none;
       box-shadow: none;
     }
+
+    /* Enhanced unit info tooltip styling */
+    .unit-info-tooltip {
+      cursor: help;
+      position: relative;
+      transition: all 0.3s ease;
+      padding: 5px 8px;
+      border-radius: 5px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+    }
+
+    .unit-info-tooltip:hover {
+      background: rgba(0, 255, 255, 0.2);
+      border-color: rgba(0, 255, 255, 0.6);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+      transform: scale(1.05);
+    }
+
+    .unit-info-tooltip::after {
+      content: "ℹ️";
+      position: absolute;
+      top: -15px;
+      right: -15px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .unit-info-tooltip:hover::after {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -896,7 +928,7 @@
       
       <div class="unit-info">
         <span class="unit-icon">ℹ️</span>
-        <span id="unitInfoLabel" title="unit info">Info</span>
+        <span id="unitInfoLabel" class="unit-info-tooltip" title="Hover for unit details">Info</span>
         <span id="unitCostLabel">Cost: 0</span>
         <span id="unitCountLabel">0/0</span>
       </div>
