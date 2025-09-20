@@ -39,7 +39,7 @@ describe('Units Test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : TargetChasingUnit = new Kamakaze(player, new Pos(7, 5));
+        let unit : TargetChasingUnit = KamakazeUnit.construct(player, new Pos(7, 5)) as TargetChasingUnit;
         let targetUnit : Unit = SoldierUnit.construct(p2, new Pos(5, 5));
         unit.target = targetUnit;
         board.addEntity(unit);
@@ -53,7 +53,7 @@ describe('Units Test', () => {
         assert.strictEqual(unit.target, targetUnit);
 
         unit.move(board);
-        assert.strictEqual(targetUnit.hp, SoldierUnit.hp - KamakazeUnit.DAMAGE);
+        assert.strictEqual(targetUnit.hp, SoldierUnit.hp - KamakazeUnit.damage);
         assert.strictEqual(board.entities.length, 2);
     });
 

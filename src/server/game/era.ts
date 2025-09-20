@@ -2,8 +2,10 @@ import { EraHeartInfo } from "./heart.js";
 import { Resources } from "./resources.js";
 import { EraData, UnitCreationData } from "../../shared/types.js";
 import { GameUnit } from "./unit/game_unit.js";
-import { ALL_UNITS } from "./unit/all_units.js";
+import { ALL_MILITARY_UNITS, ALL_RESOURCE_UNITS, ALL_UNITS } from "./unit/all_units.js";
 import { LUMBER_JACK_GAME_UNIT, MINER_GAME_UNIT } from "./unit/resource_unit.js";
+import { QuickAttackerUnit, TankUnit } from "./unit/melee_unit.js";
+import { MissileUnit } from "./unit/kamakaze.js";
 
 const STARTING_COST : Resources = new Resources(100, 0 ,0);
 const STARTING_RESOURCES : Resources = new Resources(1, 0, 0);
@@ -133,6 +135,16 @@ abstract class BaseEra {
     getUnitLimmit(): number {
         return this.numUnits;
     }
+
+    getUnits(resourceUnit: GameUnit = null, militaryUnit : GameUnit = null): GameUnit[] {
+        let resourceUnits : GameUnit[] = resourceUnit == null ? ALL_RESOURCE_UNITS : ALL_RESOURCE_UNITS.slice(0, ALL_RESOURCE_UNITS.findIndex((unit : GameUnit) => {
+            return unit == resourceUnit;
+        }));
+        let militaryUnits : GameUnit[] = militaryUnit == null ? ALL_MILITARY_UNITS : ALL_MILITARY_UNITS.slice(0, ALL_MILITARY_UNITS.findIndex((unit : GameUnit) => {
+            return unit == militaryUnit;
+        }));
+        return resourceUnits.concat(militaryUnits)
+    }
 }
 
 export class StartingEra extends BaseEra implements EraState {
@@ -146,9 +158,7 @@ export class StartingEra extends BaseEra implements EraState {
         return "The Starting Era";
     }
     getAvailableUnits(): GameUnit[] {
-        return ALL_UNITS.slice(0, ALL_UNITS.findIndex((unit : GameUnit) => {
-            return unit === LUMBER_JACK_GAME_UNIT;
-        }));
+        return this.getUnits(LUMBER_JACK_GAME_UNIT, QuickAttackerUnit);
     }
 }
 
@@ -163,9 +173,7 @@ class SecondEra extends BaseEra implements EraState {
         return "The Second Era";
     }
     getAvailableUnits(): GameUnit[] {
-        return ALL_UNITS.slice(0, ALL_UNITS.findIndex((unit : GameUnit) => {
-            return unit === MINER_GAME_UNIT;
-        }));
+        return this.getUnits(MINER_GAME_UNIT, TankUnit);
     }
 }
 
@@ -180,7 +188,7 @@ class ThirdEra extends BaseEra implements EraState {
         return "Third Era";
     }
     getAvailableUnits(): GameUnit[] {
-        return ALL_UNITS;
+        return this.getUnits();
     }
 }
 
@@ -195,7 +203,7 @@ class FourthEra extends BaseEra implements EraState {
         return "Fourth Era";
     }
     getAvailableUnits(): GameUnit[] {
-        return ALL_UNITS;
+        return this.getUnits();
     }
 }
 
@@ -210,6 +218,6 @@ class FifthEra extends BaseEra implements EraState {
         return "Fifth Era";
     }
     getAvailableUnits(): GameUnit[] {
-        return ALL_UNITS;
+        return this.getUnits();
     }
 }

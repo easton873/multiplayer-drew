@@ -28,25 +28,25 @@ export class GameResourceUnit extends GameUnit {
     }
 }
 
-export const MERCHANT_NAME = "Merchant";
-export const LUMBER_JACK_NAME = "Lumber Jack";
-export const MINER_NAME = "Miner";
+const MERCHANT_NAME = "Merchant";
+const LUMBER_JACK_NAME = "Lumber Jack";
+const MINER_NAME = "Miner";
 
 const MERCHANT_COLOR = "#ffff00";
 const LUMBER_JACK_COLOR = "#009900";
 const MINER_COLOR = "#666699";
 
-export const MERCHANT_BLURB = "Produces 1 gold a second";
-export const LUMBER_JACK_BLURB = "Produces 1 wood a second";
-export const MINER_BLURB = "Produces 1 stone a second";
+const MERCHANT_BLURB = "Produces 1 gold a second";
+const LUMBER_JACK_BLURB = "Produces 1 wood a second";
+const MINER_BLURB = "Produces 1 stone a second";
 
 const MERCHANT_PRODUCTION = new Resources(1, 0, 0);
 const LUMBER_JACK_PRODUCTION = new Resources(0, 1, 0);
 const MINER_PRODUCTION = new Resources(0, 0, 1);
 
-export const MERCHANT_COST = new Resources(25, 0, 0);
-export const LUMBER_JACK_COST = new Resources(50, 0, 0);
-export const MINER_COST = new Resources(100, 25, 0);
+const MERCHANT_COST = new Resources(25, 0, 0);
+const LUMBER_JACK_COST = new Resources(50, 0, 0);
+const MINER_COST = new Resources(100, 25, 0);
 
 export const MINER_SPEED = 10;
 

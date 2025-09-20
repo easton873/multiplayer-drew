@@ -6,8 +6,8 @@ import { GameUnit } from "./game_unit.js";
 import { Unit, TargetChasingUnit } from "./unit.js";
 
 export class Kamakaze extends TargetChasingUnit {
-    constructor(player : Player, pos : Pos, private damage : number = KamakazeUnit.DAMAGE, private range : number = KamakazeUnit.RANGE) {
-        super(player, KamakazeUnit.NAME, pos, KamakazeUnit.HP, KamakazeUnit.SPEED, KamakazeUnit.COLOR);
+    constructor(player : Player, pos : Pos, name : string, hp : number, speed : number, color : string,  private damage : number, private range : number) {
+        super(player, name, pos, hp, speed, color);
     }
     inRange(other: Unit): boolean {
         return this.isAdjacent(other);
@@ -25,19 +25,17 @@ export class Kamakaze extends TargetChasingUnit {
     }
 }
 
-export class KamakazeUnit extends GameUnit {
-    static NAME = "Kamakaze";
-    static COST = new Resources(50, 30, 0);
-    static SPEED = 9;
-    static DAMAGE = 10;
-    static HP = 3;
-    static COLOR = "#DD0000";
-    static BLURB = "Explodes once adjacent to its target, hurting all units around it for 4 blocks with 10 points of damage";
-    static RANGE = 16;
-    constructor() {
-        super(KamakazeUnit.NAME, KamakazeUnit.COST, KamakazeUnit.BLURB);
+class kamakazeUnit extends GameUnit {
+    constructor(
+        public name : string, public cost : Resources, public speed : number, public damage : number,
+        public hp : number, public color : string, public blurb : string, public range,
+    ) {
+        super(name, cost, blurb);
     }
     construct(player: Player, pos: Pos): Unit {
-        return new Kamakaze(player, pos);
+        return new Kamakaze(player, pos, this.name, this.hp, this.speed, this.color, this.damage, this.range);
     }
 }
+
+export const KamakazeUnit : kamakazeUnit = new kamakazeUnit("Kamakaze", new Resources(50, 30, 0), 9, 10, 3, "#DD0000", "Explodes once adjacent to its target, hurting all units around it for 4 blocks with 10 points of damage", 16);
+export const MissileUnit : kamakazeUnit = new kamakazeUnit("Missile", new Resources(2000, 2000, 2000), 0, 100, 100, "#000000", "Impacts with a devestating explosion", 100);

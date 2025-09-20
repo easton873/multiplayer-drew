@@ -10,6 +10,8 @@ describe('Game Test', () => {
     it('Remove all units of player', () => {
         let [game, board, p1, p2, p3] = newThreePlayerGame();
         p1.resources.add(new Resources(20, 0, 0));
+        p2.resources.add(new Resources(20, 0, 0));
+        p3.resources.add(new Resources(20, 0, 0));
         
         p1.NewUnit(SoldierUnit.name, new Pos(0, 0));
         p1.NewUnit(SoldierUnit.name, new Pos(0, 0));
