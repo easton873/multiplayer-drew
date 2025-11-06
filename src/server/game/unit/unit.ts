@@ -165,6 +165,7 @@ export abstract class TargetChasingUnit extends UnitWithTarget {
     doMove(board : Board) {
         this.findNewTarget(board.entities);
         if (this.hasNoTarget()) {
+            this.hasNoTargetMove();
             return;
         }
         if (this.inRange(this.target)) {
@@ -172,6 +173,10 @@ export abstract class TargetChasingUnit extends UnitWithTarget {
         } else {
             this.pos.moveTowards(this.target.pos);
         }
+    }
+
+    hasNoTargetMove(): void {
+        return;
     }
 
     abstract inRange(other : Unit) : boolean;

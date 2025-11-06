@@ -3,7 +3,7 @@ import { Board } from "../src/server/game/board.js";
 import { Player, PlayerProxy } from "../src/server/game/player.js";
 import { Unit, TargetChasingUnit } from "../src/server/game/unit/unit.js";
 import { Pos } from "../src/server/game/pos.js";
-import { MINER_SPEED, ResourceUnitFactory } from "../src/server/game/unit/resource_unit.js";
+import { MINER_GAME_UNIT, MINER_SPEED } from "../src/server/game/unit/resource_unit.js";
 import { Resources } from "../src/server/game/resources.js";
 import { StartingEra } from "../src/server/game/era.js";
 import { ALL_UNITS } from "../src/server/game/unit/all_units.js";
@@ -92,8 +92,7 @@ describe('Unit Test', () => {
     it('counter test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
-        let factory : ResourceUnitFactory = new ResourceUnitFactory(player);
-        let unit : Unit = factory.NewMiner(new Pos(0, 0));
+        let unit : Unit = MINER_GAME_UNIT.construct(player, new Pos(0, 0));
         let startingResrouces = player.resources;
         assert.strictEqual(unit.moveCounter.remaining, MINER_SPEED);
         unit.move(board);

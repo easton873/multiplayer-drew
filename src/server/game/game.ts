@@ -3,9 +3,11 @@ import { Board } from "./board.js";
 import { Era } from './era.js';
 import { Player } from "./player.js";
 import { Pos } from './pos.js';
+import { Resources } from './resources.js';
 import { Unit } from "./unit/unit.js";
 
 export class Game {
+    private _spectators : Player[] = [];
     constructor(private _players : Player[], private board : Board) {}
 
     gameLoop() {
@@ -27,10 +29,14 @@ export class Game {
 
     arePlayersStillAlive() {
         for (let i = 0; i < this.players.length; ++i) {
+            if (this.players[i].tempImNowASpectator) {
+                continue;
+            }
             if (this.players[i].isDead()) {
                 this.removeAllUnitsFromAPlayer(this.players[i]);
-                this.players.splice(i, 1);
-                i--;
+                this.players[i].resources = new Resources(0, 0, 0);
+                // this.players.splice(i, 1);
+                // i--;
             }
         }
     }
@@ -38,7 +44,7 @@ export class Game {
     removeAllUnitsFromAPlayer(player : Player) {
         for (let i = 0; i < this.board.entities.length; ++i) {
             if (this.board.entities[i].owner == player) {
-                this.board.entities[i].notifyObserversDeath()
+                this.board.entities[i].notifyObserversDeath();
                 --i; // the board is one of the observers and is going to remove it
             }
         }
@@ -49,6 +55,10 @@ export class Game {
             return false;
         }
         return true;
+    }
+
+    get playersAndSpectators() {
+        return this._players.concat(this._spectators);
     }
 
     get players() {

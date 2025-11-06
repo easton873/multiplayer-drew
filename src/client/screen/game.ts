@@ -1,5 +1,5 @@
 import { GameSetupData, PlayerSetupData } from "../../shared/bulider";
-import { EraData, GameData, PosData, UnitCreationData, UnitData } from "../../shared/types";
+import { EraData, GameData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
 
 export class GameScreen {
     public div = document.getElementById("gameScreen")!;
@@ -23,7 +23,7 @@ export class GameScreen {
       }
       this.unitSelect.onchange = () => {
         let cost = this.getUnitSelect().cost
-        this.unitCostLabel.innerText = cost.gold + "g" + cost.wood + "w" + cost.stone + "s";
+        this.unitCostLabel.innerText = this.formatResources(cost);
         this.unitInfoLabel.title = this.getUnitSelect().blurb;
       }
     }
@@ -40,7 +40,7 @@ export class GameScreen {
     }
 
     drawGame(data : GameData, team : number) {
-      this.resourceLabel.innerText = 'Gold: ' + data.resources.gold + ' Wood: ' + data.resources.wood + ' Stone: ' + data.resources.stone;
+      this.resourceLabel.innerText = this.formatResources(data.resources);
       this.setCanvasSize(data.board.width, data.board.height);
       this.setHp(data);
       this.setUnitCount(data);
@@ -129,7 +129,7 @@ export class GameScreen {
     upgradeEra(era : EraData) {
       this.fillSelect(this.unitSelect, era.availableUnits);
       this.eraNameLabel.innerText = 'Era: ' + era.eraName;
-      this.nextEraLabel.innerText = 'Next Era Cost:' + era.nextEraCost.gold + 'g' + era.nextEraCost.wood + 'w' + era.nextEraCost.stone + 's'
+      this.nextEraLabel.innerText = 'Next Era Cost:' + this.formatResources(era.nextEraCost);
     }
 
     setSize() {
@@ -138,5 +138,9 @@ export class GameScreen {
 
     getUnitSelect() : UnitCreationData {
       return JSON.parse(this.unitSelect.value);
+    }
+
+    formatResources(resources : ResourceData) : string {
+      return `💰${resources.gold}🪵${resources.wood}🪨${resources.stone}`
     }
 }

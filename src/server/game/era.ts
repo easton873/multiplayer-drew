@@ -3,9 +3,9 @@ import { Resources } from "./resources.js";
 import { EraData, UnitCreationData } from "../../shared/types.js";
 import { GameUnit } from "./unit/game_unit.js";
 import { ALL_MILITARY_UNITS, ALL_RESOURCE_UNITS, ALL_UNITS } from "./unit/all_units.js";
-import { LUMBER_JACK_GAME_UNIT, MINER_GAME_UNIT } from "./unit/resource_unit.js";
+import { LUMBER_JACK_GAME_UNIT, MINER_GAME_UNIT, PROSPECTOR_GAME_UNIT } from "./unit/resource_unit.js";
 import { QuickAttackerUnit, TankUnit } from "./unit/melee_unit.js";
-import { MissileUnit } from "./unit/kamakaze.js";
+import { MissileUnit } from "./unit/missile.js";
 
 const STARTING_COST : Resources = new Resources(100, 0 ,0);
 const STARTING_RESOURCES : Resources = new Resources(1, 0, 0);
@@ -188,7 +188,7 @@ class ThirdEra extends BaseEra implements EraState {
         return "Third Era";
     }
     getAvailableUnits(): GameUnit[] {
-        return this.getUnits();
+        return this.getUnits(PROSPECTOR_GAME_UNIT, MissileUnit);
     }
 }
 

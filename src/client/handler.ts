@@ -3,8 +3,9 @@ import { GameSetupData, GameWaitingData, PlayerSetupData, PlayerWaitingData } fr
 import { ClientReceiver } from "../shared/client";
 import { ScreenManager } from "./screen/manager";
 import { DefaultEventsMap } from "socket.io";
-import { emitSpawnUnit, emitSubmitStartPos } from "../shared/routes";
+import { emitDeleteUnits, emitSpawnUnit, emitSubmitStartPos } from "../shared/routes";
 import { EraData, GameData, PosData } from "../shared/types";
+import { isDelete } from "./main";
 
 export class FrontendClientHandler extends ClientReceiver {
     private latestData : GameSetupData;
@@ -72,12 +73,16 @@ export class FrontendClientHandler extends ClientReceiver {
         console.log('build success!');
         this.manager.gameScreen.upgradeEra(era);
         let temp = (event) => {
-            console.log('attempting to place unit');
             const rect = this.manager.gameScreen.canvas.getBoundingClientRect();
             const x = Math.floor((event.clientX - rect.left) / this.manager.gameScreen.SIZE);
             const y = Math.floor((event.clientY - rect.top) / this.manager.gameScreen.SIZE);
             const posData : PosData = {x:x, y:y};
-            emitSpawnUnit(this.socket, posData, this.manager.gameScreen.getUnitSelect().name);
+            if (isDelete) {
+                emitDeleteUnits(this.socket, posData);
+            } else {
+                console.log('attempting to place unit');
+                emitSpawnUnit(this.socket, posData, this.manager.gameScreen.getUnitSelect().name);
+            }
           }
         this.manager.gameScreen.canvas.addEventListener('click', temp);
         this.unitPlaceFn = temp;

@@ -31,41 +31,43 @@ export class GameResourceUnit extends GameUnit {
 const MERCHANT_NAME = "Merchant";
 const LUMBER_JACK_NAME = "Lumber Jack";
 const MINER_NAME = "Miner";
+const CARPENTER_NAME = "Carpenter";
+const PROSPECTOR_NAME = "Prospector";
+const INVESTMENT_BANKER_NAME = "Investment Banker";
 
 const MERCHANT_COLOR = "#ffff00";
 const LUMBER_JACK_COLOR = "#009900";
 const MINER_COLOR = "#666699";
+const CARPENTER_COLOR = "#A5CC19";
+const PROSPECTOR_COLOR = "#C41AC7"
+const INVESTMENT_BANKER_COLOR = "#430404ff"
 
 const MERCHANT_BLURB = "Produces 1 gold a second";
 const LUMBER_JACK_BLURB = "Produces 1 wood a second";
 const MINER_BLURB = "Produces 1 stone a second";
+const CARPENTER_BLURB = "Produces 2 gold and 1 wood a second";
+const PROSPECTOR_BLURB = "Produces 1 gold, 1 wood, and 1 stone a second";
+const INVESTMENT_BANKER_BLURB = "Produces 5 gold a second";
 
 const MERCHANT_PRODUCTION = new Resources(1, 0, 0);
 const LUMBER_JACK_PRODUCTION = new Resources(0, 1, 0);
 const MINER_PRODUCTION = new Resources(0, 0, 1);
+const CARPENTER_PRODUCTION = new Resources(2, 1, 0);
+const PROSPECTOR_PRODUCTION = new Resources(1, 1, 1);
+const INVESTMENT_BANKER_PRODUCTION = new Resources(1, 0, 0);
 
 const MERCHANT_COST = new Resources(25, 0, 0);
 const LUMBER_JACK_COST = new Resources(50, 0, 0);
 const MINER_COST = new Resources(100, 25, 0);
+const CARPENTER_COST = new Resources(100, 25, 0);
+const PROSPECTOR_COST = new Resources(100, 25, 25);
+const INVESTMENT_BANKER_COST = new Resources(75, 50, 50);
 
 export const MINER_SPEED = 10;
 
 export const MERCHANT_GAME_UNIT = new GameResourceUnit(MERCHANT_NAME, MERCHANT_COST, 1, 10, MERCHANT_PRODUCTION, MERCHANT_COLOR, MERCHANT_BLURB);
 export const LUMBER_JACK_GAME_UNIT = new GameResourceUnit(LUMBER_JACK_NAME, LUMBER_JACK_COST, 1, 10, LUMBER_JACK_PRODUCTION, LUMBER_JACK_COLOR, LUMBER_JACK_BLURB);
 export const MINER_GAME_UNIT = new GameResourceUnit(MINER_NAME, MINER_COST, 1, MINER_SPEED, MINER_PRODUCTION, MINER_COLOR, MINER_BLURB);
-
-export class ResourceUnitFactory {
-    constructor(private player : Player) {}
-
-    NewMerchant(pos : Pos) : ResourceUnit {
-        return new ResourceUnit(this.player, pos, MERCHANT_NAME, 1, 10, MERCHANT_PRODUCTION, MERCHANT_COLOR);
-    }
-
-    NewLumberJack(pos : Pos) : ResourceUnit {
-        return new ResourceUnit(this.player, pos, LUMBER_JACK_NAME, 1, 10, LUMBER_JACK_PRODUCTION, LUMBER_JACK_COLOR);
-    }
-
-    NewMiner(pos : Pos) : ResourceUnit {
-        return new ResourceUnit(this.player, pos, MINER_NAME, 1, MINER_SPEED, MINER_PRODUCTION, MINER_COLOR);
-    }
-}
+export const CARPENTER_GAME_UNIT = new GameResourceUnit(CARPENTER_NAME, CARPENTER_COST, 3, 10, CARPENTER_PRODUCTION, CARPENTER_COLOR, CARPENTER_BLURB);
+export const PROSPECTOR_GAME_UNIT = new GameResourceUnit(PROSPECTOR_NAME, PROSPECTOR_COST, 5, 10, PROSPECTOR_PRODUCTION, PROSPECTOR_COLOR, PROSPECTOR_BLURB);
+export const INVESTMENT_BANKER_GAME_UNIT = new GameResourceUnit(INVESTMENT_BANKER_NAME, INVESTMENT_BANKER_COST, 2, 2, INVESTMENT_BANKER_PRODUCTION, INVESTMENT_BANKER_COLOR, INVESTMENT_BANKER_BLURB);

@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Board } from "../src/server/game/board.js";
 import { Player } from "../src/server/game/player.js";
-import { Unit, TargetChasingUnit } from "../src/server/game/unit/unit.js";
+import { Unit, TargetChasingUnit, UnitWithTarget } from "../src/server/game/unit/unit.js";
 import { Pos } from "../src/server/game/pos.js";
 import { Kamakaze, KamakazeUnit } from "../src/server/game/unit/kamakaze.js";
 import { Summoner } from "../src/server/game/unit/summoner.js";
@@ -11,6 +11,10 @@ import { SoldierUnit, TankUnit, GoblinUnit } from "../src/server/game/unit/melee
 import { ArcherUnit, FireballThrowerUnit, Ranged } from "../src/server/game/unit/ranged_unit.js";
 import { Counter } from "../src/server/game/move/counter.js";
 import { GorillaWarfarer, GorillaWarfareUnit } from "../src/server/game/unit/gorilla_warfare.js";
+import { MissileUnit } from "../src/server/game/unit/missile.js";
+import { Missile } from "../src/server/game/unit/missile.js";
+import { FlareUnit } from "../src/server/game/unit/flare.js";
+import { CounterMissileUnit } from "../src/server/game/unit/counter_missile.js";
 
 describe('Units Test', () => {
     it('archer test', () => {
@@ -232,5 +236,44 @@ describe('Units Test', () => {
         // unit.move(board);
         // unit.move(board);
         // assert.strictEqual(unit.pos.equals(new Pos(18, 6)), true);
+    });
+
+    it('missiles and what not test', () => {
+        let board : Board = new Board(100, 100);
+        let player : Player = new Player(0, new Pos(90, 90), board, "0", "", "");
+        let p2 : Player = new Player(1, new Pos(90, 90), board, "1", "", "");
+        let unit : Missile = MissileUnit.construct(player, new Pos(5, 5)) as Missile;
+        let soldier : Unit = SoldierUnit.construct(player, new Pos(1, 1));
+        let flare = FlareUnit.construct(p2, new Pos(5, 15));
+        let counterMissile : UnitWithTarget = CounterMissileUnit.construct(p2, new Pos(5, 10)) as UnitWithTarget;
+        let counterMissile2 : UnitWithTarget = CounterMissileUnit.construct(p2, new Pos(5, 15)) as UnitWithTarget;
+        board.addEntity(unit);
+        assert.strictEqual(board.entities.length, 3);
+        unit.move(board);
+        assert.strictEqual(unit.target, p2.heart);
+        board.addEntity(soldier)
+        unit.move(board);
+        assert.strictEqual(unit.target, p2.heart);
+        board.addEntity(flare);
+        unit.move(board);
+        assert.strictEqual(unit.target, flare);
+        board.addEntity(counterMissile);
+        counterMissile.move(board);
+        unit.move(board);
+        assert.strictEqual(unit.target, flare);
+        assert.strictEqual(counterMissile.target, unit);
+        board.addEntity(counterMissile2);
+        assert.strictEqual(board.entities.length, 7);
+        while (counterMissile.hp > 0) {
+            counterMissile.move(board);
+            counterMissile2.move(board);
+        }
+        assert.strictEqual(board.entities.length, 5);
+        assert.notStrictEqual(counterMissile2.pos, new Pos(5, 15));
+        for (let i = 0; i < 100; ++i) {
+            counterMissile2.move(board);
+        }
+        let expectedSpot : boolean = (counterMissile2.pos.equals(new Pos(5, 15)));
+        assert.strictEqual(expectedSpot, true);
     });
 });

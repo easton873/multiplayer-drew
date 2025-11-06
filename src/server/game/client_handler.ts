@@ -124,6 +124,20 @@ export class ClientHandler extends RouteReceiver {
         player.NewUnit(unitType, new Pos(pos.x, pos.y));
     }
 
+    handleDeleteUnits(pos: PosData) {
+        let room = this.playerRoomLookup.get(this.client.id);
+        if (!room || !room.getGame()) {
+            console.log('game is null');
+            return;
+        }
+        let game = room.getGame();
+        let player = game.getPlayer(this.client.id);
+        if (!player) {
+            return;
+        }
+        player.DeleteUnits(new Pos(pos.x, pos.y));
+    }
+
     handleEraUpgrade() {
         let room = this.playerRoomLookup.get(this.client.id);
         if (!room || !room.getGame()) {

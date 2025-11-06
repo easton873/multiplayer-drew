@@ -10,10 +10,11 @@ import { GameUnit } from "./unit/game_unit.js";
 import { UNIT_MAP } from "./unit/all_units.js";
 
 export class Player implements UnitObserver {
-    resources: Resources = new Resources(20, 0, 0);
+    resources: Resources = new Resources(10000, 10000, 10000);
     board: Board;
     era: Era = new Era();
     unitCount = 0;
+    tempImNowASpectator : boolean = false;
 
     heart: Heart;
 
@@ -34,6 +35,16 @@ export class Player implements UnitObserver {
 
     getTeam(): number {
         return this.team;
+    }
+
+    DeleteUnits(pos : Pos) {
+        for (let i = 0; i < this.board.entities.length; ++i) {
+            let entity = this.board.entities[i];
+            if (!(entity instanceof Heart) && entity.owner == this && entity.pos.equals(pos)) {
+                entity.doDamage(entity.hp); // board is an observer so needs i--
+                --i;
+            }
+        }
     }
 
     NewUnit(unitType: string, pos: Pos) {

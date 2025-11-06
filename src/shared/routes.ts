@@ -12,6 +12,7 @@ export const START_GAME_KEY = "start";
 const SUBMIT_START_POS_KEY = "submit start pos";
 
 export const UNIT_SPAWN_KEY = "spawn";
+export const DELETE_UNITS_KEY = "delete";
 export const UPGRADE_ERA_KEY = "era";
 export const DISCONNECT_KEY = "disconnect";
 
@@ -26,6 +27,7 @@ export abstract class RouteReceiver {
         client.on(START_GAME_KEY, () => this.handleStartGame());
         client.on(SUBMIT_START_POS_KEY, (pos : PosData) => this.handleSubmitStartPos(pos));
         client.on(UNIT_SPAWN_KEY, (pos : PosData, unitType : string) => this.handleSpawnUnit(pos, unitType));
+        client.on(DELETE_UNITS_KEY, (pos : PosData) => this.handleDeleteUnits(pos));
         client.on(UPGRADE_ERA_KEY, () => this.handleEraUpgrade());
         client.on(DISCONNECT_KEY, () => this.handleDisconnect());
     }
@@ -35,6 +37,7 @@ export abstract class RouteReceiver {
     abstract handleStartGame();
     abstract handleSubmitStartPos(pos : PosData);
     abstract handleSpawnUnit(pos : PosData, unitType : string);
+    abstract handleDeleteUnits(pos : PosData);
     abstract handleEraUpgrade();
     abstract handleDisconnect();
 }
@@ -61,6 +64,10 @@ export function emitSubmitStartPos(socket : any, pos : PosData){
 
 export function emitSpawnUnit(socket : any, pos : PosData, unitType : string) {
     socket.emit(UNIT_SPAWN_KEY, pos, unitType);
+}
+
+export function emitDeleteUnits(socket : any, pos : PosData) {
+    socket.emit(DELETE_UNITS_KEY, pos);
 }
 
 export function emitEraUpgrade(socket : any) {
