@@ -263,12 +263,14 @@ describe('Units Test', () => {
         assert.strictEqual(unit.target, flare);
         assert.strictEqual(counterMissile.target, unit);
         board.addEntity(counterMissile2);
+        // only one counter used
         assert.strictEqual(board.entities.length, 7);
         while (counterMissile.hp > 0) {
             counterMissile.move(board);
             counterMissile2.move(board);
         }
         assert.strictEqual(board.entities.length, 5);
+        // returns to original spot test
         assert.notStrictEqual(counterMissile2.pos, new Pos(5, 15));
         for (let i = 0; i < 100; ++i) {
             counterMissile2.move(board);
