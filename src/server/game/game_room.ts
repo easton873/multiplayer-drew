@@ -10,11 +10,14 @@ export class GameRoom {
     public boardX : number = 100;
     public boardY : number = 100;
     private game : Game;
-    constructor(public roomCode : string){}
+    constructor(){}
 
     addPlayer(id : string, name : string, client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, color : string) {
         let isLeader : boolean = this.players.size == 0; // first to join is leader
+        console.log(this.players.size);
         this.players.set(id, new SetupPlayer(id, name, client, color, isLeader));
+        console.log(this.players.size);
+        console.log(id);
     }
 
     updatePlayer(id : string, data : PlayerWaitingData) {
@@ -35,7 +38,7 @@ export class GameRoom {
     }
 
     joinRoomData() : GameWaitingData {
-        return {roomCode: this.roomCode, players: this.getPlayerJoinData()};
+        return {players: this.getPlayerJoinData()};
     }
 
     setupData(id : string) : GameSetupData {

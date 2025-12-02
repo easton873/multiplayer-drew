@@ -18,7 +18,6 @@ export class FrontendClientHandler extends ClientReceiver {
     handleJoinSuccess(data: GameWaitingData) {
         this.manager.toWaitingScreen();
         this.manager.waitingScreen.drawPlayerList(data.players);
-        this.manager.waitingScreen.roomCodeLabel.innerText = "Room Code: " + data.roomCode;
     }
     handlePlayerWaitingInfo(data: PlayerWaitingData) {
         console.log(data);

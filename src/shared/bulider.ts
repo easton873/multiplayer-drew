@@ -1,7 +1,6 @@
 import { PosData } from "./types.js"
 
 export interface GameWaitingData {
-    roomCode : string
     players : PlayerWaitingData[]
 }
 

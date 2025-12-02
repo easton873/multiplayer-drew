@@ -33,7 +33,7 @@ export class MeleeUnit extends GameUnit {
 
 class soldierUnit extends MeleeUnit {
     constructor() {
-        super("Soldier", new Resources(5, 0, 0), 10, 1, 3, "#000000", "Moves once a second and does one damage to its target when adjacent to it");
+        super("Soldier", new Resources(10, 0, 0), 10, 1, 3, "#000000", "Moves once a second and does one damage to its target when adjacent to it");
     }
 }
 

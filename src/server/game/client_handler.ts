@@ -9,68 +9,51 @@ import { DefaultEventsMap, Server, Socket } from "socket.io";
 import { Player } from "./player.js";
 import { PlayerWaitingData } from "../../shared/bulider.js";
 
-const FRAME_RATE = 10;
+const FRAME_RATE = 20;
+const ROOM_CODE = "roomcode";
 
 export class ClientHandler extends RouteReceiver {
     constructor(client: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
-        io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
-        rooms : Map<string, GameRoom>, 
-        playerRoomLookup : Map<string, GameRoom>, 
+        io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
+        private room : GameRoom,
         private playerClients : Map<string, Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>>){
         console.log("guy connected");
-        super(client, io, rooms, playerRoomLookup);
+        super(client, io);
         this.playerClients.set(this.client.id, this.client);
     }   
 
-    handleCreateRoom(name : string, color : string) {
-        console.log("creating game");
-        let roomCode = randomRoomID(4);
-        this.rooms.set(roomCode, new GameRoom(roomCode));
-        this.handleJoinRoom(roomCode, name, color); // TODO make a create room success
-    }
-
-    handleJoinRoom(roomCode : string, name : string, color : string){
-        roomCode = roomCode.toUpperCase(); // make case insensitive
-        let currGame : GameRoom = this.rooms.get(roomCode);
-        if (!currGame) {
-            return;
-        }
-        this.playerRoomLookup.set(this.client.id, currGame);
-        this.client.join(roomCode);
+    handleJoinRoom(name : string, color : string){
+        let currGame : GameRoom = this.room;
+        this.client.join(ROOM_CODE);
         currGame.addPlayer(this.client.id, name, this.client, color);
-        emitJoinSuccess(this.io, roomCode, currGame.joinRoomData());
+        emitJoinSuccess(this.io, currGame.joinRoomData());
         emitPlayerWaitingInfo(this.client, currGame.getPlayerJoinDataById(this.client.id));
-        console.log("Client " + this.client.id + " joined room " + roomCode);
+        console.log("Client " + this.client.id + " joined");
     }
 
     handleUpdateSetupPlayer(player: PlayerWaitingData) {
-        let gameRoom = this.playerRoomLookup.get(this.client.id);
-        if (!gameRoom) {
-            return;
-        }
-        gameRoom.updatePlayer(this.client.id, player);
-        emitWaitingRoomUpdate(this.io, gameRoom.roomCode, gameRoom.joinRoomData());
+        this.room.updatePlayer(this.client.id, player);
+        emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
         // emitPlayerWaitingInfo(this.client, gameRoom.getPlayerJoinDataById(this.client.id));
     }
 
     handleStartGame() {
-        let gameRoom = this.playerRoomLookup.get(this.client.id);
-        if (!gameRoom || !gameRoom.isLeader(this.client.id)) {
+        if (!this.room || !this.room.isLeader(this.client.id)) {
             return;
         }
-        emitStartSuccess(this.io, gameRoom.roomCode, gameRoom.setupData(this.client.id));
-        let player = gameRoom.getPoslessPlayer().getClient()
-        emitYourTurn(player, gameRoom.setupData(player.id));
+        emitStartSuccess(this.io, this.room.setupData(this.client.id));
+        let player = this.room.getPoslessPlayer().getClient()
+        emitYourTurn(player, this.room.setupData(player.id));
     }
 
     handleSubmitStartPos(pos: PosData) {
-        let gameRoom = this.playerRoomLookup.get(this.client.id);
+        let gameRoom = this.room;
         if (!gameRoom) {
             return;
         }
         gameRoom.addPlayerPos(this.client.id, Pos.FromPosData(pos));
         emitSetPosSuccess(this.client);
-        emitStartSuccess(this.io, gameRoom.roomCode, gameRoom.setupData(this.client.id));
+        emitStartSuccess(this.io, gameRoom.setupData(this.client.id));
         if (gameRoom.allPlayersHavePos()) {
             let game : Game = gameRoom.buildGame();
             game.players.forEach((player : Player) => {
@@ -111,7 +94,7 @@ export class ClientHandler extends RouteReceiver {
     }
 
     handleSpawnUnit(pos : PosData, unitType : string) {
-        let room = this.playerRoomLookup.get(this.client.id);
+        let room = this.room;
         if (!room || !room.getGame()) {
             console.log('game is null');
             return;
@@ -125,7 +108,7 @@ export class ClientHandler extends RouteReceiver {
     }
 
     handleDeleteUnits(pos: PosData) {
-        let room = this.playerRoomLookup.get(this.client.id);
+        let room = this.room;
         if (!room || !room.getGame()) {
             console.log('game is null');
             return;
@@ -139,7 +122,7 @@ export class ClientHandler extends RouteReceiver {
     }
 
     handleEraUpgrade() {
-        let room = this.playerRoomLookup.get(this.client.id);
+        let room = this.room;
         if (!room || !room.getGame()) {
             console.log('game is null');
             return;

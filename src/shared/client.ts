@@ -13,6 +13,8 @@ const GAME_BUILD_SUCCESS = "game built";
 const GAME_INSTANCE_KEY = "gameInstance";
 const UPDGRADE_SUCCESS_KEY = "upgrade success";
 
+const ROOM_CODE = "roomcode";
+
 export abstract class ClientReceiver {
     constructor(protected socket : Socket<DefaultEventsMap, DefaultEventsMap>) {
         socket.on(WAITING_PLAYER_KEY, (data : PlayerWaitingData) => this.handlePlayerWaitingInfo(data));
@@ -42,16 +44,16 @@ export function emitPlayerWaitingInfo(client : any, data : PlayerWaitingData) {
     client.emit(WAITING_PLAYER_KEY, data);
 }
 
-export function emitWaitingRoomUpdate(io : any, roomCode : string, data : GameWaitingData) {
-    io.sockets.in(roomCode).emit(WAITING_ROOM_UPDATE, data);
+export function emitWaitingRoomUpdate(io : any, data : GameWaitingData) {
+    io.sockets.in(ROOM_CODE).emit(WAITING_ROOM_UPDATE, data);
 }
 
-export function emitJoinSuccess(io : any, roomCode : string, currGame : GameWaitingData) {
-    io.sockets.in(roomCode).emit(JOIN_SUCCESS_KEY, currGame);
+export function emitJoinSuccess(io : any, currGame : GameWaitingData) {
+    io.sockets.in(ROOM_CODE).emit(JOIN_SUCCESS_KEY, currGame);
 }
 
-export function emitStartSuccess(io : any, roomCode : string, data : GameSetupData) {
-    io.sockets.in(roomCode).emit(START_SUCCESS_KEY, data);
+export function emitStartSuccess(io : any, data : GameSetupData) {
+    io.sockets.in(ROOM_CODE).emit(START_SUCCESS_KEY, data);
 }
 
 export function emitYourTurn(client : any, data : GameSetupData) {

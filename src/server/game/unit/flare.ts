@@ -40,4 +40,4 @@ class flareUnit extends GameUnit {
     }
 }
 
-export const FlareUnit : flareUnit = new flareUnit("Flare", new Resources(500, 500, 500), 2, 10, "#ff4343ff", "Distracts missiles");
+export const FlareUnit : flareUnit = new flareUnit("Flare", new Resources(100, 100, 100), 2, 10, "#ff4343ff", "Distracts missiles");

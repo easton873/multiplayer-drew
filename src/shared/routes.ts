@@ -18,11 +18,8 @@ export const DISCONNECT_KEY = "disconnect";
 
 export abstract class RouteReceiver {
     constructor(protected client: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
-        protected io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
-        protected rooms : Map<string, GameRoom>, 
-        protected playerRoomLookup : Map<string, GameRoom>) {        
-        client.on(JOIN_ROOM_KEY, (roomCode : string, playerName : string, color : string) => this.handleJoinRoom(roomCode, playerName, color));
-        client.on(CREATE_ROOM_KEY, (playerName : string, color : string) => this.handleCreateRoom(playerName, color));
+        protected io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) {        
+        client.on(JOIN_ROOM_KEY, (playerName : string, color : string) => this.handleJoinRoom(playerName, color));
         client.on(UPDATE_PLAYER_KEY, (player : PlayerWaitingData) => this.handleUpdateSetupPlayer(player));
         client.on(START_GAME_KEY, () => this.handleStartGame());
         client.on(SUBMIT_START_POS_KEY, (pos : PosData) => this.handleSubmitStartPos(pos));
@@ -31,8 +28,7 @@ export abstract class RouteReceiver {
         client.on(UPGRADE_ERA_KEY, () => this.handleEraUpgrade());
         client.on(DISCONNECT_KEY, () => this.handleDisconnect());
     }
-    abstract handleJoinRoom(roomCode : string, playerName : string, color : string);
-    abstract handleCreateRoom(playerName : string, color : string);
+    abstract handleJoinRoom(playerName : string, color : string);
     abstract handleUpdateSetupPlayer(player : PlayerWaitingData)
     abstract handleStartGame();
     abstract handleSubmitStartPos(pos : PosData);
@@ -42,12 +38,8 @@ export abstract class RouteReceiver {
     abstract handleDisconnect();
 }
 
-export function emitJoinRoom(socket : any, roomCode : string, playerName : string, color : string) {
-  socket.emit(JOIN_ROOM_KEY, roomCode, playerName, color);
-}
-
-export function emitCreateRoom(socket : any, playerName : string, color : string) {
-  socket.emit(CREATE_ROOM_KEY, playerName, color);
+export function emitJoinRoom(socket : any, playerName : string, color : string) {
+  socket.emit(JOIN_ROOM_KEY, playerName, color);
 }
 
 export function emitUpdateSetupPlayer(socket : any, player : PlayerWaitingData) {

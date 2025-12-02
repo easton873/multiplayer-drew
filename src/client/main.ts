@@ -1,4 +1,4 @@
-import { emitCreateRoom, emitEraUpgrade, emitJoinRoom, emitStartGme } from '../shared/routes';
+import { emitEraUpgrade, emitJoinRoom, emitStartGme } from '../shared/routes';
 import { io, Socket } from 'socket.io-client';
 import { DefaultEventsMap } from 'socket.io';
 import { ScreenManager } from './screen/manager';
@@ -10,16 +10,11 @@ const manager : ScreenManager = new ScreenManager(socket);
 const clientHandler : ClientReceiver = new FrontendClientHandler(socket, manager);
 
 manager.joinScreen.joinButton.onclick = joinRoom;
-manager.joinScreen.createButton.onclick = createRoom;
 manager.waitingScreen.startButton.onclick = startGame;
 manager.gameScreen.upgradeButton.onclick = attemptUpgradeEra;
 
 function joinRoom() {
-  emitJoinRoom(socket, manager.joinScreen.roomInput.value, manager.joinScreen.nameInput.value, manager.joinScreen.colorSelect.value);
-}
-
-function createRoom() {
-  emitCreateRoom(socket, manager.joinScreen.nameInput.value, manager.joinScreen.colorSelect.value);
+  emitJoinRoom(socket, manager.joinScreen.nameInput.value, manager.joinScreen.colorSelect.value);
 }
 
 function startGame() {
@@ -37,8 +32,9 @@ function attemptUpgradeEra() {
 
 function handleKey(event: KeyboardEvent) {
   if (event.key == "d") {
-    isDelete = !isDelete;
-    console.log(`isDelete: ${isDelete}`)
+    isDelete = true;
+  } else if (event.key == "a") {
+    isDelete = false;
   }
 }
 

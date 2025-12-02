@@ -31,7 +31,7 @@ export abstract class RangedUnit extends GameUnit {
 
 class archerUnit extends RangedUnit {
     constructor() {
-        super("Archer", new Resources(15, 5, 0), 10, 1, 1, "#66ffff", "With 1 HP, shoots its target from 4 blocks away for 1 damage", 16);
+        super("Archer", new Resources(40, 0, 0), 10, 1, 1, "#66ffff", "With 1 HP, shoots its target from 4 blocks away for 1 damage", 16);
     }
 }
 

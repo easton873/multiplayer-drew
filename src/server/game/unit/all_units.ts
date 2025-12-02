@@ -5,9 +5,9 @@ import { GorillaWarfareUnit } from "./gorilla_warfare.js";
 import { HealerUnit } from "./healer.js";
 import { KamakazeUnit } from "./kamakaze.js";
 import { GoblinUnit, QuickAttackerUnit, RandomMoverUnit, SabotagerUnit, SoldierUnit, TankUnit } from "./melee_unit.js";
-import { MissileUnit } from "./missile.js";
+import { BallisticMissileUnit, MissileUnit, UnitMissileUnit } from "./missile.js";
 import { ArcherUnit, FireballThrowerUnit } from "./ranged_unit.js";
-import { CARPENTER_GAME_UNIT, INVESTMENT_BANKER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT, PROSPECTOR_GAME_UNIT } from "./resource_unit.js";
+import { CARPENTER_GAME_UNIT, INDUSTRIAL_WORKER_GAME_UNIT, INVESTMENT_BANKER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT, PROSPECTOR_GAME_UNIT, RICH_GUY_GAME_UNIT } from "./resource_unit.js";
 import { ScarecrowUnit } from "./scarecrow.js";
 import { SummonerUnit } from "./summoner.js";
 import { TurretUnit } from "./turret.js";
@@ -22,15 +22,19 @@ export const ALL_RESOURCE_UNITS : GameUnit[] = [
 
     PROSPECTOR_GAME_UNIT,
     INVESTMENT_BANKER_GAME_UNIT,
+
+    INDUSTRIAL_WORKER_GAME_UNIT,
+
+    RICH_GUY_GAME_UNIT,
 ];
 
 export const ALL_MILITARY_UNITS : GameUnit[] = [
     
     SoldierUnit,
     new ScarecrowUnit(),
+    ArcherUnit,
     
     QuickAttackerUnit,
-    ArcherUnit,
     KamakazeUnit,
     GoblinUnit,
     RandomMoverUnit,
@@ -38,13 +42,16 @@ export const ALL_MILITARY_UNITS : GameUnit[] = [
     
     TankUnit,
     new SummonerUnit(),
-    new HealerUnit(),
+    // new HealerUnit(),
     FireballThrowerUnit,
     SabotagerUnit,
     GorillaWarfareUnit,
     
     FlareUnit,
     CounterMissileUnit,
+    UnitMissileUnit,
+    BallisticMissileUnit,
+
     MissileUnit,
     // lure
     // assassain
@@ -54,6 +61,7 @@ export const ALL_MILITARY_UNITS : GameUnit[] = [
     // longbowman
     // regen soldier
     // teleporter
+    // missionary (converts unit)
 ];
 
 export const ALL_UNITS : GameUnit[] = ALL_RESOURCE_UNITS.concat(ALL_MILITARY_UNITS);
