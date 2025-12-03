@@ -1,4 +1,4 @@
-import { CounterMissileUnit } from "./counter_missile.js";
+import { CounterCounterMissileUnit, CounterMissileUnit } from "./counter_missile.js";
 import { FlareUnit } from "./flare.js";
 import { GameUnit } from "./game_unit.js";
 import { GorillaWarfareUnit } from "./gorilla_warfare.js";
@@ -51,8 +51,10 @@ export const ALL_MILITARY_UNITS : GameUnit[] = [
     CounterMissileUnit,
     UnitMissileUnit,
     BallisticMissileUnit,
-
+    CounterCounterMissileUnit,
+    
     MissileUnit,
+
     // lure
     // assassain
     // wizard (chain lightning)

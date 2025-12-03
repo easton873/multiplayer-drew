@@ -51,4 +51,24 @@ class counterMissileUnit extends GameUnit {
     }
 }
 
-export const CounterMissileUnit : counterMissileUnit = new counterMissileUnit("Counter Missile", new Resources(500, 500, 500), 0, 10, "#ff4343ff", "Distracts missiles");
+export const CounterMissileUnit : counterMissileUnit = new counterMissileUnit("Counter Missile", new Resources(500, 500, 500), 0, 10, "#ff4343ff", "Takes out missiles");
+
+class CounterCounterMissile extends CounterMissile {
+    willTarget(unit : Unit) : boolean {
+        return unit instanceof CounterMissile;
+    }
+}
+
+class counterCounterMissileUnit extends GameUnit {
+    constructor(
+        public name : string, public cost : Resources, public speed : number,
+        public hp : number, public color : string, public blurb : string,
+    ) {
+        super(name, cost, blurb);
+    }
+    construct(player: Player, pos: Pos): Unit {
+        return new CounterCounterMissile(player, pos, this.name, this.hp, this.speed, this.color);
+    }
+}
+
+export const CounterCounterMissileUnit : counterCounterMissileUnit = new counterCounterMissileUnit("Counter Counter Missile", new Resources(400, 400, 400), 0, 5, "#ff9a9aff", "Takes out counter missiles");
