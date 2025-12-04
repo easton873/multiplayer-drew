@@ -20,6 +20,7 @@ export class GameScreen {
     public SIZE : number = 10;
 
     private isDelete : boolean = false
+    private bg : HTMLImageElement = new Image();
 
     constructor(private socket : any) {
       this.zoomSelect.onchange = () => {
@@ -31,9 +32,15 @@ export class GameScreen {
         this.unitInfoLabel.title = this.getUnitSelect().blurb;
       }
 
+      this.bg.src = '/bg.png';
+
       this.canvas.addEventListener('click', (event) => {this.clickFn(event)});
       // Attach the listener
       document.addEventListener("keydown", (event : KeyboardEvent) => {this.handleKey(event)});
+    }
+
+    drawBG() {
+      this.ctx.drawImage(this.bg, 0, 0, this.canvas.width, this.canvas.height);
     }
 
     clickFn(event) {
@@ -50,7 +57,6 @@ export class GameScreen {
     }
 
     handleKey(event: KeyboardEvent) {
-      console.log('keydown');
       if (event.key == "d") {
         this.isDelete = true;
       } else if (event.key == "a") {
@@ -62,6 +68,7 @@ export class GameScreen {
       if (!data) {
         return;
       }
+      this.drawBG();
       data.players.forEach((player : PlayerSetupData) => {
         if (player.pos) {
           this.drawUnitByPos(player.pos, player.color);
@@ -87,6 +94,7 @@ export class GameScreen {
     setCanvasSize(width : number, height : number) {
         this.ctx.canvas.height = height * this.SIZE + this.SIZE;
         this.ctx.canvas.width = width * this.SIZE + this.SIZE;
+        this.drawBG();
     }
 
     setHp(data : GameData) {
