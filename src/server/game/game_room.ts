@@ -14,10 +14,7 @@ export class GameRoom {
 
     addPlayer(id : string, name : string, client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, color : string) {
         let isLeader : boolean = this.players.size == 0; // first to join is leader
-        console.log(this.players.size);
         this.players.set(id, new SetupPlayer(id, name, client, color, isLeader));
-        console.log(this.players.size);
-        console.log(id);
     }
 
     updatePlayer(id : string, data : PlayerWaitingData) {
@@ -38,7 +35,7 @@ export class GameRoom {
     }
 
     joinRoomData() : GameWaitingData {
-        return {players: this.getPlayerJoinData()};
+        return {players: this.getPlayerJoinData(), board: {boardX: this.boardX, boardY: this.boardY}};
     }
 
     setupData(id : string) : GameSetupData {
@@ -105,7 +102,7 @@ export class GameRoom {
     }
 
     buildGame() : Game {
-        let board : Board = new Board(100, 100);
+        let board : Board = new Board(this.boardX, this.boardY);
         let players : Player[] = [];
         this.players.forEach((player : SetupPlayer) => {
             players.push(player.createPlayer(board));

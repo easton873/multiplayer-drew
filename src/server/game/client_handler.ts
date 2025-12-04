@@ -1,4 +1,4 @@
-import { PosData } from "../../shared/types.js";
+import { BoardData, PosData } from "../../shared/types.js";
 import { CREATE_ROOM_KEY, DISCONNECT_KEY, emitUpdateSetupPlayer, JOIN_ROOM_KEY, RouteReceiver, START_GAME_KEY, UNIT_SPAWN_KEY, UPGRADE_ERA_KEY } from "../../shared/routes.js";
 import { Era } from "./era.js";
 import { Game } from "./game.js";
@@ -7,7 +7,7 @@ import { emitGameBuilt, emitGameState, emitJoinSuccess, emitPlayerWaitingInfo, e
 import { Pos } from "./pos.js";
 import { DefaultEventsMap, Server, Socket } from "socket.io";
 import { Player } from "./player.js";
-import { PlayerWaitingData } from "../../shared/bulider.js";
+import { GameWaitingData, PlayerWaitingData } from "../../shared/bulider.js";
 
 const FRAME_RATE = 20;
 const ROOM_CODE = "roomcode";
@@ -20,14 +20,15 @@ export class ClientHandler extends RouteReceiver {
         console.log("guy connected");
         super(client, io);
         this.playerClients.set(this.client.id, this.client);
-    }   
+    }
 
     handleJoinRoom(name : string, color : string){
         let currGame : GameRoom = this.room;
         this.client.join(ROOM_CODE);
         currGame.addPlayer(this.client.id, name, this.client, color);
-        emitJoinSuccess(this.io, currGame.joinRoomData());
-        emitPlayerWaitingInfo(this.client, currGame.getPlayerJoinDataById(this.client.id));
+        emitJoinSuccess(this.client); // switch screen
+        emitPlayerWaitingInfo(this.client, currGame.getPlayerJoinDataById(this.client.id)); // draw info specific to you
+        emitWaitingRoomUpdate(this.io, currGame.joinRoomData()); // draw everybody else
         console.log("Client " + this.client.id + " joined");
     }
 
@@ -37,8 +38,20 @@ export class ClientHandler extends RouteReceiver {
         // emitPlayerWaitingInfo(this.client, gameRoom.getPlayerJoinDataById(this.client.id));
     }
 
+    handleBoardUpdate(board: BoardData) {
+        if (!this.isLeader()) {
+            return;
+        }
+         if (board.width < 10 || board.height < 10) {
+            return;
+        }
+        this.room.boardX = board.width;
+        this.room.boardY = board.height;
+        emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
+    }
+
     handleStartGame() {
-        if (!this.room || !this.room.isLeader(this.client.id)) {
+        if (!this.room || !this.isLeader()) {
             return;
         }
         emitStartSuccess(this.io, this.room.setupData(this.client.id));
@@ -61,7 +74,7 @@ export class ClientHandler extends RouteReceiver {
                 if (!tempClient) {
                     return;
                 }
-                console.log('emit build success to ', player.getID());
+                console.log('emit build success to', player.getID());
                 emitGameBuilt(tempClient, player.era.getEraData());
             });
             console.log('starting game loop');
@@ -135,5 +148,9 @@ export class ClientHandler extends RouteReceiver {
         if (player.attemptUpgradeEra()) {
             emitUpgradeEraSuccess(this.client, player.era.getEraData());
         }
+    }
+
+    isLeader() : boolean {
+        return this.room.isLeader(this.client.id);
     }
 }

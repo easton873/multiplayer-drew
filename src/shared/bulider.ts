@@ -2,6 +2,12 @@ import { PosData } from "./types.js"
 
 export interface GameWaitingData {
     players : PlayerWaitingData[]
+    board : BoardData
+}
+
+export interface BoardData {
+    boardX : number
+    boardY : number
 }
 
 export interface PlayerWaitingData {

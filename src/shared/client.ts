@@ -18,7 +18,7 @@ const ROOM_CODE = "roomcode";
 export abstract class ClientReceiver {
     constructor(protected socket : Socket<DefaultEventsMap, DefaultEventsMap>) {
         socket.on(WAITING_PLAYER_KEY, (data : PlayerWaitingData) => this.handlePlayerWaitingInfo(data));
-        socket.on(JOIN_SUCCESS_KEY, (data : GameWaitingData) => this.handleJoinSuccess(data));
+        socket.on(JOIN_SUCCESS_KEY, () => this.handleJoinSuccess());
         socket.on(WAITING_ROOM_UPDATE, (data : GameWaitingData) => this.handleWaitingRoomUpdate(data));
         socket.on(START_SUCCESS_KEY, (data : GameSetupData) => this.handleStartSuccess(data));
         socket.on(YOUR_TURN_KEY, (data : GameSetupData) => this.handleYourTurn(data));
@@ -30,7 +30,7 @@ export abstract class ClientReceiver {
     }
 
     abstract handlePlayerWaitingInfo(data : PlayerWaitingData);
-    abstract handleJoinSuccess(data : GameWaitingData);
+    abstract handleJoinSuccess();
     abstract handleWaitingRoomUpdate(data : GameWaitingData);
     abstract handleStartSuccess(data : GameSetupData);
     abstract handleYourTurn(data : GameSetupData);
@@ -48,8 +48,8 @@ export function emitWaitingRoomUpdate(io : any, data : GameWaitingData) {
     io.sockets.in(ROOM_CODE).emit(WAITING_ROOM_UPDATE, data);
 }
 
-export function emitJoinSuccess(io : any, currGame : GameWaitingData) {
-    io.sockets.in(ROOM_CODE).emit(JOIN_SUCCESS_KEY, currGame);
+export function emitJoinSuccess(client : any) {
+    client.emit(JOIN_SUCCESS_KEY);
 }
 
 export function emitStartSuccess(io : any, data : GameSetupData) {

@@ -1,4 +1,4 @@
-import { emitUpdateSetupPlayer } from "../../shared/routes";
+import { emitBoardUpdate, emitUpdateSetupPlayer } from "../../shared/routes";
 import { PlayerWaitingData } from "../../shared/bulider";
 import { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io";
@@ -10,12 +10,23 @@ export class WaitingScreen {
     public startButton = document.getElementById("waitingStartButton") as HTMLButtonElement;
     public widthInput = document.getElementById("widthInput") as HTMLInputElement;
     public heightInput = document.getElementById("heightInput") as HTMLInputElement;
+    public widthLabel = document.getElementById("widthLabel") as HTMLLabelElement;
+    public heightLabel = document.getElementById("heightLabel") as HTMLLabelElement;
 
     public waitingPlayerControls = document.getElementById("playerControlsDiv") as HTMLDivElement;
 
-    constructor(private socket : Socket<DefaultEventsMap, DefaultEventsMap>) {}
+    constructor(private socket : Socket<DefaultEventsMap, DefaultEventsMap>) {
+      this.widthInput.value = "100";
+      this.heightInput.value = "100";
+    }
 
     drawPlayerControls(p : PlayerWaitingData) {
+      if (!p.leader) {
+        this.startButton.style.display = "none";
+        this.widthInput.style.display = "none";
+        this.heightInput.style.display = "none";
+      }
+
       this.waitingPlayerControls.innerHTML = '';
       const playerNameLabel = document.createElement('label');
       playerNameLabel.innerText = p.name;
@@ -26,7 +37,10 @@ export class WaitingScreen {
       colorSelect.onchange = () => {
         p.color = colorSelect.value;
         emitUpdateSetupPlayer(this.socket, p);
-      }
+      };
+
+      this.widthInput.onchange = () => {this.boardUpdate()};
+      this.heightInput.onchange = () => {this.boardUpdate()};
 
       const teamInput = document.createElement('input');
       teamInput.type = "number";
@@ -73,5 +87,17 @@ export class WaitingScreen {
         li.appendChild(span);
         this.playerList.appendChild(li);
       })
+    }
+
+    boardUpdate() {
+      let width = parseInt(this.widthInput.value);
+      if (isNaN(width)) {
+        return;
+      }
+      let height = parseInt(this.heightInput.value);
+      if (isNaN(height)) {
+        return;
+      }
+      emitBoardUpdate(this.socket, {width: width, height: height});
     }
 }

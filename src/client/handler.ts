@@ -15,17 +15,16 @@ export class FrontendClientHandler extends ClientReceiver {
     constructor(socket : Socket<DefaultEventsMap, DefaultEventsMap>, private manager : ScreenManager)  {
         super(socket);
     }
-    handleJoinSuccess(data: GameWaitingData) {
+    handleJoinSuccess() {
         this.manager.toWaitingScreen();
-        this.manager.waitingScreen.drawPlayerList(data.players);
     }
     handlePlayerWaitingInfo(data: PlayerWaitingData) {
-        console.log(data);
         this.manager.waitingScreen.drawPlayerControls(data);
     }
     handleWaitingRoomUpdate(data: GameWaitingData) {
-        console.log(data);
         this.manager.waitingScreen.drawPlayerList(data.players);
+        this.manager.waitingScreen.widthLabel.innerHTML = `Board Width: ${data.board.boardX}`;
+        this.manager.waitingScreen.heightLabel.innerHTML = `Board Height: ${data.board.boardY}`;
     }
     handleStartSuccess(data: GameSetupData) {
         this.manager.toGameScreen();
