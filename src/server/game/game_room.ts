@@ -12,6 +12,12 @@ export class GameRoom {
     private game : Game;
     constructor(){}
 
+    reset() {
+        this.players.forEach((player : SetupPlayer) => {
+            player.reset();
+        });
+    }
+
     addPlayer(id : string, name : string, client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, color : string) {
         let isLeader : boolean = this.players.size == 0; // first to join is leader
         this.players.set(id, new SetupPlayer(id, name, client, color, isLeader));
@@ -116,15 +122,21 @@ export class GameRoom {
     }
 }
 
-class SetupPlayer {
+export class SetupPlayer {
     static DefaultTeam = -1;
     private team : number = null;
     private pos : Pos = null;
     ready : boolean = true;
     constructor(private id : string, private name: string, private client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, private color : string, private isLeader : boolean) {}
 
+    reset() {
+        SetupPlayer.DefaultTeam = -1;
+        this.team = null;
+        this.pos = null
+    }
+
     update(other : PlayerWaitingData) {
-        this.team = other.team;
+        this.team = Math.abs(other.team);
         this.color = other.color;
         this.ready = other.ready;
     }

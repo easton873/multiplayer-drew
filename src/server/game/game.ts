@@ -1,4 +1,4 @@
-import { GameData, UnitData, PosData, BoardData, ResourceData, EraData, PlayerSpecificData } from '../../shared/types.js';
+import { GameData, UnitData, PosData, BoardData, ResourceData, EraData, PlayerSpecificData, GeneralGameData } from '../../shared/types.js';
 import { Board } from "./board.js";
 import { Era } from './era.js';
 import { Player } from "./player.js";
@@ -7,7 +7,7 @@ import { Resources } from './resources.js';
 import { Unit } from "./unit/unit.js";
 
 export class Game {
-    private _spectators : Player[] = [];
+    public spectators : string[] = []; // client ids
     constructor(private _players : Player[], private board : Board) {}
 
     gameLoop() {
@@ -29,14 +29,11 @@ export class Game {
 
     arePlayersStillAlive() {
         for (let i = 0; i < this.players.length; ++i) {
-            if (this.players[i].tempImNowASpectator) {
-                continue;
-            }
             if (this.players[i].isDead()) {
                 this.removeAllUnitsFromAPlayer(this.players[i]);
-                this.players[i].resources = new Resources(0, 0, 0);
-                // this.players.splice(i, 1);
-                // i--;
+                this.spectators.push(this.players[i].getID());
+                this.players.splice(i, 1);
+                i--;
             }
         }
     }
@@ -56,11 +53,7 @@ export class Game {
         }
         return true;
     }
-
-    get playersAndSpectators() {
-        return this._players.concat(this._spectators);
-    }
-
+s
     get players() {
         return this._players
     }
@@ -71,10 +64,20 @@ export class Game {
             return null;
         }
         let heart : PlayerSpecificData = player.getPlayerSpecificData();
-        let board : BoardData = {width: this.board.width, height: this.board.height};
-        let units : UnitData[] = [];
         let resources : ResourceData = player.resources.getResourceData();
         let era : EraData = player.era.getEraData();
+        const gameData : GameData = {
+            playerData: heart,
+            resources: resources, 
+            era: era,
+            generalData: this.generalGameData(),
+        };
+        return gameData;
+    }
+
+    generalGameData() : GeneralGameData {
+        let board : BoardData = {width: this.board.width, height: this.board.height};
+        let units : UnitData[] = [];
         this.board.entities.forEach((unit : Unit) => {
             const unitPos : PosData = unit.pos.getPosData();
             const unitData : UnitData = {
@@ -87,12 +90,9 @@ export class Game {
             };
             units.push(unitData);
         })
-        const gameData : GameData = {
-            playerData: heart,
+        const gameData : GeneralGameData = {
             units: units, 
             board: board, 
-            resources: resources, 
-            era: era,
         };
         return gameData;
     }

@@ -1,9 +1,9 @@
-import { BoardData, PosData } from "../../shared/types.js";
+import { BoardData, GeneralGameData, PosData } from "../../shared/types.js";
 import { CREATE_ROOM_KEY, DISCONNECT_KEY, emitUpdateSetupPlayer, JOIN_ROOM_KEY, RouteReceiver, START_GAME_KEY, UNIT_SPAWN_KEY, UPGRADE_ERA_KEY } from "../../shared/routes.js";
 import { Era } from "./era.js";
 import { Game } from "./game.js";
-import { GameRoom, randomRoomID } from "./game_room.js";
-import { emitGameBuilt, emitGameState, emitJoinSuccess, emitPlayerWaitingInfo, emitSetPosSuccess, emitStartSuccess, emitUpgradeEraSuccess, emitWaitingRoomUpdate, emitYourTurn, START_SUCCESS_KEY } from "../../shared/client.js";
+import { GameRoom, randomRoomID, SetupPlayer } from "./game_room.js";
+import { emitGameBuilt, emitGameOver, emitGameState, emitJoinSuccess, emitPlayerWaitingInfo, emitSetPosSuccess, emitSpectatorGameState, emitStartSuccess, emitUpgradeEraSuccess, emitWaitingRoomUpdate, emitYourTurn, START_SUCCESS_KEY } from "../../shared/client.js";
 import { Pos } from "./pos.js";
 import { DefaultEventsMap, Server, Socket } from "socket.io";
 import { Player } from "./player.js";
@@ -89,11 +89,32 @@ export class ClientHandler extends RouteReceiver {
                     if (!data) {
                         return;
                     }
-                    emitGameState(tempClient, data, player.getTeam());
+                    emitGameState(tempClient, data);
                 });
+                game.spectators.forEach((id : string) => {
+                    let tempClient = this.playerClients.get(id);
+                    if (!tempClient) {
+                        return;
+                    }
+                    let data : GeneralGameData = game.generalGameData();
+                    if (!data) {
+                        return;
+                    }
+                    emitSpectatorGameState(tempClient, data);
+                })
                 if (!game.checkGameStillGoing()) {
                     console.log('game over');
                     clearInterval(intervalId);
+                    let winner = "No Winner";
+                    if (game.players.length == 1) {
+                        let id = game.players[0].getID();
+                        if (id) {
+                            let p = this.room.players.get(id);
+                            winner = p.getJoinData().name;
+                        }
+                    }
+                    this.room.reset();
+                    emitGameOver(this.io, winner);
                 } 
             }, 1000 / FRAME_RATE);
             return;

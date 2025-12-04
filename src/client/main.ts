@@ -24,19 +24,6 @@ function startGame() {
 // socket.on(GAME_INSTANCE_KEY, drawGame);
 // socket.on(UPDGRADE_SUCCESS_KEY, upgradeEra);
 
-export let isDelete : boolean = false
-
 function attemptUpgradeEra() {
   emitEraUpgrade(socket);
 }
-
-function handleKey(event: KeyboardEvent) {
-  if (event.key == "d") {
-    isDelete = true;
-  } else if (event.key == "a") {
-    isDelete = false;
-  }
-}
-
-// Attach the listener
-document.addEventListener("keydown", handleKey);

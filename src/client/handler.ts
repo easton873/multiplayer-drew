@@ -4,14 +4,12 @@ import { ClientReceiver } from "../shared/client";
 import { ScreenManager } from "./screen/manager";
 import { DefaultEventsMap } from "socket.io";
 import { emitDeleteUnits, emitSpawnUnit, emitSubmitStartPos } from "../shared/routes";
-import { EraData, GameData, PosData } from "../shared/types";
-import { isDelete } from "./main";
+import { EraData, GameData, GeneralGameData, PosData } from "../shared/types";
 
 export class FrontendClientHandler extends ClientReceiver {
     private latestData : GameSetupData;
     private mouseMoveSelectStartPos;
     private clickSelectStartPos;
-    private unitPlaceFn;
     constructor(socket : Socket<DefaultEventsMap, DefaultEventsMap>, private manager : ScreenManager)  {
         super(socket);
     }
@@ -64,28 +62,23 @@ export class FrontendClientHandler extends ClientReceiver {
         this.manager.gameScreen.canvas.removeEventListener('mousemove', this.mouseMoveSelectStartPos);
         this.manager.gameScreen.canvas.removeEventListener('click', this.clickSelectStartPos);
     }
-    handleEmitGamestate(gameInstance: GameData, team : number) {
-        this.manager.gameScreen.drawGame(gameInstance, team);
+    handleEmitGamestate(gameInstance: GameData) {
+        this.manager.gameScreen.controls.style.display = "flex";
+        this.manager.gameScreen.drawGame(gameInstance);
+    }
+    handleEmitSpectatorGameState(data: GeneralGameData) {
+        this.manager.gameScreen.controls.style.display = "none";
+        this.manager.gameScreen.drawGeneralGameData(data);
     }
     handleBuildSucces(era: EraData) {
         console.log('build success!');
         this.manager.gameScreen.upgradeEra(era);
-        let temp = (event) => {
-            const rect = this.manager.gameScreen.canvas.getBoundingClientRect();
-            const x = Math.floor((event.clientX - rect.left) / this.manager.gameScreen.SIZE);
-            const y = Math.floor((event.clientY - rect.top) / this.manager.gameScreen.SIZE);
-            const posData : PosData = {x:x, y:y};
-            if (isDelete) {
-                emitDeleteUnits(this.socket, posData);
-            } else {
-                console.log('attempting to place unit');
-                emitSpawnUnit(this.socket, posData, this.manager.gameScreen.getUnitSelect().name);
-            }
-          }
-        this.manager.gameScreen.canvas.addEventListener('click', temp);
-        this.unitPlaceFn = temp;
     }
     handleEraUpgradeSuccess(era: EraData) {
         this.manager.gameScreen.upgradeEra(era);
+    }
+    handleGameOver(winner: string) {
+        this.manager.toGameOverScreen();
+        this.manager.gameOverScreen.displayWinner(winner);
     }
 }

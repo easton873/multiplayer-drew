@@ -28,16 +28,16 @@ describe('Game Test', () => {
     });
 
     it('Game ends', () => {
-        // let [game, board, p1, p2, p3] = newThreePlayerGame();
+        let [game, board, p1, p2, p3] = newThreePlayerGame();
 
-        // assert.strictEqual(game.checkGameStillGoing(), true);
-        // p2.heart.hp = 0;
-        // game.arePlayersStillAlive();
-        // assert.strictEqual(game.players.length, 2);
-        // p3.heart.hp = 0;
-        // game.arePlayersStillAlive();
-        // assert.strictEqual(game.players.length, 1);
-        // assert.strictEqual(game.checkGameStillGoing(), false);
+        assert.strictEqual(game.checkGameStillGoing(), true);
+        p2.heart.hp = 0;
+        game.arePlayersStillAlive();
+        assert.strictEqual(game.players.length, 2);
+        p3.heart.hp = 0;
+        game.arePlayersStillAlive();
+        assert.strictEqual(game.players.length, 1);
+        assert.strictEqual(game.checkGameStillGoing(), false);
     });
 });
 
@@ -65,7 +65,7 @@ it('Short Game', () => {
         }
     });
     assert.strictEqual(total, 1);
-    // assert.strictEqual(game.checkGameStillGoing(), false);
+    assert.strictEqual(game.checkGameStillGoing(), false);
 });
 
 it('Delete units', () => {

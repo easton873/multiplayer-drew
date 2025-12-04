@@ -1,7 +1,7 @@
 import { DefaultEventsMap } from "socket.io";
 import { Socket } from "socket.io-client";
 import { GameSetupData, GameWaitingData, PlayerWaitingData } from "./bulider";
-import { EraData, GameData } from "./types";
+import { EraData, GameData, GeneralGameData } from "./types";
 
 const WAITING_PLAYER_KEY = "waiting player";
 const JOIN_SUCCESS_KEY = "join success";
@@ -11,7 +11,9 @@ const YOUR_TURN_KEY = "start pos";
 const SET_POS_SUCCESS = "set pos success";
 const GAME_BUILD_SUCCESS = "game built";
 const GAME_INSTANCE_KEY = "gameInstance";
+const SPECTATOR_GAME_KEY = "spectatorGame";
 const UPDGRADE_SUCCESS_KEY = "upgrade success";
+const GAME_OVER_KEY = "gameover";
 
 const ROOM_CODE = "roomcode";
 
@@ -24,9 +26,10 @@ export abstract class ClientReceiver {
         socket.on(YOUR_TURN_KEY, (data : GameSetupData) => this.handleYourTurn(data));
         socket.on(SET_POS_SUCCESS, () => this.handleSetPosSuccess());
         socket.on(GAME_BUILD_SUCCESS, (era : EraData) => this.handleBuildSucces(era));
-        socket.on(GAME_INSTANCE_KEY, (data : GameData, team : number) => this.handleEmitGamestate(data, team));
+        socket.on(GAME_INSTANCE_KEY, (data : GameData, team : number) => this.handleEmitGamestate(data));
+        socket.on(SPECTATOR_GAME_KEY, (data : GeneralGameData) => this.handleEmitSpectatorGameState(data));
         socket.on(UPDGRADE_SUCCESS_KEY, (era : EraData) => this.handleEraUpgradeSuccess(era));
-
+        socket.on(GAME_OVER_KEY, (winner : string) => this.handleGameOver(winner));
     }
 
     abstract handlePlayerWaitingInfo(data : PlayerWaitingData);
@@ -36,8 +39,10 @@ export abstract class ClientReceiver {
     abstract handleYourTurn(data : GameSetupData);
     abstract handleSetPosSuccess();
     abstract handleBuildSucces(era : EraData);
-    abstract handleEmitGamestate(gameInstance : GameData, team : number);
+    abstract handleEmitGamestate(gameInstance : GameData);
+    abstract handleEmitSpectatorGameState(data : GeneralGameData);
     abstract handleEraUpgradeSuccess(era : EraData);
+    abstract handleGameOver(winner : string);
 }
 
 export function emitPlayerWaitingInfo(client : any, data : PlayerWaitingData) {
@@ -68,10 +73,18 @@ export function emitGameBuilt(client : any, era : EraData) {
     client.emit(GAME_BUILD_SUCCESS, era);
 }
 
-export function emitGameState(client : any, gameInstance : GameData, team : number) {
-    client.emit(GAME_INSTANCE_KEY, gameInstance, team);
+export function emitGameState(client : any, gameInstance : GameData) {
+    client.emit(GAME_INSTANCE_KEY, gameInstance);
+}
+
+export function emitSpectatorGameState(client : any, data : GeneralGameData) {
+    client.emit(SPECTATOR_GAME_KEY, data);
 }
 
 export function emitUpgradeEraSuccess(client : any, era : EraData) {
     client.emit(UPDGRADE_SUCCESS_KEY, era);
+}
+
+export function emitGameOver(io : any, winner : string) {
+    io.sockets.in(ROOM_CODE).emit(GAME_OVER_KEY, winner);
 }

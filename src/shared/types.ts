@@ -1,9 +1,13 @@
 export interface GameData {
   playerData : PlayerSpecificData
-  units : UnitData[]
-  board : BoardData
   resources : ResourceData
   era : EraData
+  generalData : GeneralGameData
+}
+
+export interface GeneralGameData {
+  units : UnitData[]
+  board : BoardData
 }
 
 export interface PlayerSpecificData {

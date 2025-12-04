@@ -1,9 +1,11 @@
 import { GameSetupData, PlayerSetupData } from "../../shared/bulider";
-import { EraData, GameData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
+import { EraData, GameData, GeneralGameData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
+import { emitDeleteUnits, emitSpawnUnit } from "../../shared/routes";
 
 export class GameScreen {
     public div = document.getElementById("gameScreen")!;
     public canvas = document.getElementById('game') as HTMLCanvasElement;
+    public controls = document.getElementById("controls") as HTMLDivElement;
     public resourceLabel = document.getElementById('resourceLabel') as HTMLLabelElement;
     public heartProgress = document.getElementById('heartProgress') as HTMLProgressElement;
     public unitSelect = document.getElementById('unitSelect') as HTMLSelectElement;
@@ -17,7 +19,9 @@ export class GameScreen {
     public ctx : CanvasRenderingContext2D = this.canvas.getContext('2d')!;
     public SIZE : number = 10;
 
-    constructor() {
+    private isDelete : boolean = false
+
+    constructor(private socket : any) {
       this.zoomSelect.onchange = () => {
         this.setSize();
       }
@@ -25,6 +29,32 @@ export class GameScreen {
         let cost = this.getUnitSelect().cost
         this.unitCostLabel.innerText = this.formatResources(cost);
         this.unitInfoLabel.title = this.getUnitSelect().blurb;
+      }
+
+      this.canvas.addEventListener('click', (event) => {this.clickFn(event)});
+      // Attach the listener
+      document.addEventListener("keydown", (event : KeyboardEvent) => {this.handleKey(event)});
+    }
+
+    clickFn(event) {
+        const rect = this.canvas.getBoundingClientRect();
+        const x = Math.floor((event.clientX - rect.left) / this.SIZE);
+        const y = Math.floor((event.clientY - rect.top) / this.SIZE);
+        const posData : PosData = {x:x, y:y};
+        if (this.isDelete) {
+            emitDeleteUnits(this.socket, posData);
+        } else {
+            console.log('attempting to place unit');
+            emitSpawnUnit(this.socket, posData, this.getUnitSelect().name);
+        }
+    }
+
+    handleKey(event: KeyboardEvent) {
+      console.log('keydown');
+      if (event.key == "d") {
+        this.isDelete = true;
+      } else if (event.key == "a") {
+        this.isDelete = false;
       }
     }
 
@@ -39,15 +69,19 @@ export class GameScreen {
       });
     }
 
-    drawGame(data : GameData, team : number) {
+    drawGame(data : GameData) {
       this.resourceLabel.innerText = this.formatResources(data.resources);
-      this.setCanvasSize(data.board.width, data.board.height);
       this.setHp(data);
       this.setUnitCount(data);
-      data.units.forEach((unit : UnitData) => {
-        this.drawUnit(unit, team);
-      });
+      this.drawGeneralGameData(data.generalData);
       this.drawCircle(data.playerData.pos.x, data.playerData.pos.y, Math.floor(Math.sqrt(data.playerData.radius)), "black");
+    }
+
+    drawGeneralGameData(data : GeneralGameData) {
+      this.setCanvasSize(data.board.width, data.board.height);
+      data.units.forEach((unit : UnitData) => {
+        this.drawUnit(unit);
+      });
     }
 
     setCanvasSize(width : number, height : number) {
@@ -64,7 +98,7 @@ export class GameScreen {
       this.unitCountLabel.innerText = 'Units ' + data.playerData.numUnits + '/' + data.playerData.maxUnits;
     }
     
-    drawUnit(unit : UnitData, team : number) {
+    drawUnit(unit : UnitData) {
       this.drawBorder(unit.pos, unit.playerColor);
       this.drawUnitByPos(unit.pos, unit.color);
       this.drawUnitHealthBar(unit);

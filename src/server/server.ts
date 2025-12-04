@@ -17,6 +17,7 @@ const io : Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any> = n
 
 const room : GameRoom = new GameRoom();
 
+// to get the client associated with the player
 const playerClients : Map<string, Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>> = new Map<string, Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>>();
 
 io.on('connection', (client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) => {

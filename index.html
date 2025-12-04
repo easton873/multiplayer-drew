@@ -87,12 +87,11 @@
   <!-- Second Screen (Centered Form) -->
   <div id="formScreen">
     <div class="centeredForm">
+      <h1>MultiplayerDrew</h1>
       <label for="nameInput">Player Name</label>
       <input type="text" id="nameInput" autocomplete="off"/>
       <label for="colorInput">Choose Color</label>
       <input id="colorInput" type="color">
-      <label for="roomInput">Enter a room</label>
-      <input type="text" id="roomInput" autocomplete="off"/>
       <button id="joinButton">Join</button>
     </div>
   </div>
@@ -109,6 +108,15 @@
       <div id="playerControlsDiv"></div>
       <ul id="playerList"></ul>
       <button id="waitingStartButton">Start</button>
+    </div>
+  </div>
+
+  <!-- Fourth Screen (Centered Form) -->
+  <div id="gameOverScreen">
+    <div class="centeredForm">
+      <h1>Game Over</h1>
+      <label id="winnerLabel"></label>
+      <button id="returnToWaitingButton">Return to Setup Menu</button>
     </div>
   </div>
 </body>
