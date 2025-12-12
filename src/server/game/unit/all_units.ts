@@ -11,6 +11,7 @@ import { CARPENTER_GAME_UNIT, INDUSTRIAL_WORKER_GAME_UNIT, INVESTMENT_BANKER_GAM
 import { ScarecrowUnit } from "./scarecrow.js";
 import { SummonerUnit } from "./summoner.js";
 import { TurretUnit } from "./turret.js";
+import { LoadData, UnitLoadData } from "../../../shared/bulider.js";
 
 export const ALL_RESOURCE_UNITS : GameUnit[] = [
     MERCHANT_GAME_UNIT,
@@ -77,3 +78,15 @@ function buildUnitMap() : Map<string, GameUnit> {
 }
 
 export const UNIT_MAP : Map<string, GameUnit> = buildUnitMap();
+
+export function loadData() : LoadData {
+    let units : UnitLoadData[] = [];
+    ALL_UNITS.forEach((unit : GameUnit) => {
+        units.push(
+            {name: unit.getName()}
+        );
+    });
+    return {
+        units: units
+    };
+}

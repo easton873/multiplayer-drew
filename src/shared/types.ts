@@ -38,6 +38,7 @@ export interface ResourceData {
 }
 
 export interface UnitData {
+  name : string
   pos : PosData
   team : number
   color : string

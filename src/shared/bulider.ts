@@ -1,5 +1,13 @@
 import { PosData } from "./types.js"
 
+export interface LoadData {
+    units : UnitLoadData[]
+}
+
+export interface UnitLoadData {
+    name : string
+}
+
 export interface GameWaitingData {
     players : PlayerWaitingData[]
     board : BoardData

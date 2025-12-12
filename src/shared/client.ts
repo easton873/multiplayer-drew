@@ -1,8 +1,9 @@
 import { DefaultEventsMap } from "socket.io";
 import { Socket } from "socket.io-client";
-import { GameSetupData, GameWaitingData, PlayerWaitingData } from "./bulider";
+import { GameSetupData, GameWaitingData, LoadData, PlayerWaitingData } from "./bulider";
 import { EraData, GameData, GeneralGameData } from "./types";
 
+const LOAD_DATA_KEY = "load";
 const WAITING_PLAYER_KEY = "waiting player";
 const JOIN_SUCCESS_KEY = "join success";
 const WAITING_ROOM_UPDATE = "update waiting room";
@@ -19,6 +20,7 @@ const ROOM_CODE = "roomcode";
 
 export abstract class ClientReceiver {
     constructor(protected socket : Socket<DefaultEventsMap, DefaultEventsMap>) {
+        socket.on(LOAD_DATA_KEY, (data : LoadData) => this.handleLoadData(data));
         socket.on(WAITING_PLAYER_KEY, (data : PlayerWaitingData) => this.handlePlayerWaitingInfo(data));
         socket.on(JOIN_SUCCESS_KEY, () => this.handleJoinSuccess());
         socket.on(WAITING_ROOM_UPDATE, (data : GameWaitingData) => this.handleWaitingRoomUpdate(data));
@@ -32,6 +34,7 @@ export abstract class ClientReceiver {
         socket.on(GAME_OVER_KEY, (winner : string) => this.handleGameOver(winner));
     }
 
+    abstract handleLoadData(data : LoadData);
     abstract handlePlayerWaitingInfo(data : PlayerWaitingData);
     abstract handleJoinSuccess();
     abstract handleWaitingRoomUpdate(data : GameWaitingData);
@@ -43,6 +46,10 @@ export abstract class ClientReceiver {
     abstract handleEmitSpectatorGameState(data : GeneralGameData);
     abstract handleEraUpgradeSuccess(era : EraData);
     abstract handleGameOver(winner : string);
+}
+
+export function emitLoadData(client : any, data : LoadData) {
+    client.emit(LOAD_DATA_KEY, data);
 }
 
 export function emitPlayerWaitingInfo(client : any, data : PlayerWaitingData) {

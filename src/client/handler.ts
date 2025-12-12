@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-import { GameSetupData, GameWaitingData, PlayerSetupData, PlayerWaitingData } from "../shared/bulider";
+import { GameSetupData, GameWaitingData, LoadData, PlayerSetupData, PlayerWaitingData } from "../shared/bulider";
 import { ClientReceiver } from "../shared/client";
 import { ScreenManager } from "./screen/manager";
 import { DefaultEventsMap } from "socket.io";
@@ -42,7 +42,7 @@ export class FrontendClientHandler extends ClientReceiver {
             const y = e.clientY - rect.top;
             let gameX = Math.floor(x / gameScreen.SIZE);
             let gameY = Math.floor(y / gameScreen.SIZE);
-            this.manager.gameScreen.drawUnitByPos({x: gameX, y: gameY}, data.currPlayer.color);
+            this.manager.gameScreen.drawUnitByPos("heart", {x: gameX, y: gameY}, data.currPlayer.color);
             this.manager.gameScreen.drawCircle(gameX, gameY, 3, data.currPlayer.color);
         };
         let temp2 = (e : MouseEvent) => {
@@ -80,5 +80,8 @@ export class FrontendClientHandler extends ClientReceiver {
     handleGameOver(winner: string) {
         this.manager.toGameOverScreen();
         this.manager.gameOverScreen.displayWinner(winner);
+    }
+    handleLoadData(data: LoadData) {
+        // this.manager.gameScreen.loadImages(data);
     }
 }

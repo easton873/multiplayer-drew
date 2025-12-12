@@ -1,14 +1,19 @@
 import { GameData, UnitData, PosData, BoardData, ResourceData, EraData, PlayerSpecificData, GeneralGameData } from '../../shared/types.js';
 import { Board } from "./board.js";
 import { Era } from './era.js';
-import { Player } from "./player.js";
+import { AIPlayer, Player } from "./player.js";
 import { Pos } from './pos.js';
 import { Resources } from './resources.js';
 import { Unit } from "./unit/unit.js";
+import { LoadData, UnitLoadData } from '../../shared/bulider.js';
+import { ALL_UNITS } from './unit/all_units.js';
+import { GameUnit } from './unit/game_unit.js';
 
 export class Game {
     public spectators : string[] = []; // client ids
-    constructor(private _players : Player[], private board : Board) {}
+    constructor(private _players : Player[], private board : Board) {
+        this._players.push(new AIPlayer(100, new Pos(50, 50), board, "AI", "AI", "#6a5656ff"))
+    }
 
     gameLoop() {
         while (this.checkGameStillGoing()) {
@@ -18,12 +23,19 @@ export class Game {
 
     mainLoop() {
         this.move();
+        this.playerTurns();
         this.arePlayersStillAlive();
     }
 
     move() {
         this.board.entities.forEach((entity : Unit) => {
             entity.move(this.board);
+        })
+    }
+
+    playerTurns() {
+        this._players.forEach((player : Player) => {
+            player.doTurn();
         })
     }
 
@@ -81,6 +93,7 @@ s
         this.board.entities.forEach((unit : Unit) => {
             const unitPos : PosData = unit.pos.getPosData();
             const unitData : UnitData = {
+                name: unit.name,
                 pos : unitPos,
                 team: unit.team,
                 color: unit.color,

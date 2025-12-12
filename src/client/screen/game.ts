@@ -1,4 +1,4 @@
-import { GameSetupData, PlayerSetupData } from "../../shared/bulider";
+import { GameSetupData, LoadData, PlayerSetupData, UnitLoadData } from "../../shared/bulider";
 import { EraData, GameData, GeneralGameData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
 import { emitDeleteUnits, emitSpawnUnit } from "../../shared/routes";
 
@@ -21,6 +21,7 @@ export class GameScreen {
 
     private isDelete : boolean = false
     private bg : HTMLImageElement = new Image();
+    private images : Map<string, HTMLImageElement> = new Map<string, HTMLImageElement>();
 
     constructor(private socket : any) {
       this.zoomSelect.onchange = () => {
@@ -42,6 +43,20 @@ export class GameScreen {
     drawBG() {
       this.ctx.drawImage(this.bg, 0, 0, this.canvas.width, this.canvas.height);
     }
+
+    // loadImages(data : LoadData) {
+    //   data.units.forEach((unit : UnitLoadData) => {
+    //     let image : HTMLImageElement = new Image();
+    //     image.onload = () => {
+    //         this.images.set(unit.name, image);
+    //     };
+    //     image.onerror = () => {
+    //         // nothing for now
+    //         return;
+    //     };
+    //     image.src = '/units/' + unit.name + '.png';
+    //   });
+    // }
 
     clickFn(event) {
         const rect = this.canvas.getBoundingClientRect();
@@ -71,7 +86,7 @@ export class GameScreen {
       this.drawBG();
       data.players.forEach((player : PlayerSetupData) => {
         if (player.pos) {
-          this.drawUnitByPos(player.pos, player.color);
+          this.drawUnitByPos("heart", player.pos, player.color);
         }
       });
     }
@@ -108,15 +123,22 @@ export class GameScreen {
     
     drawUnit(unit : UnitData) {
       this.drawBorder(unit.pos, unit.playerColor);
-      this.drawUnitByPos(unit.pos, unit.color);
+      this.drawUnitByPos(unit.name, unit.pos, unit.color);
       this.drawUnitHealthBar(unit);
     }
 
-    drawUnitByPos(pos : PosData, color : string) {
-      let x : number = pos.x * this.SIZE;
-      let y : number = pos.y * this.SIZE;
+    drawUnitByPos(name : string, pos : PosData, color : string) {
+      let x : number = (pos.x * this.SIZE);
+      let y : number = (pos.y * this.SIZE);
       this.ctx.fillStyle = color;
-      this.ctx.fillRect(x, y, this.SIZE, this.SIZE);
+      if (this.images.has(name)) {
+        let image = this.images.get(name);
+        x -= this.SIZE;
+        y -= this.SIZE;
+        this.ctx.drawImage(image, x, y, this.SIZE * 3, this.SIZE * 3);
+      } else {
+        this.ctx.fillRect(x, y, this.SIZE, this.SIZE);
+      }
     }
 
     drawUnitHealthBar(unit : UnitData) {
@@ -139,7 +161,9 @@ export class GameScreen {
       let x : number = pos.x * this.SIZE;
       let y : number = pos.y * this.SIZE;
       this.ctx.fillStyle = color;
+      // this.ctx.lineWidth = 4;
       this.ctx.fillRect(x - 2, y - 2, this.SIZE + 4, this.SIZE + 4);
+       // this.ctx.lineWidth = 1;
     }
 
     drawCircle(x : number, y : number, radius : number, color : string) {

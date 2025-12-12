@@ -1,13 +1,15 @@
 import { Board } from "./board.js";
 import { Heart } from "./heart.js";
 import { Resources } from "./resources.js";
-import { ResourceUnit } from "./unit/resource_unit.js";
+import { MERCHANT_GAME_UNIT, ResourceUnit } from "./unit/resource_unit.js";
 import { ObservableUnit, Unit, UnitObserver } from "./unit/unit.js";
 import { Pos } from "./pos.js";
 import { Era } from "./era.js";
 import { PlayerSpecificData } from "../../shared/types.js";
 import { GameUnit } from "./unit/game_unit.js";
 import { UNIT_MAP } from "./unit/all_units.js";
+import { SoldierUnit } from "./unit/melee_unit.js";
+import { ArcherUnit } from "./unit/ranged_unit.js";
 
 export class Player implements UnitObserver {
     resources: Resources = new Resources(50, 0, 0);
@@ -22,6 +24,8 @@ export class Player implements UnitObserver {
         this.heart = new Heart(this, pos, this.era.currEra.getHeart());
         this.board.addEntity(this.heart);
     }
+
+    doTurn() {}
 
     notifyDeath(unit: ObservableUnit) {
         unit.unregisterObserver(this);
@@ -109,5 +113,45 @@ export class PlayerProxy extends Player {
             return;
         }
         super.NewUnit(unitType, pos);
+    }
+}
+
+export class AIPlayer extends PlayerProxy {
+    private targetMerchantNum : number = 15;
+    private placed : number = 0;
+    doTurn() : void {
+        // return;
+        if (this.resources.canAfford(MERCHANT_GAME_UNIT.getUnitCreationInfo().getCost()) &&
+        this.unitCount < this.targetMerchantNum) {
+            let pos = this.heart.pos.clone();
+            this.NewUnit(MERCHANT_GAME_UNIT.getName(), pos);
+        } else if (this.unitCount >= this.targetMerchantNum) {
+            let pos = this.heart.pos.clone();
+            if (this.placed >= 3) {
+                if (this.resources.canAfford(ArcherUnit.getUnitCreationInfo().getCost())) {
+                    this.NewUnit(ArcherUnit.getName(), pos);
+                    this.placed = 0;
+                }
+            } else {
+                if (this.resources.canAfford(SoldierUnit.getUnitCreationInfo().getCost())) {
+                    this.NewUnit(SoldierUnit.getName(), pos);
+                    this.placed++;
+                }
+            }
+        }
+
+        if (this.era.canAffordNextEra(this.resources)) {
+            this.era.advanceToNextEra(this.resources);
+        }
+    }
+
+    countUnit(unitType : new (...args: any[]) => Unit) : number {
+        let count = 0;
+        this.board.entities.forEach((unit : Unit) => {
+            if (unit instanceof unitType) {
+                count++
+            }
+        });
+        return count;
     }
 }

@@ -3,11 +3,12 @@ import { CREATE_ROOM_KEY, DISCONNECT_KEY, emitUpdateSetupPlayer, JOIN_ROOM_KEY, 
 import { Era } from "./era.js";
 import { Game } from "./game.js";
 import { GameRoom, randomRoomID, SetupPlayer } from "./game_room.js";
-import { emitGameBuilt, emitGameOver, emitGameState, emitJoinSuccess, emitPlayerWaitingInfo, emitSetPosSuccess, emitSpectatorGameState, emitStartSuccess, emitUpgradeEraSuccess, emitWaitingRoomUpdate, emitYourTurn, START_SUCCESS_KEY } from "../../shared/client.js";
+import { emitGameBuilt, emitGameOver, emitGameState, emitJoinSuccess, emitLoadData, emitPlayerWaitingInfo, emitSetPosSuccess, emitSpectatorGameState, emitStartSuccess, emitUpgradeEraSuccess, emitWaitingRoomUpdate, emitYourTurn, START_SUCCESS_KEY } from "../../shared/client.js";
 import { Pos } from "./pos.js";
 import { DefaultEventsMap, Server, Socket } from "socket.io";
 import { Player } from "./player.js";
 import { GameWaitingData, PlayerWaitingData } from "../../shared/bulider.js";
+import { loadData } from "./unit/all_units.js";
 
 const FRAME_RATE = 20;
 const ROOM_CODE = "roomcode";
@@ -20,6 +21,7 @@ export class ClientHandler extends RouteReceiver {
         console.log("guy connected");
         super(client, io);
         this.playerClients.set(this.client.id, this.client);
+        emitLoadData(this.client, loadData());``
     }
 
     handleJoinRoom(name : string, color : string){
