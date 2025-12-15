@@ -2,16 +2,22 @@ import { BoardData, GeneralGameData, PosData } from "../../shared/types.js";
 import { CREATE_ROOM_KEY, DISCONNECT_KEY, emitUpdateSetupPlayer, JOIN_ROOM_KEY, RouteReceiver, START_GAME_KEY, UNIT_SPAWN_KEY, UPGRADE_ERA_KEY } from "../../shared/routes.js";
 import { Era } from "./era.js";
 import { Game } from "./game.js";
-import { GameRoom, randomRoomID, SetupPlayer } from "./game_room.js";
-import { emitGameBuilt, emitGameOver, emitGameState, emitJoinSuccess, emitLoadData, emitPlayerWaitingInfo, emitSetPosSuccess, emitSpectatorGameState, emitStartSuccess, emitUpgradeEraSuccess, emitWaitingRoomUpdate, emitYourTurn, START_SUCCESS_KEY } from "../../shared/client.js";
+import { GameRoom, SetupPlayer } from "./game_room.js";
+import { emitGameBuilt, emitGameOver, emitGameState, emitJoinSuccess, emitLoadData, emitPlayerWaitingInfo, emitSetPosSuccess, emitSpectatorGameState, emitStartSuccess, emitUpgradeEraSuccess, emitWaitingRoomUpdate } from "../../shared/client.js";
 import { Pos } from "./pos.js";
 import { DefaultEventsMap, Server, Socket } from "socket.io";
 import { Player } from "./player.js";
-import { GameWaitingData, PlayerWaitingData } from "../../shared/bulider.js";
+import { ComputerWaitingData, GameWaitingData, PlayerWaitingData } from "../../shared/bulider.js";
 import { loadData } from "./unit/all_units.js";
 
 const FRAME_RATE = 20;
 const ROOM_CODE = "roomcode";
+
+export interface GameClient {
+  id: string;
+
+  emit(ev: string, ...args: any[]): boolean
+}
 
 export class ClientHandler extends RouteReceiver {
     constructor(client: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
@@ -40,6 +46,15 @@ export class ClientHandler extends RouteReceiver {
         // emitPlayerWaitingInfo(this.client, gameRoom.getPlayerJoinDataById(this.client.id));
     }
 
+    handleAddComputerPlayer(data : ComputerWaitingData) {
+        let player = this.room.players.get(this.client.id); // only the leader can add computers
+        if (!player.getIsLeader()) {
+            return;
+        }
+        this.room.addComputerPlayer(this, data.name, data.color, data.team);
+        emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
+    }
+
     handleBoardUpdate(board: BoardData) {
         if (!this.isLeader()) {
             return;
@@ -57,8 +72,8 @@ export class ClientHandler extends RouteReceiver {
             return;
         }
         emitStartSuccess(this.io, this.room.setupData(this.client.id));
-        let player = this.room.getPoslessPlayer().getClient()
-        emitYourTurn(player, this.room.setupData(player.id));
+        let player = this.room.getPoslessPlayer()
+        player.findStartingPos(this.room.setupData(player.getClient().id))
     }
 
     handleSubmitStartPos(pos: PosData) {
@@ -66,9 +81,17 @@ export class ClientHandler extends RouteReceiver {
         if (!gameRoom) {
             return;
         }
-        gameRoom.addPlayerPos(this.client.id, Pos.FromPosData(pos));
+        this.submitStartPosWithID(pos, this.client.id);
+    }
+
+    submitStartPosWithID(pos : PosData, id : string) {
+        let gameRoom = this.room;
+        if (!gameRoom) {
+            return;
+        }
+        gameRoom.addPlayerPos(id, Pos.FromPosData(pos));
         emitSetPosSuccess(this.client);
-        emitStartSuccess(this.io, gameRoom.setupData(this.client.id));
+        emitStartSuccess(this.io, gameRoom.setupData(id));
         if (gameRoom.allPlayersHavePos()) {
             let game : Game = gameRoom.buildGame();
             game.players.forEach((player : Player) => {
@@ -121,8 +144,8 @@ export class ClientHandler extends RouteReceiver {
             }, 1000 / FRAME_RATE);
             return;
         }
-        let nextPlayer = gameRoom.getPoslessPlayer().getClient()
-        emitYourTurn(nextPlayer, gameRoom.setupData(nextPlayer.id));
+        let nextPlayer = gameRoom.getPoslessPlayer()
+        nextPlayer.findStartingPos(gameRoom.setupData(nextPlayer.getClient().id))
     }
 
     handleDisconnect(){

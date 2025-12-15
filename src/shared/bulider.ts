@@ -26,6 +26,13 @@ export interface PlayerWaitingData {
     color : string
 }
 
+export interface ComputerWaitingData {
+    name : string
+    team : number
+    color : string
+    difficulty : string
+}
+
 export interface GameSetupData {
     boardX : number
     boardY : number

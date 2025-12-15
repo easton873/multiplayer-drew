@@ -1,4 +1,4 @@
-import { emitBoardUpdate, emitUpdateSetupPlayer } from "../../shared/routes";
+import { emitAddComputer, emitBoardUpdate, emitUpdateSetupPlayer } from "../../shared/routes";
 import { PlayerWaitingData } from "../../shared/bulider";
 import { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io";
@@ -12,12 +12,30 @@ export class WaitingScreen {
     public heightInput = document.getElementById("heightInput") as HTMLInputElement;
     public widthLabel = document.getElementById("widthLabel") as HTMLLabelElement;
     public heightLabel = document.getElementById("heightLabel") as HTMLLabelElement;
+    public addComputerDiv = document.getElementById("addComputerDiv") as HTMLDivElement;
+    public addComputerButton = document.getElementById("addComputerButton") as HTMLButtonElement;
+    public addComputerName = document.getElementById("addComputerName") as HTMLInputElement;
+    public addComputerTeam = document.getElementById("addComputerTeam") as HTMLInputElement;
+    public addComputerColor = document.getElementById("addComputerColor") as HTMLInputElement;
 
     public waitingPlayerControls = document.getElementById("playerControlsDiv") as HTMLDivElement;
 
     constructor(private socket : Socket<DefaultEventsMap, DefaultEventsMap>) {
       this.widthInput.value = "100";
       this.heightInput.value = "100";
+
+      this.addComputerButton.onclick = () => {
+        let team = parseInt(this.addComputerTeam.value);
+        if (Number.isNaN(team)) {
+          return;
+        }
+        emitAddComputer(this.socket, {
+          name: this.addComputerName.value,
+          team:  team,
+          color: this.addComputerColor.value,
+          difficulty: "",
+        });
+      };
     }
 
     drawPlayerControls(p : PlayerWaitingData) {
@@ -25,6 +43,7 @@ export class WaitingScreen {
         this.startButton.style.display = "none";
         this.widthInput.style.display = "none";
         this.heightInput.style.display = "none";
+        this.addComputerDiv.style.display = "none";
       }
 
       this.waitingPlayerControls.innerHTML = '';

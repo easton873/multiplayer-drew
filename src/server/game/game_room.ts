@@ -4,6 +4,10 @@ import { Pos } from "./pos.js";
 import { Board } from "./board.js";
 import { Player, PlayerProxy } from "./player.js";
 import { DefaultEventsMap, Socket } from "socket.io";
+import { ComputerPlayer } from "./computer/basics.js";
+import { ClientHandler, GameClient } from "./client_handler.js";
+import { emitYourTurn } from "../../shared/client.js";
+import { Random } from "./math.js";
 
 export class GameRoom {
     public players : Map<string, SetupPlayer> = new Map<string, SetupPlayer>; // player id to player
@@ -21,6 +25,14 @@ export class GameRoom {
     addPlayer(id : string, name : string, client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, color : string) {
         let isLeader : boolean = this.players.size == 0; // first to join is leader
         this.players.set(id, new SetupPlayer(id, name, client, color, isLeader));
+    }
+    
+    addComputerPlayer(handler : ClientHandler, name : string, color : string, team : number) {
+        let client = new ComputerClient()
+        let id = client.id;
+        let computer = new SetupComputerPlayer(handler, id, name, client, color, false);
+        computer.updateTeam(team);
+        this.players.set(id, computer);
     }
 
     updatePlayer(id : string, data : PlayerWaitingData) {
@@ -124,10 +136,10 @@ export class GameRoom {
 
 export class SetupPlayer {
     static DefaultTeam = -1;
-    private team : number = null;
-    private pos : Pos = null;
+    protected team : number = null;
+    protected pos : Pos = null;
     ready : boolean = true;
-    constructor(private id : string, private name: string, private client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, private color : string, private isLeader : boolean) {}
+    constructor(protected id : string, protected name: string, private client : GameClient, protected color : string, private isLeader : boolean) {}
 
     reset() {
         SetupPlayer.DefaultTeam = -1;
@@ -141,7 +153,11 @@ export class SetupPlayer {
         this.ready = other.ready;
     }
 
-    getClient() : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any> {
+    updateTeam(team : number) {
+        this.team = team;
+    }
+
+    getClient() : GameClient {
         return this.client;
     }
 
@@ -169,6 +185,10 @@ export class SetupPlayer {
         return {name : this.name, pos : this.pos ? this.pos.getPosData() : null, color: this.color};
     }
 
+    public findStartingPos(data : GameSetupData) {
+        emitYourTurn(this.client, data);
+    }
+
     createPlayer(board : Board) : Player {
         if (this.team == null) {
             this.team = SetupPlayer.DefaultTeam--;
@@ -177,12 +197,39 @@ export class SetupPlayer {
     }
 }
 
-export function randomRoomID(length: number) : string {
-    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let code = '';
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * alphabet.length);
-      code += alphabet[randomIndex];
+class ComputerClient implements GameClient {
+    public id : string;
+    private static next_id : number = 0;
+    constructor() {
+        this.id = ComputerClient.next_id.toString();
+        ComputerClient.next_id++;
     }
-    return code;
-  }
+    emit(ev: string, ...args: any[]): boolean {
+        return true;
+    }
+}
+
+class SetupComputerPlayer extends SetupPlayer {
+    constructor(protected handler : ClientHandler, id : string, name: string, client : GameClient, color : string, isLeader : boolean) {
+        super(id, name, client, color, isLeader);
+    }
+    createPlayer(board : Board) : Player {
+        if (this.team == null) {
+            this.team = SetupPlayer.DefaultTeam--;
+        }
+        return new ComputerPlayer(this.team, this.pos, board, this.id, this.name, this.color);
+    }
+
+    public findStartingPos(data: GameSetupData): void {
+        
+        this.handler.submitStartPosWithID(new Pos(getRandomInt(0, data.boardX - 1), getRandomInt(0, data.boardY - 1)), this.id);
+    }
+}
+
+function getRandomInt(min: number, max: number): number {
+  // Ensure min and max are treated as integers for the calculation
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  // The formula ensures both min and max are included in the possible results
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
