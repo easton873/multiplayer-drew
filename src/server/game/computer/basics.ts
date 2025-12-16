@@ -1,8 +1,30 @@
 import { PlayerProxy } from "../player.js";
+import { GameUnit } from "../unit/game_unit.js";
 import { SoldierUnit } from "../unit/melee_unit.js";
 import { ArcherUnit } from "../unit/ranged_unit.js";
 import { MERCHANT_GAME_UNIT } from "../unit/resource_unit.js";
 import { Unit } from "../unit/unit.js";
+
+export abstract class BaseComputerPlayer extends PlayerProxy {
+    doTurn(): void {
+        switch(this.era.getEraData().eraName) {
+            case "":
+                return;
+            default:
+                return;
+        }
+    }
+    
+    countUnit(gameUnit : GameUnit) : number {
+        let count = 0;
+        this.board.entities.forEach((unit : Unit) => {
+            if (unit.name == gameUnit.getName()) {
+                count++
+            }
+        });
+        return count;
+    }
+}
 
 export class ComputerPlayer extends PlayerProxy {
     private targetMerchantNum : number = 15;

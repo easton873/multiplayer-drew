@@ -7,6 +7,13 @@ import { INDUSTRIAL_WORKER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MINER_GAME_UNIT, PR
 import { QuickAttackerUnit, TankUnit } from "./unit/melee_unit.js";
 import { MissileUnit } from "./unit/missile.js";
 
+export const STARTING_ERA_NAME = "The Starting Era";
+export const SECOND_ERA_NAME = "The Second Era";
+export const THIRD_ERA_NAME = "Third Era";
+export const FOURTH_ERA_NAME = "Fourth Era";
+export const FIFTH_ERA_NAME = "Fifth Era";
+export const SIXTH_ERA_NAME = "Sixth Era";
+
 const STARTING_COST : Resources = new Resources(400, 0 ,0);
 const STARTING_RESOURCES : Resources = new Resources(1, 0, 0);
 const STARTING_SPEED : number = 10;
@@ -162,7 +169,7 @@ export class StartingEra extends BaseEra implements EraState {
         return new SecondEra();
     }
     getName(): string {
-        return "The Starting Era";
+        return STARTING_ERA_NAME;
     }
     getAvailableUnits(): GameUnit[] {
         return this.getUnits(LUMBER_JACK_GAME_UNIT, QuickAttackerUnit);
@@ -177,7 +184,7 @@ class SecondEra extends BaseEra implements EraState {
         return new ThirdEra();
     }
     getName(): string {
-        return "The Second Era";
+        return SECOND_ERA_NAME;
     }
     getAvailableUnits(): GameUnit[] {
         return this.getUnits(MINER_GAME_UNIT, TankUnit);
@@ -192,7 +199,7 @@ class ThirdEra extends BaseEra implements EraState {
         return new FourthEra();
     }
     getName(): string {
-        return "Third Era";
+        return THIRD_ERA_NAME;
     }
     getAvailableUnits(): GameUnit[] {
         return this.getUnits(PROSPECTOR_GAME_UNIT, MissileUnit);
@@ -207,7 +214,7 @@ class FourthEra extends BaseEra implements EraState {
         return new FifthEra();
     }
     getName(): string {
-        return "Fourth Era";
+        return FOURTH_ERA_NAME;
     }
     getAvailableUnits(): GameUnit[] {
         return this.getUnits(INDUSTRIAL_WORKER_GAME_UNIT, MissileUnit);
@@ -222,7 +229,7 @@ class FifthEra extends BaseEra implements EraState {
         return new SixthEra();
     }
     getName(): string {
-        return "Fifth Era";
+        return FIFTH_ERA_NAME;
     }
     getAvailableUnits(): GameUnit[] {
         return this.getUnits(RICH_GUY_GAME_UNIT, MissileUnit);
@@ -237,7 +244,7 @@ class SixthEra extends BaseEra implements EraState {
         return null;
     }
     getName(): string {
-        return "Fifth Era";
+        return SIXTH_ERA_NAME;
     }
     getAvailableUnits(): GameUnit[] {
         return this.getUnits();

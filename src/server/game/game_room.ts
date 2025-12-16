@@ -7,7 +7,6 @@ import { DefaultEventsMap, Socket } from "socket.io";
 import { ComputerPlayer } from "./computer/basics.js";
 import { ClientHandler, GameClient } from "./client_handler.js";
 import { emitYourTurn } from "../../shared/client.js";
-import { Random } from "./math.js";
 
 export class GameRoom {
     public players : Map<string, SetupPlayer> = new Map<string, SetupPlayer>; // player id to player
@@ -221,9 +220,45 @@ class SetupComputerPlayer extends SetupPlayer {
     }
 
     public findStartingPos(data: GameSetupData): void {
-        
-        this.handler.submitStartPosWithID(new Pos(getRandomInt(0, data.boardX - 1), getRandomInt(0, data.boardY - 1)), this.id);
+        let pos = new Pos(0, 0);
+        let poses : Pos[] = [];
+        data.players.forEach((player : PlayerSetupData) => {
+            if (player.pos != null) {
+                poses.push(new Pos(player.pos.x, player.pos.y));
+            }
+        });
+        if (poses.length > 0) {
+            pos = findFurthest(data.boardX, data.boardY, poses)
+        }
+        this.handler.submitStartPosWithID(pos, this.id);
     }
+}
+
+export function findFurthest(boardX : number, boardY : number, players : Pos[]) : Pos {
+    let maxDist = NaN;
+    let bestSpot : Pos = null;
+    for (let y = 1; y < boardY; y++) {
+        for (let x = 1; x < boardX; x++) {
+            let pos = new Pos(x, y);
+            let minDistToplayer : number = NaN;
+            for (let i = 0; i < players.length; i++) {
+                let dist = players[i].distanceTo(pos);
+                if (Number.isNaN(minDistToplayer)) {
+                    minDistToplayer = dist
+                } else if (dist < minDistToplayer) {
+                    minDistToplayer = dist;
+                }
+            }
+            if (Number.isNaN(maxDist)) {
+                maxDist = minDistToplayer;
+                bestSpot = pos;
+            } else if (minDistToplayer > maxDist) {
+                maxDist = minDistToplayer;
+                bestSpot = pos;
+            }
+        }
+    }
+    return bestSpot;
 }
 
 function getRandomInt(min: number, max: number): number {

@@ -204,7 +204,9 @@ export class GameScreen {
     }
 
     upgradeEra(era : EraData) {
+      let ogVal = this.unitSelect.value
       this.fillSelect(this.unitSelect, era.availableUnits);
+      this.unitSelect.value = ogVal;
       this.eraNameLabel.innerText = 'Era: ' + era.eraName;
       this.nextEraLabel.innerText = 'Next Era Cost:' + this.formatResources(era.nextEraCost);
     }
