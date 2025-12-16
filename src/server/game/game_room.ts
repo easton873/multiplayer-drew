@@ -7,6 +7,7 @@ import { DefaultEventsMap, Socket } from "socket.io";
 import { ComputerPlayer, WinnerComputerPlayer } from "./computer/basics.js";
 import { ClientHandler, GameClient } from "./client_handler.js";
 import { emitYourTurn } from "../../shared/client.js";
+// import { ComputerNames } from "./computer/factory.js";
 
 export class GameRoom {
     public players : Map<string, SetupPlayer> = new Map<string, SetupPlayer>; // player id to player
@@ -52,7 +53,7 @@ export class GameRoom {
     }
 
     joinRoomData() : GameWaitingData {
-        return {players: this.getPlayerJoinData(), board: {boardX: this.boardX, boardY: this.boardY}};
+        return {players: this.getPlayerJoinData(), board: {boardX: this.boardX, boardY: this.boardY}, computerDifficulties: []};
     }
 
     setupData(id : string) : GameSetupData {

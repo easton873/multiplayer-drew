@@ -17,6 +17,7 @@ export class WaitingScreen {
     public addComputerName = document.getElementById("addComputerName") as HTMLInputElement;
     public addComputerTeam = document.getElementById("addComputerTeam") as HTMLInputElement;
     public addComputerColor = document.getElementById("addComputerColor") as HTMLInputElement;
+    public addComputerDifficulty = document.getElementById("addComputerDifficulty") as HTMLSelectElement;
 
     public waitingPlayerControls = document.getElementById("playerControlsDiv") as HTMLDivElement;
 
@@ -29,6 +30,7 @@ export class WaitingScreen {
         if (Number.isNaN(team)) {
           return;
         }
+        console.log(this.addComputerDifficulty.value == "");
         emitAddComputer(this.socket, {
           name: this.addComputerName.value,
           team:  team,

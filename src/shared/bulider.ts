@@ -11,6 +11,7 @@ export interface UnitLoadData {
 export interface GameWaitingData {
     players : PlayerWaitingData[]
     board : BoardData
+    computerDifficulties : string[]
 }
 
 export interface BoardData {

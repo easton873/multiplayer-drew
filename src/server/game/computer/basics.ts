@@ -6,7 +6,7 @@ import { GameUnit } from "../unit/game_unit.js";
 import { GorillaWarfareUnit } from "../unit/gorilla_warfare.js";
 import { QuickAttackerUnit, RandomMoverUnit, SoldierUnit } from "../unit/melee_unit.js";
 import { ArcherUnit, FireballThrowerUnit } from "../unit/ranged_unit.js";
-import { CARPENTER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT } from "../unit/resource_unit.js";
+import { CARPENTER_GAME_UNIT, INVESTMENT_BANKER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT, PROSPECTOR_GAME_UNIT } from "../unit/resource_unit.js";
 import { SummonerUnit } from "../unit/summoner.js";
 import { Unit } from "../unit/unit.js";
 
@@ -75,6 +75,7 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
 }
 
 export class WinnerComputerPlayer extends BaseComputerPlayer {
+    public static NAME = "Winner";
     firstEra() {
         this.protectBase(SoldierUnit);
         if (!this.resources.canAfford(new Resources(35, 0, 0))) {
@@ -98,13 +99,15 @@ export class WinnerComputerPlayer extends BaseComputerPlayer {
         this.maintainCountOfUnits(CARPENTER_GAME_UNIT, 20);
         this.maintainCountOfUnits(MINER_GAME_UNIT, 10);
         this.maintainCountOfUnits(RandomMoverUnit, 15);
+        this.maintainCountOfUnits(SoldierUnit, 15);
         this.maintainCountOfUnits(GorillaWarfareUnit, 2);
         this.maintainCountOfUnits(new SummonerUnit(), 3);
         this.maintainCountOfUnits(FireballThrowerUnit, 1);
         this.era.advanceToNextEra(this.resources);
     }
     fourthEra() {
-        return;
+        this.maintainCountOfUnits(PROSPECTOR_GAME_UNIT, 30);
+        this.maintainCountOfUnits(INVESTMENT_BANKER_GAME_UNIT, 10);
     }
     fifthEra() {
         return;
@@ -115,6 +118,7 @@ export class WinnerComputerPlayer extends BaseComputerPlayer {
 }
 
 export class ComputerPlayer extends PlayerProxy {
+    public static NAME = "Basic";
     private targetMerchantNum : number = 15;
     private placed : number = 0;
     doTurn() : void {
