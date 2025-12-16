@@ -4,7 +4,7 @@ import { Pos } from "./pos.js";
 import { Board } from "./board.js";
 import { Player, PlayerProxy } from "./player.js";
 import { DefaultEventsMap, Socket } from "socket.io";
-import { ComputerPlayer } from "./computer/basics.js";
+import { ComputerPlayer, WinnerComputerPlayer } from "./computer/basics.js";
 import { ClientHandler, GameClient } from "./client_handler.js";
 import { emitYourTurn } from "../../shared/client.js";
 
@@ -216,7 +216,7 @@ class SetupComputerPlayer extends SetupPlayer {
         if (this.team == null) {
             this.team = SetupPlayer.DefaultTeam--;
         }
-        return new ComputerPlayer(this.team, this.pos, board, this.id, this.name, this.color);
+        return new WinnerComputerPlayer(this.team, this.pos, board, this.id, this.name, this.color);
     }
 
     public findStartingPos(data: GameSetupData): void {
