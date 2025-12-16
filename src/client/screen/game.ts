@@ -23,6 +23,10 @@ export class GameScreen {
     private bg : HTMLImageElement = new Image();
     private images : Map<string, HTMLImageElement> = new Map<string, HTMLImageElement>();
 
+    private pressedKeys : Set<string> = new Set<string>();
+    private hotKeys : Map<string, UnitCreationData> = new Map<string, UnitCreationData>();
+    private settingHotKey : string = null;
+
     constructor(private socket : any) {
       this.zoomSelect.onchange = () => {
         this.setSize();
@@ -31,13 +35,19 @@ export class GameScreen {
         let cost = this.getUnitSelect().cost
         this.unitCostLabel.innerText = this.formatResources(cost);
         this.unitInfoLabel.title = this.getUnitSelect().blurb;
+        if (this.settingHotKey != null) {
+          this.hotKeys.set(this.settingHotKey.toString(), this.getUnitSelect());
+          this.settingHotKey = null;
+        }
       }
 
       this.bg.src = '/bg.png';
 
       this.canvas.addEventListener('click', (event) => {this.clickFn(event)});
       // Attach the listener
-      document.addEventListener("keydown", (event : KeyboardEvent) => {this.handleKey(event)});
+      // document.addEventListener("keydown", (event : KeyboardEvent) => {this.handleKey(event)});
+      document.addEventListener('keydown', (event) => this.handleKeydown(event));
+      document.addEventListener('keyup', (event) => this.handleKeyup(event));
     }
 
     drawBG() {
@@ -72,6 +82,7 @@ export class GameScreen {
     }
 
     handleKey(event: KeyboardEvent) {
+      if (event.key)
       if (event.key == "d") {
         this.isDelete = true;
       } else if (event.key == "a") {
@@ -208,5 +219,42 @@ export class GameScreen {
 
     formatResources(resources : ResourceData) : string {
       return `💰${resources.gold}🪵${resources.wood}🪨${resources.stone}`
+    }
+
+    /**
+     * Handle keydown events: add the pressed key to the set.
+     */
+    handleKeydown(event: KeyboardEvent): void {
+        // Prevent default browser behavior for certain keys if needed (e.g., arrow keys scrolling the page)
+        // if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+        //     event.preventDefault();
+        // }
+        this.pressedKeys.add(event.key);
+        let number : number = parseInt(event.key);
+        if (!Number.isNaN(number) && this.isCombinationPressed(['Control'])) {
+          this.settingHotKey = event.key;
+          return;
+        }
+        if (this.hotKeys.has(event.key)) {
+          this.unitSelect.value = JSON.stringify(this.hotKeys.get(event.key));
+          this.unitSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    }
+
+    /**
+     * Handle keyup events: remove the released key from the set.
+     */
+    handleKeyup(event: KeyboardEvent): void {
+        this.pressedKeys.delete(event.key);
+    }
+
+    // Add event listeners to the window or a specific input element
+
+    /**
+     * Function to check if a specific key combination is currently pressed.
+     */
+    isCombinationPressed(combination: string[]): boolean {
+        // Check if all keys in the required combination are present in the pressedKeys set
+        return combination.every(key => this.pressedKeys.has(key));
     }
 }

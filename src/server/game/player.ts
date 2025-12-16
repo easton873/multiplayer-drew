@@ -1,15 +1,12 @@
 import { Board } from "./board.js";
 import { Heart } from "./heart.js";
 import { Resources } from "./resources.js";
-import { MERCHANT_GAME_UNIT, ResourceUnit } from "./unit/resource_unit.js";
 import { ObservableUnit, Unit, UnitObserver } from "./unit/unit.js";
 import { Pos } from "./pos.js";
 import { Era } from "./era.js";
 import { PlayerSpecificData } from "../../shared/types.js";
 import { GameUnit } from "./unit/game_unit.js";
 import { UNIT_MAP } from "./unit/all_units.js";
-import { SoldierUnit } from "./unit/melee_unit.js";
-import { ArcherUnit } from "./unit/ranged_unit.js";
 
 export class Player implements UnitObserver {
     resources: Resources = new Resources(50, 0, 0);
