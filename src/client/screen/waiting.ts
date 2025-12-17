@@ -87,6 +87,7 @@ export class WaitingScreen {
     }
 
     fillComputerSelect(difficulties : string[]) {
+      let temp = this.addComputerDifficulty.value;
       removeOptions(this.addComputerDifficulty);
       difficulties.forEach((difficulty : string) => {
         const optionElement = document.createElement('option');
@@ -94,6 +95,7 @@ export class WaitingScreen {
         optionElement.text = difficulty;
         this.addComputerDifficulty.add(optionElement);
       });
+      this.addComputerDifficulty.value = temp;
     }
 
     drawPlayerList(data : PlayerWaitingData[]) {

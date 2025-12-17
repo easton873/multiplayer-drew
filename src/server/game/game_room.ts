@@ -222,7 +222,7 @@ class SetupComputerPlayer extends SetupPlayer {
     }
 
     public findStartingPos(data: GameSetupData): void {
-        let pos = new Pos(0, 0);
+        let pos = new Pos(1, 1);
         let poses : Pos[] = [];
         data.players.forEach((player : PlayerSetupData) => {
             if (player.pos != null) {

@@ -75,6 +75,20 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
             }
         })
     }
+
+    advanceEra() {
+        this.era.advanceToNextEra(this.resources);
+    }
+
+    spamUnits(unit : GameUnit, num : number) {
+        let cost : Resources = new Resources(0, 0, 0);
+        for (let i = 0; i < num; i++) {
+            cost.add(unit.getUnitCreationInfo().getCost());
+        }
+        if (this.resources.canAfford(cost)) {
+            this.placeUnit(unit, this.heart.pos.clone(), num);
+        }
+    }
 }
 
 export class WinnerComputerPlayer extends BaseComputerPlayer {
@@ -85,7 +99,7 @@ export class WinnerComputerPlayer extends BaseComputerPlayer {
             return;
         }
         this.maintainCountOfUnits(MERCHANT_GAME_UNIT, 15);
-        this.advanceToNextEra(this.savings.copy(), new Resources(100, 25, 0));
+        this.advanceEra();
     }
     secontEra() {
         this.protectBase(QuickAttackerUnit);
@@ -123,13 +137,13 @@ export class WinnerComputerPlayer extends BaseComputerPlayer {
 
     }
 
-    advanceToNextEra(savings : Resources, newSavings : Resources) {
-        savings.add(this.era.nextEraCost);
-        if (this.resources.canAfford(savings)) {
-            this.era.advanceToNextEra(this.resources);
-            this.savings = newSavings;
-        }
-    }
+    // advanceToNextEra(savings : Resources, newSavings : Resources) {
+    //     savings.add(this.era.nextEraCost);
+    //     if (this.resources.canAfford(savings)) {
+    //         this.era.advanceToNextEra(this.resources);
+    //         this.savings = newSavings;
+    //     }
+    // }
 }
 
 export class ComputerPlayer extends PlayerProxy {
