@@ -59,9 +59,12 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
         return count;
     }
 
-    maintainCountOfUnits(unit : GameUnit, targetCount : number) {
+    maintainCountOfUnits(unit : GameUnit, targetCount : number, savings : Resources = new Resources(0, 0, 0)) {
         if (this.countUnit(unit) < targetCount) {
-            this.placeUnit(unit, this.heart.pos);
+            savings.add(unit.getUnitCreationInfo().getCost())
+            if (this.resources.canAfford(savings)) {
+                this.placeUnit(unit, this.heart.pos);
+            }
         }
     }
 
@@ -75,23 +78,19 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
 }
 
 export class WinnerComputerPlayer extends BaseComputerPlayer {
-    public static NAME = "Winner";
+    private savings = new Resources(25, 0, 0);
     firstEra() {
         this.protectBase(SoldierUnit);
         if (!this.resources.canAfford(new Resources(35, 0, 0))) {
             return;
         }
         this.maintainCountOfUnits(MERCHANT_GAME_UNIT, 15);
-        this.era.advanceToNextEra(this.resources);
-        // this.board.entities.forEach((unit : Unit) => {
-        //     if (unit.team == this.getTeam())
-        // });
+        this.advanceToNextEra(this.savings.copy(), new Resources(100, 25, 0));
     }
     secontEra() {
         this.protectBase(QuickAttackerUnit);
-        
-        this.maintainCountOfUnits(MERCHANT_GAME_UNIT, 20);
-        this.maintainCountOfUnits(LUMBER_JACK_GAME_UNIT, 7);
+        this.maintainCountOfUnits(MERCHANT_GAME_UNIT, 25);
+        this.maintainCountOfUnits(LUMBER_JACK_GAME_UNIT, 15);
         this.maintainCountOfUnits(RandomMoverUnit, 10);
         this.era.advanceToNextEra(this.resources);
     }
@@ -115,10 +114,25 @@ export class WinnerComputerPlayer extends BaseComputerPlayer {
     sixthEra() {
         return;
     }
+
+    maintainCountOfUnits(unit: GameUnit, targetCount: number): void {
+        super.maintainCountOfUnits(unit, targetCount, this.savings.copy());
+    }
+
+    maintainResourceUnit(unit: GameUnit, targetCount: number) {
+
+    }
+
+    advanceToNextEra(savings : Resources, newSavings : Resources) {
+        savings.add(this.era.nextEraCost);
+        if (this.resources.canAfford(savings)) {
+            this.era.advanceToNextEra(this.resources);
+            this.savings = newSavings;
+        }
+    }
 }
 
 export class ComputerPlayer extends PlayerProxy {
-    public static NAME = "Basic";
     private targetMerchantNum : number = 15;
     private placed : number = 0;
     doTurn() : void {

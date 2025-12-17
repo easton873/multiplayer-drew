@@ -2,6 +2,7 @@ import { emitAddComputer, emitBoardUpdate, emitUpdateSetupPlayer } from "../../s
 import { PlayerWaitingData } from "../../shared/bulider";
 import { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io";
+import { removeOptions } from "../../client/main";
 
 export class WaitingScreen {
     public div = document.getElementById("waitingScreen") as HTMLDivElement;
@@ -35,7 +36,7 @@ export class WaitingScreen {
           name: this.addComputerName.value,
           team:  team,
           color: this.addComputerColor.value,
-          difficulty: "",
+          difficulty: this.addComputerDifficulty.value,
         });
       };
     }
@@ -83,6 +84,16 @@ export class WaitingScreen {
       span.appendChild(teamInput);
 
       this.waitingPlayerControls.appendChild(span);
+    }
+
+    fillComputerSelect(difficulties : string[]) {
+      removeOptions(this.addComputerDifficulty);
+      difficulties.forEach((difficulty : string) => {
+        const optionElement = document.createElement('option');
+        optionElement.value = difficulty
+        optionElement.text = difficulty;
+        this.addComputerDifficulty.add(optionElement);
+      });
     }
 
     drawPlayerList(data : PlayerWaitingData[]) {

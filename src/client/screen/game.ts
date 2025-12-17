@@ -1,6 +1,7 @@
 import { GameSetupData, LoadData, PlayerSetupData, UnitLoadData } from "../../shared/bulider";
 import { EraData, GameData, GeneralGameData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
 import { emitDeleteUnits, emitSpawnUnit } from "../../shared/routes";
+import { removeOptions } from "../../client/main";
 
 export class GameScreen {
     public div = document.getElementById("gameScreen")!;
@@ -25,7 +26,6 @@ export class GameScreen {
 
     private pressedKeys : Set<string> = new Set<string>();
     private hotKeys : Map<string, UnitCreationData> = new Map<string, UnitCreationData>();
-    private settingHotKey : string = null;
 
     constructor(private socket : any) {
       this.zoomSelect.onchange = () => {
@@ -35,10 +35,6 @@ export class GameScreen {
         let cost = this.getUnitSelect().cost
         this.unitCostLabel.innerText = this.formatResources(cost);
         this.unitInfoLabel.title = this.getUnitSelect().blurb;
-        if (this.settingHotKey != null) {
-          this.hotKeys.set(this.settingHotKey.toString(), this.getUnitSelect());
-          this.settingHotKey = null;
-        }
       }
 
       this.bg.src = '/bg.png';
@@ -81,8 +77,7 @@ export class GameScreen {
         }
     }
 
-    handleKey(event: KeyboardEvent) {
-      if (event.key)
+    handlePlaceDelete(event: KeyboardEvent) {
       if (event.key == "d") {
         this.isDelete = true;
       } else if (event.key == "a") {
@@ -187,20 +182,13 @@ export class GameScreen {
     }
 
     fillSelect(selectElement : HTMLSelectElement, units : UnitCreationData[]) {
-      this.removeOptions(selectElement);
+      removeOptions(selectElement);
       units.forEach((data : UnitCreationData) => {
         const optionElement = document.createElement('option');
         optionElement.value = JSON.stringify(data);
         optionElement.text = data.name;
         selectElement.add(optionElement);
       });
-    }
-    
-    removeOptions(selectElement) {
-      var i, L = selectElement.options.length - 1;
-      for(i = L; i >= 0; i--) {
-         selectElement.remove(i);
-      }
     }
 
     upgradeEra(era : EraData) {
@@ -231,10 +219,11 @@ export class GameScreen {
         // if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
         //     event.preventDefault();
         // }
+        this.handlePlaceDelete(event);
         this.pressedKeys.add(event.key);
         let number : number = parseInt(event.key);
         if (!Number.isNaN(number) && this.isCombinationPressed(['Control'])) {
-          this.settingHotKey = event.key;
+          this.hotKeys.set(event.key, this.getUnitSelect());
           return;
         }
         if (this.hotKeys.has(event.key)) {

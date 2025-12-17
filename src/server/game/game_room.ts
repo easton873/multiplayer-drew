@@ -7,6 +7,7 @@ import { DefaultEventsMap, Socket } from "socket.io";
 import { ComputerPlayer, WinnerComputerPlayer } from "./computer/basics.js";
 import { ClientHandler, GameClient } from "./client_handler.js";
 import { emitYourTurn } from "../../shared/client.js";
+import { ComputerDifficulties, CreateComputer } from "./computer/factory.js";
 // import { ComputerNames } from "./computer/factory.js";
 
 export class GameRoom {
@@ -27,10 +28,10 @@ export class GameRoom {
         this.players.set(id, new SetupPlayer(id, name, client, color, isLeader));
     }
     
-    addComputerPlayer(handler : ClientHandler, name : string, color : string, team : number) {
+    addComputerPlayer(handler : ClientHandler, name : string, color : string, team : number, difficulty : string) {
         let client = new ComputerClient()
         let id = client.id;
-        let computer = new SetupComputerPlayer(handler, id, name, client, color, false);
+        let computer = new SetupComputerPlayer(handler, id, name, client, color, false, difficulty);
         computer.updateTeam(team);
         this.players.set(id, computer);
     }
@@ -53,7 +54,7 @@ export class GameRoom {
     }
 
     joinRoomData() : GameWaitingData {
-        return {players: this.getPlayerJoinData(), board: {boardX: this.boardX, boardY: this.boardY}, computerDifficulties: []};
+        return {players: this.getPlayerJoinData(), board: {boardX: this.boardX, boardY: this.boardY}, computerDifficulties: ComputerDifficulties};
     }
 
     setupData(id : string) : GameSetupData {
@@ -210,14 +211,14 @@ class ComputerClient implements GameClient {
 }
 
 class SetupComputerPlayer extends SetupPlayer {
-    constructor(protected handler : ClientHandler, id : string, name: string, client : GameClient, color : string, isLeader : boolean) {
+    constructor(protected handler : ClientHandler, id : string, name: string, client : GameClient, color : string, isLeader : boolean, private difficulty : string) {
         super(id, name, client, color, isLeader);
     }
     createPlayer(board : Board) : Player {
         if (this.team == null) {
             this.team = SetupPlayer.DefaultTeam--;
         }
-        return new WinnerComputerPlayer(this.team, this.pos, board, this.id, this.name, this.color);
+        return CreateComputer(this.difficulty, this.team, this.pos, board, this.id, this.name, this.color)
     }
 
     public findStartingPos(data: GameSetupData): void {

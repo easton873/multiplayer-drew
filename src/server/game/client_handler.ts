@@ -1,13 +1,12 @@
 import { BoardData, GeneralGameData, PosData } from "../../shared/types.js";
-import { CREATE_ROOM_KEY, DISCONNECT_KEY, emitUpdateSetupPlayer, JOIN_ROOM_KEY, RouteReceiver, START_GAME_KEY, UNIT_SPAWN_KEY, UPGRADE_ERA_KEY } from "../../shared/routes.js";
-import { Era } from "./era.js";
+import { RouteReceiver} from "../../shared/routes.js";
 import { Game } from "./game.js";
-import { GameRoom, SetupPlayer } from "./game_room.js";
+import { GameRoom } from "./game_room.js";
 import { emitGameBuilt, emitGameOver, emitGameState, emitJoinSuccess, emitLoadData, emitPlayerWaitingInfo, emitSetPosSuccess, emitSpectatorGameState, emitStartSuccess, emitUpgradeEraSuccess, emitWaitingRoomUpdate } from "../../shared/client.js";
 import { Pos } from "./pos.js";
 import { DefaultEventsMap, Server, Socket } from "socket.io";
 import { Player } from "./player.js";
-import { ComputerWaitingData, GameWaitingData, PlayerWaitingData } from "../../shared/bulider.js";
+import { ComputerWaitingData, PlayerWaitingData } from "../../shared/bulider.js";
 import { loadData } from "./unit/all_units.js";
 
 const FRAME_RATE = 30;
@@ -51,7 +50,7 @@ export class ClientHandler extends RouteReceiver {
         if (!player.getIsLeader()) {
             return;
         }
-        this.room.addComputerPlayer(this, data.name, data.color, data.team);
+        this.room.addComputerPlayer(this, data.name, data.color, data.team, data.difficulty);
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 

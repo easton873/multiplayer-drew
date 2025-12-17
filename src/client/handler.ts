@@ -21,6 +21,7 @@ export class FrontendClientHandler extends ClientReceiver {
     }
     handleWaitingRoomUpdate(data: GameWaitingData) {
         this.manager.waitingScreen.drawPlayerList(data.players);
+        this.manager.waitingScreen.fillComputerSelect(data.computerDifficulties);
         this.manager.waitingScreen.widthLabel.innerHTML = `Board Width: ${data.board.boardX}`;
         this.manager.waitingScreen.heightLabel.innerHTML = `Board Height: ${data.board.boardY}`;
     }
