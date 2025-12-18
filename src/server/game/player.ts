@@ -55,11 +55,15 @@ export class Player implements UnitObserver {
         let unitCost = gameUnit.getUnitCreationInfo().getCost()
         if (this.resources.canAfford(unitCost)) {
             this.resources.spend(unitCost);
-            let unit = gameUnit.construct(this, pos);
-            unit.registerObserver(this);
-            this.board.addEntity(unit);
-            this.unitCount++;
+            this.addUnitToBoard(gameUnit, pos);
         }
+    }
+
+    protected addUnitToBoard(gameUnit : GameUnit, pos : Pos) {
+        let unit = gameUnit.construct(this, pos);
+        unit.registerObserver(this);
+        this.board.addEntity(unit);
+        this.unitCount++;
     }
 
     whichUnit(s: string): GameUnit {

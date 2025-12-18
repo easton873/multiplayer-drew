@@ -4,7 +4,6 @@ import { Pos } from "./pos.js";
 import { Board } from "./board.js";
 import { Player, PlayerProxy } from "./player.js";
 import { DefaultEventsMap, Socket } from "socket.io";
-import { ComputerPlayer, WinnerComputerPlayer } from "./computer/basics.js";
 import { ClientHandler, GameClient } from "./client_handler.js";
 import { emitYourTurn } from "../../shared/client.js";
 import { ComputerDifficulties, CreateComputer } from "./computer/factory.js";
