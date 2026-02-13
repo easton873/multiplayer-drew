@@ -43,16 +43,16 @@ export class WaitingScreen {
 
     drawPlayerControls(p : PlayerWaitingData) {
       if (!p.leader) {
-        this.startButton.style.display = "none";
-        this.widthInput.style.display = "none";
-        this.heightInput.style.display = "none";
-        this.addComputerDiv.style.display = "none";
+        this.startButton.classList.add("hidden");
+        this.widthInput.parentElement?.parentElement?.classList.add("hidden");
+        this.addComputerDiv.classList.add("hidden");
       }
 
       this.waitingPlayerControls.innerHTML = '';
       const playerNameLabel = document.createElement('label');
       playerNameLabel.innerText = p.name;
-      // <input id="colorInput" type="color">
+      playerNameLabel.className = "pixel-label";
+
       const colorSelect = document.createElement('input');
       colorSelect.type = "color";
       colorSelect.value = p.color;
@@ -66,6 +66,8 @@ export class WaitingScreen {
 
       const teamInput = document.createElement('input');
       teamInput.type = "number";
+      teamInput.className = "pixel-input";
+      teamInput.placeholder = "Team";
       teamInput.onkeyup = () => {
         let team = null;
         if (teamInput.value != "") {
@@ -79,6 +81,7 @@ export class WaitingScreen {
       };
 
       const span = document.createElement('span');
+      span.className = "player-controls-row";
       span.appendChild(playerNameLabel);
       span.appendChild(colorSelect);
       span.appendChild(teamInput);
@@ -101,24 +104,24 @@ export class WaitingScreen {
     drawPlayerList(data : PlayerWaitingData[]) {
       this.playerList.innerHTML = '';
       data.forEach((p : PlayerWaitingData) => {
-        const playerNameLabel = document.createElement('label');
-        playerNameLabel.innerText = p.name;
-        // <input id="colorInput" type="color">
-        const colorSelect = document.createElement('input');
-        colorSelect.type = "color";
-        colorSelect.value = p.color;
-        colorSelect.disabled = true;
+        const nameSpan = document.createElement('span');
+        nameSpan.className = "player-card__name";
+        nameSpan.innerText = p.name;
 
-        const teamLabel = document.createElement('label');
-        teamLabel.innerText = p.team ? p.team.toString() : "";
+        const colorSwatch = document.createElement('div');
+        colorSwatch.className = "player-card__color-swatch";
+        colorSwatch.style.backgroundColor = p.color;
 
-        const span = document.createElement('span');
-        span.appendChild(playerNameLabel);
-        span.appendChild(colorSelect);
-        span.appendChild(teamLabel);
+        const teamSpan = document.createElement('span');
+        teamSpan.className = "player-card__team";
+        teamSpan.innerText = p.team ? `Team ${p.team}` : "";
 
         const li = document.createElement('li');
-        li.appendChild(span);
+        li.className = "player-card";
+        li.style.borderLeftColor = p.color;
+        li.appendChild(nameSpan);
+        li.appendChild(colorSwatch);
+        li.appendChild(teamSpan);
         this.playerList.appendChild(li);
       })
     }

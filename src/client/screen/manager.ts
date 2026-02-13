@@ -33,7 +33,7 @@ export class ScreenManager {
 
     toGameOverScreen() {
       this.hideAll();
-      this.gameOverScreen.div.style.display = "inline";
+      this.gameOverScreen.div.style.display = "flex";
     }
 
     hideAll() {

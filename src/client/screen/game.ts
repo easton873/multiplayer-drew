@@ -11,12 +11,14 @@ export class GameScreen {
     public heartProgress = document.getElementById('heartProgress') as HTMLProgressElement;
     public unitSelect = document.getElementById('unitSelect') as HTMLSelectElement;
     public unitInfoLabel = document.getElementById('unitInfoLabel') as HTMLLabelElement;
+    public unitInfoTooltip = document.getElementById('unitInfoTooltip') as HTMLSpanElement;
     public unitCostLabel = document.getElementById('unitCostLabel') as HTMLLabelElement;
     public unitCountLabel = document.getElementById('unitCountLabel') as HTMLLabelElement;
     public upgradeButton = document.getElementById('upgradeButton') as HTMLButtonElement;
     public eraNameLabel = document.getElementById('eraNameLabel') as HTMLLabelElement;
     public nextEraLabel = document.getElementById('nextEraLabel') as HTMLLabelElement;
     public zoomSelect = document.getElementById('zoomList') as HTMLSelectElement;
+    public modeIndicator = document.getElementById('modeIndicator') as HTMLSpanElement;
     public ctx : CanvasRenderingContext2D = this.canvas.getContext('2d')!;
     public SIZE : number = 10;
 
@@ -34,7 +36,7 @@ export class GameScreen {
       this.unitSelect.onchange = () => {
         let cost = this.getUnitSelect().cost
         this.unitCostLabel.innerText = this.formatResources(cost);
-        this.unitInfoLabel.title = this.getUnitSelect().blurb;
+        this.unitInfoTooltip.textContent = this.getUnitSelect().blurb;
       }
 
       this.bg.src = '/bg.png';
@@ -80,8 +82,12 @@ export class GameScreen {
     handlePlaceDelete(event: KeyboardEvent) {
       if (event.key == "d") {
         this.isDelete = true;
+        this.modeIndicator.textContent = "DELETE";
+        this.modeIndicator.className = "hud-mode hud-mode--delete";
       } else if (event.key == "a") {
         this.isDelete = false;
+        this.modeIndicator.textContent = "ADD";
+        this.modeIndicator.className = "hud-mode hud-mode--add";
       }
     }
 
@@ -197,6 +203,7 @@ export class GameScreen {
       this.unitSelect.value = ogVal;
       this.eraNameLabel.innerText = 'Era: ' + era.eraName;
       this.nextEraLabel.innerText = 'Next Era Cost:' + this.formatResources(era.nextEraCost);
+      this.updateHotkeyLabels();
     }
 
     setSize() {
@@ -224,6 +231,7 @@ export class GameScreen {
         let number : number = parseInt(event.key);
         if (!Number.isNaN(number) && this.isCombinationPressed(['Control'])) {
           this.hotKeys.set(event.key, this.getUnitSelect());
+          this.updateHotkeyLabels();
           return;
         }
         if (this.hotKeys.has(event.key)) {
@@ -247,5 +255,21 @@ export class GameScreen {
     isCombinationPressed(combination: string[]): boolean {
         // Check if all keys in the required combination are present in the pressedKeys set
         return combination.every(key => this.pressedKeys.has(key));
+    }
+
+    updateHotkeyLabels() {
+      // Build reverse map: unit name → key
+      const nameToKey = new Map<string, string>();
+      this.hotKeys.forEach((unit, key) => {
+        nameToKey.set(unit.name, key);
+      });
+
+      // Update each option text
+      for (let i = 0; i < this.unitSelect.options.length; i++) {
+        const option = this.unitSelect.options[i];
+        const data : UnitCreationData = JSON.parse(option.value);
+        const key = nameToKey.get(data.name);
+        option.text = key ? `[${key}] ${data.name}` : data.name;
+      }
     }
 }

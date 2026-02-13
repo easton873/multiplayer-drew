@@ -2,130 +2,137 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MultiplayerDrew</title>
+  <link rel="stylesheet" href="/styles.css">
   <script type="module" crossorigin src="/src/client/main.ts"></script>
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-    }
-
-    #controls {
-      position: sticky;
-      top: 0;
-      background: white;
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-bottom: 1px solid #ccc;
-      z-index: 10; /* Ensure it stays above canvas */
-    }
-
-    #canvasContainer {
-      flex: 1;
-      overflow: auto;
-    }
-
-    canvas {
-      border: 1px solid black;
-      display: block;
-      margin: auto; /* Center the canvas horizontally */
-    }
-
-    #formScreen {
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #waitingScreen {
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .centeredForm {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-  </style>
 </head>
 <body>
   <!-- Main Game Screen -->
   <div id="gameScreen">
     <div id="controls">
-      <label id="resourceLabel">Multiplayer Drew</label>
-      <label for="heartProgress">Heart</label>
-      <progress id="heartProgress" value="10" max="10"></progress>
-      <select id="unitSelect"></select>
-      <label id="unitInfoLabel" title="unit info">&#9432;</label>
-      <label id="unitCostLabel">Unit Cost</label>
-      <label id="unitCountLabel">Units 0/0</label>
-      <label id="eraNameLabel">Current Era</label>
-      <button id="upgradeButton">Upgrade Era</button>
-      <label id="nextEraLabel">Next Era</label>
-      <select name="zoom" id="zoomList" value="10px">
-        <option value="30">30px</option>
-        <option value="20">20px</option>
-        <option value="10">10px</option>
-        <option value="5">5px</option>
-        <option value="1">1px</option>
-      </select>
+      <!-- Resources -->
+      <div class="hud-group">
+        <label id="resourceLabel">Multiplayer Drew</label>
+      </div>
+
+      <!-- Health -->
+      <div class="hud-group">
+        <label for="heartProgress" class="pixel-label">HP</label>
+        <progress id="heartProgress" class="pixel-progress" value="10" max="10"></progress>
+      </div>
+
+      <div class="hud-separator"></div>
+
+      <!-- Unit -->
+      <div class="hud-group">
+        <select id="unitSelect" class="pixel-select"></select>
+        <label id="unitInfoLabel" class="tooltip-wrapper">&#9432;
+          <span id="unitInfoTooltip" class="tooltip-text">unit info</span>
+        </label>
+        <label id="unitCostLabel" class="pixel-label">Unit Cost</label>
+        <label id="unitCountLabel" class="pixel-label">Units 0/0</label>
+      </div>
+
+      <!-- Mode Indicator -->
+      <span id="modeIndicator" class="hud-mode hud-mode--add">ADD</span>
+
+      <div class="hud-separator"></div>
+
+      <!-- Era -->
+      <div class="hud-group">
+        <label id="eraNameLabel" class="pixel-label">Current Era</label>
+        <button id="upgradeButton" class="pixel-btn pixel-btn--upgrade">Upgrade Era</button>
+        <label id="nextEraLabel" class="pixel-label">Next Era</label>
+      </div>
+
+      <!-- Zoom -->
+      <div class="hud-group">
+        <select name="zoom" id="zoomList" class="pixel-select" value="10px">
+          <option value="30">30px</option>
+          <option value="20">20px</option>
+          <option value="10">10px</option>
+          <option value="5">5px</option>
+          <option value="1">1px</option>
+        </select>
+      </div>
     </div>
     <div id="canvasContainer">
       <canvas id="game" width="1600" height="1200"></canvas>
     </div>
   </div>
 
-  <!-- Second Screen (Centered Form) -->
+  <!-- Join Screen -->
   <div id="formScreen">
-    <div class="centeredForm">
-      <h1>MultiplayerDrew</h1>
-      <label for="nameInput">Player Name</label>
-      <input type="text" id="nameInput" autocomplete="off"/>
-      <label for="colorInput">Choose Color</label>
-      <input id="colorInput" type="color">
-      <button id="joinButton">Join</button>
-    </div>
-  </div>
-
-  <!-- Third Screen (Centered Form) -->
-  <div id="waitingScreen">
-    <div class="centeredForm">
-      <h1>Waiting Room</h1>
-      <label for="widthInput" id="widthLabel">Board Width</label>
-      <input type="text" id="widthInput" autocomplete="off">
-      <label for="heightInput" id="heightLabel">Board Height</label>
-      <input type="text" id="heightInput" autocomplete="off">
-      <div id="addComputerDiv">
-        <span>
-          <input type="text" id="addComputerName" autocomplete="pff" placeholder="Computer Name">
-          <input type="number" id="addComputerTeam" autocomplete="off" placeholder="team">
-          <input type="color" id="addComputerColor" autocomplete="off">
-          <select id="addComputerDifficulty"></select>
-        </span>
-        <button id="addComputerButton">Add Computer Player</button>
+    <div class="pixel-panel">
+      <h1 class="title-glow">MultiplayerDrew</h1>
+      <p class="subtitle">Conquer the pixel battlefield</p>
+      <div class="form-group">
+        <label for="nameInput" class="pixel-label">Player Name</label>
+        <input type="text" id="nameInput" class="pixel-input" autocomplete="off" placeholder="Enter name..." />
       </div>
-      <label for="playerList">Current Players</label>
-      <div id="playerControlsDiv"></div>
-      <ul id="playerList"></ul>
-      <button id="waitingStartButton">Start</button>
+      <div class="form-group">
+        <label for="colorInput" class="pixel-label">Choose Color</label>
+        <input id="colorInput" type="color" class="pixel-input">
+      </div>
+      <button id="joinButton" class="pixel-btn">Join</button>
     </div>
   </div>
 
-  <!-- Fourth Screen (Centered Form) -->
+  <!-- Waiting Room Screen -->
+  <div id="waitingScreen">
+    <div class="waiting-layout">
+      <!-- Sidebar -->
+      <div class="waiting-sidebar">
+        <!-- Board Config -->
+        <div class="pixel-panel">
+          <h3 class="pixel-panel__title">Board Config</h3>
+          <div class="form-group">
+            <label for="widthInput" id="widthLabel" class="pixel-label">Width</label>
+            <input type="text" id="widthInput" class="pixel-input" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="heightInput" id="heightLabel" class="pixel-label">Height</label>
+            <input type="text" id="heightInput" class="pixel-input" autocomplete="off">
+          </div>
+        </div>
+
+        <!-- Add Computer -->
+        <div class="pixel-panel" id="addComputerDiv">
+          <h3 class="pixel-panel__title">Add Computer</h3>
+          <div class="computer-add-row">
+            <input type="text" id="addComputerName" class="pixel-input" autocomplete="pff" placeholder="Name">
+            <input type="number" id="addComputerTeam" class="pixel-input" autocomplete="off" placeholder="Team">
+            <input type="color" id="addComputerColor" autocomplete="off">
+            <select id="addComputerDifficulty" class="pixel-select"></select>
+          </div>
+          <button id="addComputerButton" class="pixel-btn pixel-btn--secondary">Add Computer</button>
+        </div>
+      </div>
+
+      <!-- Main: Players -->
+      <div class="waiting-main">
+        <div class="pixel-panel" style="height: 100%;">
+          <h3 class="pixel-panel__title">Players</h3>
+          <div id="playerControlsDiv"></div>
+          <ul id="playerList" class="player-list"></ul>
+        </div>
+      </div>
+
+      <!-- Footer: Start -->
+      <div class="waiting-footer">
+        <button id="waitingStartButton" class="pixel-btn">Start Game</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Over Screen -->
   <div id="gameOverScreen">
-    <div class="centeredForm">
+    <div class="pixel-panel">
+      <div class="trophy-icon">🏆</div>
       <h1>Game Over</h1>
       <label id="winnerLabel"></label>
-      <button id="returnToWaitingButton">Return to Setup Menu</button>
+      <button id="returnToWaitingButton" class="pixel-btn">Return to Setup</button>
     </div>
   </div>
 </body>
