@@ -31,12 +31,9 @@ export class FrontendClientHandler extends ClientReceiver {
         this.manager.gameScreen.setCanvasSize(data.boardX, data.boardY);
         this.manager.gameScreen.startSetupRenderLoop(data);
         this.manager.gameScreen.requestFullscreen();
-        if (data.placingPlayerName) {
-            this.manager.gameScreen.setupBanner.textContent = `${data.placingPlayerName}'s turn to place`;
-            this.manager.gameScreen.setupBanner.classList.remove('hidden');
-        } else {
-            this.manager.gameScreen.setupBanner.classList.add('hidden');
-        }
+        this.manager.gameScreen.setupBanner.textContent = `${data.placingPlayerName}'s turn to place`;
+        this.manager.gameScreen.setupBanner.style.color = data.placingPlayerColor;
+        this.manager.gameScreen.setupBanner.classList.remove('hidden');
     }
     handleYourTurn(data: GameSetupData) {
         let gameScreen = this.manager.gameScreen;
@@ -72,6 +69,7 @@ export class FrontendClientHandler extends ClientReceiver {
     }
     handleBuildSucces(era: EraData) {
         console.log('build success!');
+        this.manager.gameScreen.setupBanner.classList.add('hidden');
         this.manager.gameScreen.upgradeEra(era);
     }
     handleEraUpgradeSuccess(era: EraData) {

@@ -73,6 +73,7 @@ export class ClientHandler extends RouteReceiver {
         let player = this.room.getPoslessPlayer();
         let data = this.room.setupData(this.client.id);
         data.placingPlayerName = player.getSetupData().name;
+        data.placingPlayerColor = player.getSetupData().color;
         emitStartSuccess(this.io, data);
         player.findStartingPos(this.room.setupData(player.getClient().id));
     }
@@ -148,6 +149,7 @@ export class ClientHandler extends RouteReceiver {
         let nextPlayer = gameRoom.getPoslessPlayer();
         let data = gameRoom.setupData(id);
         data.placingPlayerName = nextPlayer.getSetupData().name;
+        data.placingPlayerColor = nextPlayer.getSetupData().color;
         emitStartSuccess(this.io, data);
         nextPlayer.findStartingPos(gameRoom.setupData(nextPlayer.getClient().id));
     }

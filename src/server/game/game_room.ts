@@ -59,9 +59,9 @@ export class GameRoom {
     setupData(id : string) : GameSetupData {
         let player = this.players.get(id);
         if (!player) {
-            return {boardX: this.boardX, boardY: this.boardY, players: this.getPlayerSetupData(), currPlayer: null};
+            return {boardX: this.boardX, boardY: this.boardY, players: this.getPlayerSetupData(), currPlayer: null, placingPlayerName: "", placingPlayerColor: ""};
         }
-        return {boardX: this.boardX, boardY: this.boardY, players: this.getPlayerSetupData(), currPlayer: player.getSetupData()};
+        return {boardX: this.boardX, boardY: this.boardY, players: this.getPlayerSetupData(), currPlayer: player.getSetupData(), placingPlayerName: "", placingPlayerColor: ""};
     }
 
     setBoardXY(width : number, height : number) {
