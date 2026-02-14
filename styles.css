@@ -426,6 +426,7 @@ input[type="color"].pixel-input {
   flex-direction: column;
   background: var(--bg-medium);
   border-left: 3px solid var(--border-purple);
+  overflow-x: hidden;
   overflow-y: hidden;
   --font-size-xs: 10px;
   --font-size-sm: 12px;
@@ -435,9 +436,10 @@ input[type="color"].pixel-input {
   padding: 10px 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
   border-top: 3px solid var(--border-purple);
   flex: 1;
+  word-break: break-word;
 }
 
 .hud-group {
@@ -445,20 +447,21 @@ input[type="color"].pixel-input {
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .hud-separator {
   width: 100%;
-  height: 2px;
+  height: 3px;
   background: var(--border-purple);
   flex-shrink: 0;
+  margin: 6px 0;
 }
 
 /* Resource label */
 #resourceLabel {
   font-size: var(--font-size-sm);
   color: var(--accent-gold);
-  white-space: nowrap;
 }
 
 /* Health */
@@ -502,24 +505,27 @@ input[type="color"].pixel-input {
   opacity: 1;
 }
 
+#sidebar .tooltip-text {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
 /* Unit cost / count */
 #unitCostLabel, #unitCountLabel {
   font-size: var(--font-size-xs);
   color: var(--text-secondary);
-  white-space: nowrap;
 }
 
 /* Era labels */
 #eraNameLabel {
   font-size: var(--font-size-xs);
   color: var(--accent-gold);
-  white-space: nowrap;
 }
 
 #nextEraLabel {
   font-size: var(--font-size-xs);
   color: var(--text-muted);
-  white-space: nowrap;
 }
 
 /* HUD selects & buttons */
@@ -531,6 +537,12 @@ input[type="color"].pixel-input {
 #controls .pixel-btn {
   font-size: var(--font-size-xs);
   padding: 6px 12px;
+}
+
+#controls .pixel-select,
+#controls .pixel-btn,
+#controls .pixel-progress {
+  width: 100%;
 }
 
 /* Mode Indicator */
