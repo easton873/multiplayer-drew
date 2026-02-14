@@ -54,7 +54,6 @@ export class GameScreen {
 
     private isDelete : boolean = false
     private bg : HTMLImageElement = new Image();
-    private bgPattern : CanvasPattern | null = null;
     private images : Map<string, HTMLImageElement> = new Map<string, HTMLImageElement>();
 
     private pressedKeys : Set<string> = new Set<string>();
@@ -76,9 +75,6 @@ export class GameScreen {
       }
 
       this.bg.src = '/bg.png';
-      this.bg.onload = () => {
-        this.bgPattern = this.ctx.createPattern(this.bg, 'repeat');
-      };
 
       this.canvas.addEventListener('click', (event) => {this.clickFn(event)});
       this.fullscreenButton.addEventListener('click', () => this.toggleFullscreen());
@@ -174,10 +170,6 @@ export class GameScreen {
       if (w > 0 && h > 0) {
         this.canvas.width = w;
         this.canvas.height = h;
-        // Recreate pattern since canvas resize clears context state
-        if (this.bg.complete && this.bg.naturalWidth > 0) {
-          this.bgPattern = this.ctx.createPattern(this.bg, 'repeat');
-        }
       }
     }
 
@@ -252,14 +244,7 @@ export class GameScreen {
 
     drawBG() {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      if (this.bgPattern && this.boardWidth > 0 && this.boardHeight > 0) {
-        this.ctx.save();
-        this.ctx.translate(-this.cameraX * this.zoom, -this.cameraY * this.zoom);
-        this.ctx.fillStyle = this.bgPattern;
-        this.ctx.fillRect(0, 0, this.boardWidth * this.zoom, this.boardHeight * this.zoom);
-        this.ctx.restore();
-      } else if (this.bg.complete && this.boardWidth > 0 && this.boardHeight > 0) {
-        // Fallback: draw stretched bg
+      if (this.bg.complete && this.bg.naturalWidth > 0 && this.boardWidth > 0 && this.boardHeight > 0) {
         this.ctx.save();
         this.ctx.translate(-this.cameraX * this.zoom, -this.cameraY * this.zoom);
         this.ctx.drawImage(this.bg, 0, 0, this.boardWidth * this.zoom, this.boardHeight * this.zoom);
