@@ -6,7 +6,7 @@ import { removeOptions } from "../../client/main";
 const ZOOM_FACTOR = 1.1;
 const MIN_ZOOM = 2;
 const MAX_ZOOM = 40;
-const PAN_SCROLL_SPEED = 0.003;
+const PAN_SCROLL_SPEED = 0.006;
 const KEY_SCROLL_SPEED = 0.5;
 const MINIMAP_MAX_DIM = 180;
 
@@ -34,7 +34,7 @@ export class GameScreen {
     // Camera state
     private cameraX : number = 0; // top-left of viewport in tile coords
     private cameraY : number = 0;
-    private zoom : number = 10; // pixels per tile
+    private zoom : number = MAX_ZOOM; // pixels per tile
     private boardWidth : number = 0;
     private boardHeight : number = 0;
 
@@ -455,8 +455,14 @@ export class GameScreen {
       const mctx = this.minimapCtx;
 
       // Background
-      mctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-      mctx.fillRect(0, 0, mw, mh);
+      if (this.bg.complete && this.bg.naturalWidth > 0) {
+          mctx.drawImage(this.bg, 0, 0, mw, mh);
+          mctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+          mctx.fillRect(0, 0, mw, mh);
+      } else {
+          mctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+          mctx.fillRect(0, 0, mw, mh);
+      }
 
       const scaleX = mw / this.boardWidth;
       const scaleY = mh / this.boardHeight;
@@ -489,8 +495,14 @@ export class GameScreen {
       const mctx = this.minimapCtx;
 
       // Background
-      mctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-      mctx.fillRect(0, 0, mw, mh);
+      if (this.bg.complete && this.bg.naturalWidth > 0) {
+          mctx.drawImage(this.bg, 0, 0, mw, mh);
+          mctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+          mctx.fillRect(0, 0, mw, mh);
+      } else {
+          mctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+          mctx.fillRect(0, 0, mw, mh);
+      }
 
       const scaleX = mw / this.boardWidth;
       const scaleY = mh / this.boardHeight;
@@ -516,16 +528,6 @@ export class GameScreen {
       mctx.strokeStyle = 'white';
       mctx.lineWidth = 1.5;
       mctx.strokeRect(vpX, vpY, vpW, vpH);
-    }
-
-    zoomToRandom() {
-      if (this.boardWidth <= 0 || this.boardHeight <= 0) return;
-      this.zoom = MAX_ZOOM;
-      const maxCamX = Math.max(0, this.boardWidth - this.viewportWidthTiles);
-      const maxCamY = Math.max(0, this.boardHeight - this.viewportHeightTiles);
-      this.cameraX = Math.random() * maxCamX;
-      this.cameraY = Math.random() * maxCamY;
-      this.clampCamera();
     }
 
     handleMinimapClick(event : MouseEvent) {
