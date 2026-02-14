@@ -60,6 +60,11 @@ export class GameScreen {
     private pressedKeys : Set<string> = new Set<string>();
     private hotKeys : Map<string, UnitCreationData> = new Map<string, UnitCreationData>();
 
+    // Setup render loop state
+    private setupRafId : number = 0;
+    private setupData : GameSetupData | null = null;
+    public setupPreview : { pos: PosData; color: string } | null = null;
+
     get viewportWidthTiles() : number { return this.canvas.width / this.zoom; }
     get viewportHeightTiles() : number { return this.canvas.height / this.zoom; }
 
@@ -233,6 +238,9 @@ export class GameScreen {
       const mx = this.mouseScreenX;
       const my = this.mouseScreenY;
 
+      // Skip if mouse is outside canvas bounds (e.g. over controls bar)
+      if (mx < 0 || mx > w || my < 0 || my > h) return;
+
       if (mx < EDGE_SCROLL_MARGIN) this.cameraX -= EDGE_SCROLL_SPEED;
       if (mx > w - EDGE_SCROLL_MARGIN) this.cameraX += EDGE_SCROLL_SPEED;
       if (my < EDGE_SCROLL_MARGIN) this.cameraY -= EDGE_SCROLL_SPEED;
@@ -312,6 +320,38 @@ export class GameScreen {
           this.drawUnitByPos("heart", player.pos, player.color);
         }
       });
+    }
+
+    startSetupRenderLoop(data : GameSetupData) {
+      this.setupData = data;
+      if (this.setupRafId) return; // already running
+      const loop = () => {
+        this.updateEdgeScroll();
+        this.updateKeyScroll();
+        this.clampCamera();
+        if (this.setupData) {
+          this.drawSetupGame(this.setupData);
+        }
+        if (this.setupPreview) {
+          this.drawUnitByPos("heart", this.setupPreview.pos, this.setupPreview.color);
+          this.drawCircle(this.setupPreview.pos.x, this.setupPreview.pos.y, 3, this.setupPreview.color);
+        }
+        this.setupRafId = requestAnimationFrame(loop);
+      };
+      this.setupRafId = requestAnimationFrame(loop);
+    }
+
+    stopSetupRenderLoop() {
+      if (this.setupRafId) {
+        cancelAnimationFrame(this.setupRafId);
+        this.setupRafId = 0;
+      }
+      this.setupData = null;
+      this.setupPreview = null;
+    }
+
+    updateSetupData(data : GameSetupData) {
+      this.setupData = data;
     }
 
     drawGame(data : GameData) {
@@ -438,13 +478,15 @@ export class GameScreen {
       const scaleX = mw / this.boardWidth;
       const scaleY = mh / this.boardHeight;
 
-      // Draw units as colored dots
+      // Draw units as colored circles
+      const dotRadius = Math.max(2, Math.min(scaleX, scaleY) * 0.75);
       units.forEach((unit : UnitData) => {
         const ux = unit.pos.x * scaleX;
         const uy = unit.pos.y * scaleY;
-        const dotSize = Math.max(2, Math.min(scaleX, scaleY) * 0.8);
         mctx.fillStyle = unit.playerColor;
-        mctx.fillRect(ux, uy, dotSize, dotSize);
+        mctx.beginPath();
+        mctx.arc(ux, uy, dotRadius, 0, 2 * Math.PI);
+        mctx.fill();
       });
 
       // Draw viewport rectangle

@@ -29,33 +29,33 @@ export class FrontendClientHandler extends ClientReceiver {
         this.manager.toGameScreen();
         this.latestData = data;
         this.manager.gameScreen.setCanvasSize(data.boardX, data.boardY);
-        this.manager.gameScreen.drawSetupGame(this.latestData);
+        this.manager.gameScreen.startSetupRenderLoop(data);
         this.manager.gameScreen.requestFullscreen();
     }
     handleYourTurn(data: GameSetupData) {
         let gameScreen = this.manager.gameScreen;
-        let ctx = gameScreen.ctx;
+        this.latestData = data;
+        gameScreen.updateSetupData(data);
         let temp = (e : MouseEvent) => {
-            ctx.clearRect(0, 0, gameScreen.canvas.width, gameScreen.canvas.height);
-            this.manager.gameScreen.drawSetupGame(this.latestData);
             const pos = gameScreen.screenToGame(e.clientX, e.clientY);
-            this.manager.gameScreen.drawUnitByPos("heart", pos, data.currPlayer.color);
-            this.manager.gameScreen.drawCircle(pos.x, pos.y, 3, data.currPlayer.color);
+            gameScreen.setupPreview = { pos, color: data.currPlayer.color };
         };
         let temp2 = (e : MouseEvent) => {
             const pos = gameScreen.screenToGame(e.clientX, e.clientY);
             emitSubmitStartPos(this.socket, pos);
         };
-        this.manager.gameScreen.canvas.addEventListener('mousemove', temp);
-        this.manager.gameScreen.canvas.addEventListener('click', temp2);
+        gameScreen.canvas.addEventListener('mousemove', temp);
+        gameScreen.canvas.addEventListener('click', temp2);
         this.mouseMoveSelectStartPos = temp;
         this.clickSelectStartPos = temp2;
     }
     handleSetPosSuccess() {
         this.manager.gameScreen.canvas.removeEventListener('mousemove', this.mouseMoveSelectStartPos);
         this.manager.gameScreen.canvas.removeEventListener('click', this.clickSelectStartPos);
+        this.manager.gameScreen.setupPreview = null;
     }
     handleEmitGamestate(gameInstance: GameData) {
+        this.manager.gameScreen.stopSetupRenderLoop();
         this.manager.gameScreen.controls.style.display = "flex";
         this.manager.gameScreen.drawGame(gameInstance);
     }
