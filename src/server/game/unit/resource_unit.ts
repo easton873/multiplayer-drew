@@ -28,50 +28,76 @@ export class GameResourceUnit extends GameUnit {
     }
 }
 
-const MERCHANT_NAME = "Merchant💰";
+// Era 1
+const MERCHANT_NAME = "Merchant💰"; 
+// Era 2
 const LUMBER_JACK_NAME = "Lumber Jack🪵";
+// Era 3
 const MINER_NAME = "Miner🪨";
 const CARPENTER_NAME = "Carpenter💰🪵";
-const PROSPECTOR_NAME = "Prospector💰🪵🪨";
-const INVESTMENT_BANKER_NAME = "Investment Banker💰";
-const INDUSTRIAL_WORKER_NAME = "Industrial Worker💰🪵🪨";
-const RICH_GUY_NAME = "Rich Guy💰🪵🪨";
+// Era 4
+const MASON_NAME = "Mason💰🪨";
+const SCAVENGER_NAME = "Scavenger💰🪵🪨";
+// Era 5
+const SCULPTOR_NAME = "Sculptor💰🪨";
+const ARCHITECT_NAME = "Architect🪵🪨";
+const BANKER_NAME = "Banker💵";
+// Era 6
+const ALCHEMIST_NAME = "Alchemist💰🪵🪨";
+const ENGINEER_NAME = "Engineer💰🪨";
+const DRUID_NAME = "Druid🪵🪨";
 
 const MERCHANT_COLOR = "#ffff00";
 const LUMBER_JACK_COLOR = "#009900";
 const MINER_COLOR = "#666699";
 const CARPENTER_COLOR = "#A5CC19";
-const PROSPECTOR_COLOR = "#C41AC7"
-const INVESTMENT_BANKER_COLOR = "#430404ff"
-const INDUSTRIAL_WORKER_COLOR = "#78490fff"
-const RICH_GUY_COLOR = "#1d94bcff"
+const MASON_COLOR = "#8B7355";
+const SCAVENGER_COLOR = "#B87333";
+const SCULPTOR_COLOR = "#C0B8A8";
+const ARCHITECT_COLOR = "#4A90D9";
+const BANKER_COLOR = "#DAA520";
+const ALCHEMIST_COLOR = "#9B59B6";
+const ENGINEER_COLOR = "#708090";
+const DRUID_COLOR = "#2E8B57";
 
 const MERCHANT_BLURB = "Produces 1 gold a second";
 const LUMBER_JACK_BLURB = "Produces 1 wood a second";
 const MINER_BLURB = "Produces 1 stone a second";
-const CARPENTER_BLURB = "Produces 2 gold and 1 wood a second";
-const PROSPECTOR_BLURB = "Produces 1 gold, 1 wood, and 1 stone a second";
-const INVESTMENT_BANKER_BLURB = "Produces 5 gold a second";
-const INDUSTRIAL_WORKER_BLURB = "Produces 3 gold, 3 wood, and 3 stone a second";
-const RICH_GUY_BLURB = "Produces 5 gold, wood, and stone a second";
+const CARPENTER_BLURB = "Produces 1 gold and 2 wood a second";
+const MASON_BLURB = "Produces 1 gold and 2 stone a second";
+const SCAVENGER_BLURB = "Produces 1 gold, 1 wood, and 1 stone a second";
+const SCULPTOR_BLURB = "Produces 2 gold and 2 stone a second";
+const ARCHITECT_BLURB = "Produces 3 wood and 2 stone a second";
+const BANKER_BLURB = "Produces 4 gold a second";
+const ALCHEMIST_BLURB = "Produces 3 gold, 2 wood, and 3 stone a second";
+const ENGINEER_BLURB = "Produces 5 gold and 4 stone a second";
+const DRUID_BLURB = "Produces 5 wood and 3 stone a second";
 
 const MERCHANT_PRODUCTION = new Resources(1, 0, 0);
 const LUMBER_JACK_PRODUCTION = new Resources(0, 1, 0);
 const MINER_PRODUCTION = new Resources(0, 0, 1);
-const CARPENTER_PRODUCTION = new Resources(2, 1, 0);
-const PROSPECTOR_PRODUCTION = new Resources(1, 1, 1);
-const INVESTMENT_BANKER_PRODUCTION = new Resources(1, 0, 0);
-const INDUSTRIAL_WORKER_PRODUCTION = new Resources(1, 1, 1);
-const RICH_GUY_PRODUCTION = new Resources(1, 1, 1);
+const CARPENTER_PRODUCTION = new Resources(1, 2, 0);
+const MASON_PRODUCTION = new Resources(1, 0, 2);
+const SCAVENGER_PRODUCTION = new Resources(1, 1, 1);
+const SCULPTOR_PRODUCTION = new Resources(2, 0, 2);
+const ARCHITECT_PRODUCTION = new Resources(0, 3, 2);
+const BANKER_PRODUCTION = new Resources(4, 0, 0);
+const ALCHEMIST_PRODUCTION = new Resources(3, 2, 3);
+const ENGINEER_PRODUCTION = new Resources(5, 0, 4);
+const DRUID_PRODUCTION = new Resources(0, 5, 3);
 
 const MERCHANT_COST = new Resources(25, 0, 0);
 const LUMBER_JACK_COST = new Resources(50, 0, 0);
 const MINER_COST = new Resources(100, 25, 0);
 const CARPENTER_COST = new Resources(100, 25, 0);
-const PROSPECTOR_COST = new Resources(100, 25, 25);
-const INVESTMENT_BANKER_COST = new Resources(75, 50, 50);
-const INDUSTRIAL_WORKER_COST = new Resources(150, 100, 100);
-const RICH_GUY_COST = new Resources(500, 500, 500);
+const MASON_COST = new Resources(200, 75, 0);
+const SCAVENGER_COST = new Resources(125, 75, 50);
+const SCULPTOR_COST = new Resources(300, 150, 50);
+const ARCHITECT_COST = new Resources(350, 50, 100);
+const BANKER_COST = new Resources(250, 150, 100);
+const ALCHEMIST_COST = new Resources(500, 300, 200);
+const ENGINEER_COST = new Resources(600, 300, 100);
+const DRUID_COST = new Resources(300, 400, 200);
 
 export const MINER_SPEED = 20;
 
@@ -79,7 +105,11 @@ export const MERCHANT_GAME_UNIT = new GameResourceUnit(MERCHANT_NAME, MERCHANT_C
 export const LUMBER_JACK_GAME_UNIT = new GameResourceUnit(LUMBER_JACK_NAME, LUMBER_JACK_COST, 1, 30, LUMBER_JACK_PRODUCTION, LUMBER_JACK_COLOR, LUMBER_JACK_BLURB);
 export const MINER_GAME_UNIT = new GameResourceUnit(MINER_NAME, MINER_COST, 1, MINER_SPEED, MINER_PRODUCTION, MINER_COLOR, MINER_BLURB);
 export const CARPENTER_GAME_UNIT = new GameResourceUnit(CARPENTER_NAME, CARPENTER_COST, 3, 30, CARPENTER_PRODUCTION, CARPENTER_COLOR, CARPENTER_BLURB);
-export const PROSPECTOR_GAME_UNIT = new GameResourceUnit(PROSPECTOR_NAME, PROSPECTOR_COST, 5, 30, PROSPECTOR_PRODUCTION, PROSPECTOR_COLOR, PROSPECTOR_BLURB);
-export const INVESTMENT_BANKER_GAME_UNIT = new GameResourceUnit(INVESTMENT_BANKER_NAME, INVESTMENT_BANKER_COST, 2, 6, INVESTMENT_BANKER_PRODUCTION, INVESTMENT_BANKER_COLOR, INVESTMENT_BANKER_BLURB);
-export const INDUSTRIAL_WORKER_GAME_UNIT = new GameResourceUnit(INDUSTRIAL_WORKER_NAME, INDUSTRIAL_WORKER_COST, 10, 10, INDUSTRIAL_WORKER_PRODUCTION, INDUSTRIAL_WORKER_COLOR, INDUSTRIAL_WORKER_BLURB);
-export const RICH_GUY_GAME_UNIT = new GameResourceUnit(RICH_GUY_NAME, RICH_GUY_COST, 20, 6, RICH_GUY_PRODUCTION, RICH_GUY_COLOR, RICH_GUY_BLURB);
+export const MASON_GAME_UNIT = new GameResourceUnit(MASON_NAME, MASON_COST, 3, 30, MASON_PRODUCTION, MASON_COLOR, MASON_BLURB);
+export const SCAVENGER_GAME_UNIT = new GameResourceUnit(SCAVENGER_NAME, SCAVENGER_COST, 3, 30, SCAVENGER_PRODUCTION, SCAVENGER_COLOR, SCAVENGER_BLURB);
+export const SCULPTOR_GAME_UNIT = new GameResourceUnit(SCULPTOR_NAME, SCULPTOR_COST, 5, 30, SCULPTOR_PRODUCTION, SCULPTOR_COLOR, SCULPTOR_BLURB);
+export const ARCHITECT_GAME_UNIT = new GameResourceUnit(ARCHITECT_NAME, ARCHITECT_COST, 5, 30, ARCHITECT_PRODUCTION, ARCHITECT_COLOR, ARCHITECT_BLURB);
+export const BANKER_GAME_UNIT = new GameResourceUnit(BANKER_NAME, BANKER_COST, 5, 30, BANKER_PRODUCTION, BANKER_COLOR, BANKER_BLURB);
+export const ALCHEMIST_GAME_UNIT = new GameResourceUnit(ALCHEMIST_NAME, ALCHEMIST_COST, 8, 30, ALCHEMIST_PRODUCTION, ALCHEMIST_COLOR, ALCHEMIST_BLURB);
+export const ENGINEER_GAME_UNIT = new GameResourceUnit(ENGINEER_NAME, ENGINEER_COST, 8, 30, ENGINEER_PRODUCTION, ENGINEER_COLOR, ENGINEER_BLURB);
+export const DRUID_GAME_UNIT = new GameResourceUnit(DRUID_NAME, DRUID_COST, 8, 30, DRUID_PRODUCTION, DRUID_COLOR, DRUID_BLURB);

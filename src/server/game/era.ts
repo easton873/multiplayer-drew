@@ -3,7 +3,7 @@ import { Resources } from "./resources.js";
 import { EraData, UnitCreationData } from "../../shared/types.js";
 import { GameUnit } from "./unit/game_unit.js";
 import { ALL_MILITARY_UNITS, ALL_RESOURCE_UNITS, ALL_UNITS } from "./unit/all_units.js";
-import { INDUSTRIAL_WORKER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MINER_GAME_UNIT, PROSPECTOR_GAME_UNIT, RICH_GUY_GAME_UNIT } from "./unit/resource_unit.js";
+import { LUMBER_JACK_GAME_UNIT, MASON_GAME_UNIT, MINER_GAME_UNIT, SCULPTOR_GAME_UNIT, ALCHEMIST_GAME_UNIT } from "./unit/resource_unit.js";
 import { QuickAttackerUnit, TankUnit } from "./unit/melee_unit.js";
 import { MissileUnit } from "./unit/missile.js";
 
@@ -202,7 +202,7 @@ class ThirdEra extends BaseEra implements EraState {
         return THIRD_ERA_NAME;
     }
     getAvailableUnits(): GameUnit[] {
-        return this.getUnits(PROSPECTOR_GAME_UNIT, MissileUnit);
+        return this.getUnits(MASON_GAME_UNIT, MissileUnit);
     }
 }
 
@@ -217,7 +217,7 @@ class FourthEra extends BaseEra implements EraState {
         return FOURTH_ERA_NAME;
     }
     getAvailableUnits(): GameUnit[] {
-        return this.getUnits(INDUSTRIAL_WORKER_GAME_UNIT, MissileUnit);
+        return this.getUnits(SCULPTOR_GAME_UNIT, MissileUnit);
     }
 }
 
@@ -232,7 +232,7 @@ class FifthEra extends BaseEra implements EraState {
         return FIFTH_ERA_NAME;
     }
     getAvailableUnits(): GameUnit[] {
-        return this.getUnits(RICH_GUY_GAME_UNIT, MissileUnit);
+        return this.getUnits(ALCHEMIST_GAME_UNIT, MissileUnit);
     }
 }
 

@@ -6,7 +6,7 @@ import { GameUnit } from "../unit/game_unit.js";
 import { GorillaWarfareUnit } from "../unit/gorilla_warfare.js";
 import { QuickAttackerUnit, RandomMoverUnit, SoldierUnit } from "../unit/melee_unit.js";
 import { ArcherUnit, FireballThrowerUnit } from "../unit/ranged_unit.js";
-import { CARPENTER_GAME_UNIT, INVESTMENT_BANKER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT, PROSPECTOR_GAME_UNIT } from "../unit/resource_unit.js";
+import { CARPENTER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MASON_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT, SCAVENGER_GAME_UNIT } from "../unit/resource_unit.js";
 import { SummonerUnit } from "../unit/summoner.js";
 import { Unit } from "../unit/unit.js";
 
@@ -119,8 +119,8 @@ export class WinnerComputerPlayer extends BaseComputerPlayer {
         this.era.advanceToNextEra(this.resources);
     }
     fourthEra() {
-        this.maintainCountOfUnits(PROSPECTOR_GAME_UNIT, 30);
-        this.maintainCountOfUnits(INVESTMENT_BANKER_GAME_UNIT, 10);
+        this.maintainCountOfUnits(SCAVENGER_GAME_UNIT, 30);
+        this.maintainCountOfUnits(MASON_GAME_UNIT, 10);
     }
     fifthEra() {
         return;

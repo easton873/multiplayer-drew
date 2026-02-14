@@ -7,7 +7,7 @@ import { KamakazeUnit } from "./kamakaze.js";
 import { GoblinUnit, QuickAttackerUnit, RandomMoverUnit, SabotagerUnit, SoldierUnit, TankUnit } from "./melee_unit.js";
 import { BallisticMissileUnit, MissileUnit, UnitMissileUnit } from "./missile.js";
 import { ArcherUnit, FireballThrowerUnit } from "./ranged_unit.js";
-import { CARPENTER_GAME_UNIT, INDUSTRIAL_WORKER_GAME_UNIT, INVESTMENT_BANKER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT, PROSPECTOR_GAME_UNIT, RICH_GUY_GAME_UNIT } from "./resource_unit.js";
+import { CARPENTER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT, MASON_GAME_UNIT, SCAVENGER_GAME_UNIT, SCULPTOR_GAME_UNIT, ARCHITECT_GAME_UNIT, BANKER_GAME_UNIT, ALCHEMIST_GAME_UNIT, ENGINEER_GAME_UNIT, DRUID_GAME_UNIT } from "./resource_unit.js";
 import { ScarecrowUnit } from "./scarecrow.js";
 import { SummonerUnit } from "./summoner.js";
 import { TurretUnit } from "./turret.js";
@@ -21,12 +21,16 @@ export const ALL_RESOURCE_UNITS : GameUnit[] = [
     MINER_GAME_UNIT,
     CARPENTER_GAME_UNIT,
 
-    PROSPECTOR_GAME_UNIT,
-    INVESTMENT_BANKER_GAME_UNIT,
+    MASON_GAME_UNIT,
+    SCAVENGER_GAME_UNIT,
 
-    INDUSTRIAL_WORKER_GAME_UNIT,
+    SCULPTOR_GAME_UNIT,
+    ARCHITECT_GAME_UNIT,
+    BANKER_GAME_UNIT,
 
-    RICH_GUY_GAME_UNIT,
+    ALCHEMIST_GAME_UNIT,
+    ENGINEER_GAME_UNIT,
+    DRUID_GAME_UNIT,
 ];
 
 export const ALL_MILITARY_UNITS : GameUnit[] = [
