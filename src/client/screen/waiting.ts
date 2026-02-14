@@ -98,7 +98,7 @@ export class WaitingScreen {
         optionElement.text = difficulty;
         this.addComputerDifficulty.add(optionElement);
       });
-      this.addComputerDifficulty.value = temp;
+      if (temp) this.addComputerDifficulty.value = temp;
     }
 
     drawPlayerList(data : PlayerWaitingData[]) {

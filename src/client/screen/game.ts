@@ -543,9 +543,10 @@ export class GameScreen {
     upgradeEra(era : EraData) {
       let ogVal = this.unitSelect.value
       this.fillSelect(this.unitSelect, era.availableUnits);
-      this.unitSelect.value = ogVal;
+      if (ogVal) this.unitSelect.value = ogVal;
+      this.unitSelect.dispatchEvent(new Event('change', { bubbles: true }));
       this.eraNameLabel.innerText = 'Era: ' + era.eraName;
-      this.nextEraLabel.innerText = 'Next Era Cost:' + this.formatResources(era.nextEraCost);
+      this.nextEraLabel.innerText = 'Next Era Cost:\n' + this.formatResources(era.nextEraCost);
       this.updateHotkeyLabels();
     }
 
@@ -554,7 +555,9 @@ export class GameScreen {
     }
 
     formatResources(resources : ResourceData) : string {
-      return `\u{1F4B0}${resources.gold}\u{1FAB5}${resources.wood}\u{1FAA8}${resources.stone}`
+      return `\u{1F4B0}${resources.gold}
+      \u{1FAB5}${resources.wood}
+      \u{1FAA8}${resources.stone}`
     }
 
     handleKeydown(event: KeyboardEvent): void {

@@ -426,8 +426,6 @@ input[type="color"].pixel-input {
   flex-direction: column;
   background: var(--bg-medium);
   border-left: 3px solid var(--border-purple);
-  overflow-x: hidden;
-  overflow-y: hidden;
   --font-size-xs: 10px;
   --font-size-sm: 12px;
 }
@@ -460,7 +458,7 @@ input[type="color"].pixel-input {
 
 /* Resource label */
 #resourceLabel {
-  font-size: var(--font-size-sm);
+  font-size: 24px;
   color: var(--accent-gold);
 }
 
