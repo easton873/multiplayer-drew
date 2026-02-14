@@ -29,6 +29,7 @@ export class FrontendClientHandler extends ClientReceiver {
         this.manager.toGameScreen();
         this.latestData = data;
         this.manager.gameScreen.setCanvasSize(data.boardX, data.boardY);
+        this.manager.gameScreen.zoomToRandom();
         this.manager.gameScreen.startSetupRenderLoop(data);
         this.manager.gameScreen.requestFullscreen();
     }

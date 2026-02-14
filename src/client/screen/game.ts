@@ -6,8 +6,7 @@ import { removeOptions } from "../../client/main";
 const ZOOM_FACTOR = 1.1;
 const MIN_ZOOM = 2;
 const MAX_ZOOM = 40;
-const EDGE_SCROLL_MARGIN = 30;
-const EDGE_SCROLL_SPEED = 0.4;
+const PAN_SCROLL_SPEED = 0.003;
 const KEY_SCROLL_SPEED = 0.5;
 const MINIMAP_MAX_DIM = 180;
 
@@ -27,6 +26,7 @@ export class GameScreen {
     public eraNameLabel = document.getElementById('eraNameLabel') as HTMLLabelElement;
     public nextEraLabel = document.getElementById('nextEraLabel') as HTMLLabelElement;
     public modeIndicator = document.getElementById('modeIndicator') as HTMLSpanElement;
+    public fullscreenButton = document.getElementById('fullscreenButton') as HTMLButtonElement;
     public minimapCanvas = document.getElementById('minimap') as HTMLCanvasElement;
     public minimapCtx : CanvasRenderingContext2D = this.minimapCanvas.getContext('2d')!;
     public ctx : CanvasRenderingContext2D = this.canvas.getContext('2d')!;
@@ -40,8 +40,8 @@ export class GameScreen {
 
     // Panning state
     private isPanning : boolean = false;
-    private panLastX : number = 0;
-    private panLastY : number = 0;
+    private panAnchorX : number = 0;
+    private panAnchorY : number = 0;
 
     // Mouse position for edge scrolling
     private mouseScreenX : number = 0;
@@ -81,6 +81,7 @@ export class GameScreen {
       };
 
       this.canvas.addEventListener('click', (event) => {this.clickFn(event)});
+      this.fullscreenButton.addEventListener('click', () => this.toggleFullscreen());
       document.addEventListener('keydown', (event) => this.handleKeydown(event));
       document.addEventListener('keyup', (event) => this.handleKeyup(event));
 
@@ -108,30 +109,20 @@ export class GameScreen {
         this.clampCamera();
       }, { passive: false });
 
-      // Right-click drag to pan
+      // Right-click hold to velocity pan
       this.canvas.addEventListener('mousedown', (event) => {
         if (event.button === 2) {
           this.isPanning = true;
-          this.panLastX = event.clientX;
-          this.panLastY = event.clientY;
+          const rect = this.canvas.getBoundingClientRect();
+          this.panAnchorX = event.clientX - rect.left;
+          this.panAnchorY = event.clientY - rect.top;
         }
       });
 
       window.addEventListener('mousemove', (event) => {
-        // Track mouse position for edge scrolling
         const rect = this.canvas.getBoundingClientRect();
         this.mouseScreenX = event.clientX - rect.left;
         this.mouseScreenY = event.clientY - rect.top;
-
-        if (this.isPanning) {
-          const dx = event.clientX - this.panLastX;
-          const dy = event.clientY - this.panLastY;
-          this.cameraX -= dx / this.zoom;
-          this.cameraY -= dy / this.zoom;
-          this.panLastX = event.clientX;
-          this.panLastY = event.clientY;
-          this.clampCamera();
-        }
       });
 
       window.addEventListener('mouseup', (event) => {
@@ -230,21 +221,12 @@ export class GameScreen {
       this.clampCamera();
     }
 
-    updateEdgeScroll() {
-      // Only edge scroll in fullscreen
-      if (!document.fullscreenElement) return;
-      const w = this.canvas.width;
-      const h = this.canvas.height;
-      const mx = this.mouseScreenX;
-      const my = this.mouseScreenY;
-
-      // Skip if mouse is outside canvas bounds (e.g. over controls bar)
-      if (mx < 0 || mx > w || my < 0 || my > h) return;
-
-      if (mx < EDGE_SCROLL_MARGIN) this.cameraX -= EDGE_SCROLL_SPEED;
-      if (mx > w - EDGE_SCROLL_MARGIN) this.cameraX += EDGE_SCROLL_SPEED;
-      if (my < EDGE_SCROLL_MARGIN) this.cameraY -= EDGE_SCROLL_SPEED;
-      if (my > h - EDGE_SCROLL_MARGIN) this.cameraY += EDGE_SCROLL_SPEED;
+    updatePanScroll() {
+      if (!this.isPanning) return;
+      const dx = this.mouseScreenX - this.panAnchorX;
+      const dy = this.mouseScreenY - this.panAnchorY;
+      this.cameraX += dx * PAN_SCROLL_SPEED;
+      this.cameraY += dy * PAN_SCROLL_SPEED;
     }
 
     updateKeyScroll() {
@@ -320,13 +302,14 @@ export class GameScreen {
           this.drawUnitByPos("heart", player.pos, player.color);
         }
       });
+      this.drawSetupMinimap(data.players);
     }
 
     startSetupRenderLoop(data : GameSetupData) {
       this.setupData = data;
       if (this.setupRafId) return; // already running
       const loop = () => {
-        this.updateEdgeScroll();
+        this.updatePanScroll();
         this.updateKeyScroll();
         this.clampCamera();
         if (this.setupData) {
@@ -364,7 +347,7 @@ export class GameScreen {
 
     drawGeneralGameData(data : GeneralGameData) {
       this.setCanvasSize(data.board.width, data.board.height);
-      this.updateEdgeScroll();
+      this.updatePanScroll();
       this.updateKeyScroll();
       this.clampCamera();
       this.drawBG();
@@ -499,6 +482,52 @@ export class GameScreen {
       mctx.strokeRect(vpX, vpY, vpW, vpH);
     }
 
+    drawSetupMinimap(players: PlayerSetupData[]) {
+      if (this.boardWidth <= 0 || this.boardHeight <= 0) return;
+      const mw = this.minimapCanvas.width;
+      const mh = this.minimapCanvas.height;
+      const mctx = this.minimapCtx;
+
+      // Background
+      mctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+      mctx.fillRect(0, 0, mw, mh);
+
+      const scaleX = mw / this.boardWidth;
+      const scaleY = mh / this.boardHeight;
+
+      // Draw placed hearts as colored dots
+      const dotRadius = Math.max(2, Math.min(scaleX, scaleY) * 0.75);
+      players.forEach((player) => {
+        if (player.pos) {
+          const ux = player.pos.x * scaleX;
+          const uy = player.pos.y * scaleY;
+          mctx.fillStyle = player.color;
+          mctx.beginPath();
+          mctx.arc(ux, uy, dotRadius, 0, 2 * Math.PI);
+          mctx.fill();
+        }
+      });
+
+      // Draw viewport rectangle
+      const vpX = this.cameraX * scaleX;
+      const vpY = this.cameraY * scaleY;
+      const vpW = this.viewportWidthTiles * scaleX;
+      const vpH = this.viewportHeightTiles * scaleY;
+      mctx.strokeStyle = 'white';
+      mctx.lineWidth = 1.5;
+      mctx.strokeRect(vpX, vpY, vpW, vpH);
+    }
+
+    zoomToRandom() {
+      if (this.boardWidth <= 0 || this.boardHeight <= 0) return;
+      this.zoom = MAX_ZOOM;
+      const maxCamX = Math.max(0, this.boardWidth - this.viewportWidthTiles);
+      const maxCamY = Math.max(0, this.boardHeight - this.viewportHeightTiles);
+      this.cameraX = Math.random() * maxCamX;
+      this.cameraY = Math.random() * maxCamY;
+      this.clampCamera();
+    }
+
     handleMinimapClick(event : MouseEvent) {
       const rect = this.minimapCanvas.getBoundingClientRect();
       const mx = event.clientX - rect.left;
@@ -546,10 +575,9 @@ export class GameScreen {
             event.preventDefault();
         }
         // Fullscreen toggle
-        if (event.key === 'F11' || event.key === 'f') {
+        if (event.key === 'f') {
           const tag = (event.target as HTMLElement)?.tagName;
           if (tag !== 'INPUT' && tag !== 'SELECT' && tag !== 'TEXTAREA') {
-            if (event.key === 'F11') event.preventDefault();
             this.toggleFullscreen();
             return;
           }

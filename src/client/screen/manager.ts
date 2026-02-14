@@ -32,6 +32,9 @@ export class ScreenManager {
     }
 
     toGameOverScreen() {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      }
       this.hideAll();
       this.gameOverScreen.div.style.display = "flex";
     }
