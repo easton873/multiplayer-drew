@@ -30,29 +30,21 @@ export class FrontendClientHandler extends ClientReceiver {
         this.latestData = data;
         this.manager.gameScreen.setCanvasSize(data.boardX, data.boardY);
         this.manager.gameScreen.drawSetupGame(this.latestData);
+        this.manager.gameScreen.requestFullscreen();
     }
     handleYourTurn(data: GameSetupData) {
         let gameScreen = this.manager.gameScreen;
         let ctx = gameScreen.ctx;
         let temp = (e : MouseEvent) => {
-            const offset = gameScreen.SIZE / 2;
-            const rect = gameScreen.canvas.getBoundingClientRect();
             ctx.clearRect(0, 0, gameScreen.canvas.width, gameScreen.canvas.height);
             this.manager.gameScreen.drawSetupGame(this.latestData);
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            let gameX = Math.floor(x / gameScreen.SIZE);
-            let gameY = Math.floor(y / gameScreen.SIZE);
-            this.manager.gameScreen.drawUnitByPos("heart", {x: gameX, y: gameY}, data.currPlayer.color);
-            this.manager.gameScreen.drawCircle(gameX, gameY, 3, data.currPlayer.color);
+            const pos = gameScreen.screenToGame(e.clientX, e.clientY);
+            this.manager.gameScreen.drawUnitByPos("heart", pos, data.currPlayer.color);
+            this.manager.gameScreen.drawCircle(pos.x, pos.y, 3, data.currPlayer.color);
         };
         let temp2 = (e : MouseEvent) => {
-            const rect = gameScreen.canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            let gameX = Math.floor(x / gameScreen.SIZE);
-            let gameY = Math.floor(y / gameScreen.SIZE);
-            emitSubmitStartPos(this.socket, {x: gameX, y: gameY});
+            const pos = gameScreen.screenToGame(e.clientX, e.clientY);
+            emitSubmitStartPos(this.socket, pos);
         };
         this.manager.gameScreen.canvas.addEventListener('mousemove', temp);
         this.manager.gameScreen.canvas.addEventListener('click', temp2);

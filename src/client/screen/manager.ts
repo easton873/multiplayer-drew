@@ -27,7 +27,7 @@ export class ScreenManager {
       
     toGameScreen() {
       this.hideAll();
-      this.gameScreen.div.style.display = "inline";
+      this.gameScreen.div.style.display = "flex";
       this.gameScreen.controls.style.display = "none";
     }
 

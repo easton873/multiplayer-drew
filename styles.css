@@ -556,13 +556,35 @@ input[type="color"].pixel-input {
 /* Canvas container */
 #canvasContainer {
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
   background: var(--bg-dark);
+  position: relative;
 }
 
-canvas {
+canvas#game {
   display: block;
-  margin: auto;
+}
+
+/* Mini map */
+#minimap {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: 2px solid var(--border-purple);
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 5;
+  cursor: pointer;
+}
+
+/* Fullscreen */
+#gameScreen:fullscreen {
+  width: 100vw;
+  height: 100vh;
+}
+
+#gameScreen:-webkit-full-screen {
+  width: 100vw;
+  height: 100vh;
 }
 
 /* ============================================================
