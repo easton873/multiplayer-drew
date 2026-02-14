@@ -6,6 +6,14 @@ import { DefaultEventsMap } from "socket.io";
 import { emitDeleteUnits, emitSpawnUnit, emitSubmitStartPos } from "../shared/routes";
 import { EraData, GameData, GeneralGameData, PosData } from "../shared/types";
 
+function hexRelativeLuminance(hex: string): number {
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+    const toLinear = (c: number) => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+}
+
 export class FrontendClientHandler extends ClientReceiver {
     private latestData : GameSetupData;
     private mouseMoveSelectStartPos;
@@ -33,6 +41,11 @@ export class FrontendClientHandler extends ClientReceiver {
         this.manager.gameScreen.requestFullscreen();
         this.manager.gameScreen.setupBanner.textContent = `${data.placingPlayerName}'s turn to place`;
         this.manager.gameScreen.setupBanner.style.color = data.placingPlayerColor;
+        if (hexRelativeLuminance(data.placingPlayerColor) < 0.18) {
+            this.manager.gameScreen.setupBanner.style.backgroundColor = '#c8d6e5';
+        } else {
+            this.manager.gameScreen.setupBanner.style.backgroundColor = '';
+        }
         this.manager.gameScreen.setupBanner.classList.remove('hidden');
     }
     handleYourTurn(data: GameSetupData) {
@@ -60,6 +73,7 @@ export class FrontendClientHandler extends ClientReceiver {
     handleEmitGamestate(gameInstance: GameData) {
         this.manager.gameScreen.stopSetupRenderLoop();
         this.manager.gameScreen.setupBanner.classList.add('hidden');
+        this.manager.gameScreen.setupBanner.style.backgroundColor = '';
         this.manager.gameScreen.controls.style.display = "flex";
         this.manager.gameScreen.drawGame(gameInstance);
     }
@@ -70,6 +84,7 @@ export class FrontendClientHandler extends ClientReceiver {
     handleBuildSucces(era: EraData) {
         console.log('build success!');
         this.manager.gameScreen.setupBanner.classList.add('hidden');
+        this.manager.gameScreen.setupBanner.style.backgroundColor = '';
         this.manager.gameScreen.upgradeEra(era);
     }
     handleEraUpgradeSuccess(era: EraData) {
