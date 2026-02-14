@@ -6,9 +6,9 @@ import { removeOptions } from "../../client/main";
 const ZOOM_FACTOR = 1.1;
 const MIN_ZOOM = 2;
 const MAX_ZOOM = 40;
-const PAN_SCROLL_SPEED = 0.006;
+const PAN_SCROLL_SPEED = 0.008;
 const KEY_SCROLL_SPEED = 0.5;
-const MINIMAP_MAX_DIM = 210;
+const MINIMAP_MAX_DIM = 250;
 
 export class GameScreen {
     public div = document.getElementById("gameScreen")!;
@@ -27,6 +27,7 @@ export class GameScreen {
     public nextEraLabel = document.getElementById('nextEraLabel') as HTMLLabelElement;
     public modeIndicator = document.getElementById('modeIndicator') as HTMLSpanElement;
     public fullscreenButton = document.getElementById('fullscreenButton') as HTMLButtonElement;
+    public setupBanner = document.getElementById('setupBanner')!;
     public minimapCanvas = document.getElementById('minimap') as HTMLCanvasElement;
     public minimapCtx : CanvasRenderingContext2D = this.minimapCanvas.getContext('2d')!;
     public ctx : CanvasRenderingContext2D = this.canvas.getContext('2d')!;

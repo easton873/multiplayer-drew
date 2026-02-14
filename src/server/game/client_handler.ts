@@ -70,9 +70,11 @@ export class ClientHandler extends RouteReceiver {
         if (!this.room || !this.isLeader()) {
             return;
         }
-        emitStartSuccess(this.io, this.room.setupData(this.client.id));
-        let player = this.room.getPoslessPlayer()
-        player.findStartingPos(this.room.setupData(player.getClient().id))
+        let player = this.room.getPoslessPlayer();
+        let data = this.room.setupData(this.client.id);
+        data.placingPlayerName = player.getSetupData().name;
+        emitStartSuccess(this.io, data);
+        player.findStartingPos(this.room.setupData(player.getClient().id));
     }
 
     handleSubmitStartPos(pos: PosData) {
@@ -90,8 +92,8 @@ export class ClientHandler extends RouteReceiver {
         }
         gameRoom.addPlayerPos(id, Pos.FromPosData(pos));
         emitSetPosSuccess(this.client);
-        emitStartSuccess(this.io, gameRoom.setupData(id));
         if (gameRoom.allPlayersHavePos()) {
+            emitStartSuccess(this.io, gameRoom.setupData(id));
             let game : Game = gameRoom.buildGame();
             game.players.forEach((player : Player) => {
                 let tempClient = this.playerClients.get(player.getID());
@@ -143,8 +145,11 @@ export class ClientHandler extends RouteReceiver {
             }, 1000 / FRAME_RATE);
             return;
         }
-        let nextPlayer = gameRoom.getPoslessPlayer()
-        nextPlayer.findStartingPos(gameRoom.setupData(nextPlayer.getClient().id))
+        let nextPlayer = gameRoom.getPoslessPlayer();
+        let data = gameRoom.setupData(id);
+        data.placingPlayerName = nextPlayer.getSetupData().name;
+        emitStartSuccess(this.io, data);
+        nextPlayer.findStartingPos(gameRoom.setupData(nextPlayer.getClient().id));
     }
 
     handleDisconnect(){

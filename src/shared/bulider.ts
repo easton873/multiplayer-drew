@@ -39,6 +39,7 @@ export interface GameSetupData {
     boardY : number
     players : PlayerSetupData[]
     currPlayer : PlayerSetupData
+    placingPlayerName? : string
 }
 
 export interface PlayerSetupData {

@@ -31,6 +31,12 @@ export class FrontendClientHandler extends ClientReceiver {
         this.manager.gameScreen.setCanvasSize(data.boardX, data.boardY);
         this.manager.gameScreen.startSetupRenderLoop(data);
         this.manager.gameScreen.requestFullscreen();
+        if (data.placingPlayerName) {
+            this.manager.gameScreen.setupBanner.textContent = `${data.placingPlayerName}'s turn to place`;
+            this.manager.gameScreen.setupBanner.classList.remove('hidden');
+        } else {
+            this.manager.gameScreen.setupBanner.classList.add('hidden');
+        }
     }
     handleYourTurn(data: GameSetupData) {
         let gameScreen = this.manager.gameScreen;
@@ -56,6 +62,7 @@ export class FrontendClientHandler extends ClientReceiver {
     }
     handleEmitGamestate(gameInstance: GameData) {
         this.manager.gameScreen.stopSetupRenderLoop();
+        this.manager.gameScreen.setupBanner.classList.add('hidden');
         this.manager.gameScreen.controls.style.display = "flex";
         this.manager.gameScreen.drawGame(gameInstance);
     }
