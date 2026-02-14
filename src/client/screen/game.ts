@@ -8,7 +8,7 @@ const MIN_ZOOM = 2;
 const MAX_ZOOM = 40;
 const PAN_SCROLL_SPEED = 0.006;
 const KEY_SCROLL_SPEED = 0.5;
-const MINIMAP_MAX_DIM = 180;
+const MINIMAP_MAX_DIM = 210;
 
 export class GameScreen {
     public div = document.getElementById("gameScreen")!;
@@ -232,12 +232,12 @@ export class GameScreen {
       if (document.fullscreenElement) {
         document.exitFullscreen();
       } else {
-        this.div.requestFullscreen();
+        this.div.requestFullscreen({ navigationUI: 'hide' });
       }
     }
 
     requestFullscreen() {
-      this.div.requestFullscreen().catch(() => {
+      this.div.requestFullscreen({ navigationUI: 'hide' }).catch(() => {
         // Fullscreen request may be denied by browser
       });
     }
