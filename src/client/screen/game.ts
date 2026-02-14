@@ -394,9 +394,7 @@ export class GameScreen {
       this.ctx.fillStyle = color;
       if (this.images.has(name)) {
         let image = this.images.get(name);
-        x -= this.zoom;
-        y -= this.zoom;
-        this.ctx.drawImage(image!, x, y, this.zoom * 3, this.zoom * 3);
+        this.ctx.drawImage(image!, x, y, this.zoom, this.zoom);
       } else {
         this.ctx.fillRect(x, y, this.zoom, this.zoom);
       }
@@ -593,6 +591,17 @@ export class GameScreen {
 
     isCombinationPressed(combination: string[]): boolean {
         return combination.every(key => this.pressedKeys.has(key));
+    }
+
+    loadImages(data: LoadData) {
+      data.units.forEach((unit) => {
+        const normalized = unit.name.replace(/[^\x20-\x7E]/g, '').toLowerCase().replace(/\s/g, '');
+        const img = new Image();
+        img.src = `/units/${normalized}.png`;
+        img.onload = () => {
+          this.images.set(unit.name, img);
+        };
+      });
     }
 
     updateHotkeyLabels() {

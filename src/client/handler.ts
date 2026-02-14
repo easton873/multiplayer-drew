@@ -95,6 +95,6 @@ export class FrontendClientHandler extends ClientReceiver {
         this.manager.gameOverScreen.displayWinner(winner);
     }
     handleLoadData(data: LoadData) {
-        // this.manager.gameScreen.loadImages(data);
+        this.manager.gameScreen.loadImages(data);
     }
 }
