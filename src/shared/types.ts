@@ -11,12 +11,16 @@ export interface GeneralGameData {
 }
 
 export interface PlayerSpecificData {
+  hearts : PlayerHeartData[]
+  numUnits : number
+  maxUnits : number
+}
+
+export interface PlayerHeartData {
   pos : PosData
   radius : number
   health : number
   totalHealth : number
-  numUnits : number
-  maxUnits : number
 }
 
 export interface EraData {

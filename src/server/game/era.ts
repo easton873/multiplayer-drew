@@ -112,10 +112,6 @@ export class Era {
         }
     }
 
-    getRadius() : number {
-        return this.currEra.getRadius();
-    }
-
     getUnitLimit() : number {
         return this.currEra.getUnitLimmit();
     }
@@ -125,7 +121,6 @@ export interface EraState {
     nextState() : EraState;
     nextEraCost() : Resources;
     getName() : string;
-    getRadius() : number;
     getHeart() : EraHeartInfo;
     getAvailableUnits() : GameUnit[];
     getUnitLimmit() : number;
@@ -139,11 +134,7 @@ abstract class BaseEra {
     }
 
     getHeart(): EraHeartInfo {
-        return new EraHeartInfo(this.hp, this.speed, this.resources);
-    }
-
-    getRadius(): number {
-        return this.radius;
+        return new EraHeartInfo(this.hp, this.speed, this.resources, this.radius);
     }
 
     getUnitLimmit(): number {

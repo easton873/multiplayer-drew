@@ -31,7 +31,7 @@ describe('Era Test', () => {
         let cost = new Resources(100, 0, 0);
         class testEra extends StartingEra {
             getHeart(): EraHeartInfo {
-                return new EraHeartInfo(startHP, 10, firstHeartInfo);
+                return new EraHeartInfo(startHP, 10, firstHeartInfo, 0);
             }
             nextEraCost(): Resources {
                 return cost;
@@ -42,7 +42,7 @@ describe('Era Test', () => {
         }
         class testEra2 extends StartingEra {
             getHeart(): EraHeartInfo {
-                return new EraHeartInfo(2, 0, secondHeartInfo);
+                return new EraHeartInfo(2, 0, secondHeartInfo, 0);
             }
             nextEraCost(): Resources {
                 return cost;

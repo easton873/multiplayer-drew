@@ -34,7 +34,7 @@ describe('Units Test', () => {
         assert.strictEqual(unit.target, targetUnit);
 
         unit.move(board);
-        assert.strictEqual(targetUnit.hp, SoldierUnit.hp - 1);
+        assert.strictEqual(targetUnit.hp, SoldierUnit.hp - ArcherUnit.damage);
         assert.strictEqual(unit.pos.equals(new Pos(9, 5)), true);
         assert.strictEqual(unit.target, targetUnit);
     });

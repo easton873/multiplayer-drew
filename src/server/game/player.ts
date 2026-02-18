@@ -1,5 +1,5 @@
 import { Board } from "./board.js";
-import { Heart } from "./heart.js";
+import { Heart, Hearts } from "./heart.js";
 import { Resources } from "./resources.js";
 import { ObservableUnit, Unit, UnitObserver } from "./unit/unit.js";
 import { Pos } from "./pos.js";
@@ -15,11 +15,13 @@ export class Player implements UnitObserver {
     unitCount = 0;
 
     heart: Heart;
+    hearts : Hearts;
 
     constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string) {
         this.board = board;
         this.heart = new Heart(this, pos, this.era.currEra.getHeart());
         this.board.addEntity(this.heart);
+        this.hearts = new Hearts(this.heart);
     }
 
     doTurn() {}
@@ -76,7 +78,7 @@ export class Player implements UnitObserver {
     }
 
     isDead(): Boolean {
-        return this.heart.hp <= 0;
+        return this.hearts.isDead();
     }
 
     attemptUpgradeEra(): boolean {
@@ -97,10 +99,7 @@ export class Player implements UnitObserver {
 
     getPlayerSpecificData() : PlayerSpecificData {
         return {
-            pos: this.heart.pos.getPosData(), 
-            radius: this.era.getRadius(), 
-            health: this.heart.hp, 
-            totalHealth: this.heart.totalHP,
+            hearts: this.hearts.getPlayerHeartData(),
             numUnits: this.unitCount,
             maxUnits: this.era.getUnitLimit()
         }
@@ -113,7 +112,7 @@ export class PlayerProxy extends Player {
     }
 
     NewUnit(unitType: string, pos: Pos): void {
-        if (this.heart.pos.distanceTo(pos) > this.era.getRadius() ||
+        if (!this.hearts.isInRange(pos) ||
             this.atUnitCap()) {
             return;
         }

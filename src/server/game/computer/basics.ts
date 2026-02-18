@@ -70,7 +70,7 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
 
     protectBase(defenseUnit : GameUnit) {
         this.board.entities.forEach((unit : Unit) => {
-            if (unit.team != this.getTeam() && this.heart.pos.distanceTo(unit.pos) <= this.era.getRadius()) {
+            if (unit.team != this.getTeam() && this.heart.isInRange(unit.pos)) {
                 this.placeUnit(defenseUnit, unit.pos, 3);
             }
         })

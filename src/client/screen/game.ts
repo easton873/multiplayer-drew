@@ -1,5 +1,5 @@
 import { GameSetupData, LoadData, PlayerSetupData, UnitLoadData } from "../../shared/bulider";
-import { EraData, GameData, GeneralGameData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
+import { EraData, GameData, GeneralGameData, PlayerHeartData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
 import { emitDeleteUnits, emitSpawnUnit } from "../../shared/routes";
 import { removeOptions } from "../../client/main";
 
@@ -328,7 +328,7 @@ export class GameScreen {
       this.setHp(data);
       this.setUnitCount(data);
       this.drawGeneralGameData(data.generalData);
-      this.drawCircle(data.playerData.pos.x, data.playerData.pos.y, Math.floor(Math.sqrt(data.playerData.radius)), "black");
+      this.drawCircles(data.playerData.hearts, "black");
     }
 
     drawGeneralGameData(data : GeneralGameData) {
@@ -367,8 +367,16 @@ export class GameScreen {
     }
 
     setHp(data : GameData) {
-      this.heartProgress.max = data.playerData.totalHealth;
-      this.heartProgress.value = data.playerData.health;
+      let hp = 0;
+      data.playerData.hearts.forEach((currHeart : PlayerHeartData) => {
+        hp += currHeart.health;
+      }, 0);
+      let totalHp = 0;
+      data.playerData.hearts.forEach((currHeart : PlayerHeartData) => {
+        totalHp += currHeart.totalHealth;
+      }, 0);
+      this.heartProgress.max = totalHp;
+      this.heartProgress.value = hp;
     }
 
     setUnitCount(data : GameData) {
@@ -421,6 +429,12 @@ export class GameScreen {
       let y : number = (pos.y - this.cameraY) * this.zoom;
       this.ctx.fillStyle = color;
       this.ctx.fillRect(x - 2, y - 2, this.zoom + 4, this.zoom + 4);
+    }
+
+    drawCircles(hearts : PlayerHeartData[], color : string) {
+      hearts.forEach((heart : PlayerHeartData) => {
+        this.drawCircle(heart.pos.x, heart.pos.y, Math.floor(Math.sqrt(heart.radius)), color);
+      });
     }
 
     drawCircle(x : number, y : number, radius : number, color : string) {

@@ -16,11 +16,11 @@ describe('Board Test', () => {
         board.addEntity(unit);
         assert.strictEqual(board.entities.length, 2);
         assert.strictEqual(unit.TESTObservers.length, 1);
-        assert.strictEqual(player.heart.TESTObservers.length, 1);
+        assert.strictEqual(player.heart.TESTObservers.length, 2);
         unit.notifyObserversDeath();
         assert.strictEqual(board.entities.length, 1);
         assert.strictEqual(unit.TESTObservers.length, 0);
-        assert.strictEqual(player.heart.TESTObservers.length, 1);
+        assert.strictEqual(player.heart.TESTObservers.length, 2);
     });
 });
 

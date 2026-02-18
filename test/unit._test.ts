@@ -10,6 +10,7 @@ import { ALL_UNITS } from "../src/server/game/unit/all_units.js";
 import { GameUnit } from "../src/server/game/unit/game_unit.js";
 import { SoldierUnit } from "../src/server/game/unit/melee_unit.js";
 import { Counter } from "../src/server/game/move/counter.js";
+import { EraHeartInfo } from "../src/server/game/heart.js";
 
 describe('Unit Test', () => {
     it ('spawn all units', () => {
@@ -105,9 +106,6 @@ describe('Unit Test', () => {
         let unitLimit = 1;
         let radius = 0;
         class testEra extends StartingEra {
-            getRadius() : number {
-                return radius;
-            }
             getUnitLimmit(): number {
                 return unitLimit;
             }
@@ -116,12 +114,19 @@ describe('Unit Test', () => {
         let player : Player = new PlayerProxy(0, new Pos(0, 0), board, "0", "", "");
         player.era.currEra = new testEra();
 
+        let heartInfo : EraHeartInfo = player.era.currEra.getHeart();
+        heartInfo.radius = 0;
+        player.heart.updateHeart(heartInfo);
+
         // range test
         player.resources.add(SoldierUnit.getUnitCreationInfo().getCost());
         assert.strictEqual(board.entities.length, 1);
         player.NewUnit(SoldierUnit.name, new Pos(1, 0));
         assert.strictEqual(board.entities.length, 1);
-        radius++;
+        
+        heartInfo.radius = 1;
+        player.heart.updateHeart(heartInfo);
+        
         player.NewUnit(SoldierUnit.name, new Pos(1, 0));
         assert.strictEqual(board.entities.length, 2);
 

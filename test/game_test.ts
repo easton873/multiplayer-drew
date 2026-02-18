@@ -22,7 +22,7 @@ describe('Game Test', () => {
         p3.NewUnit(SoldierUnit.name, new Pos(0, 0));
 
         assert.strictEqual(board.entities.length, 8);
-        p1.heart.hp = 0;
+        p1.heart.doDamage(p1.heart.hp);
         game.arePlayersStillAlive();
         assert.strictEqual(board.entities.length, 4);
     });
@@ -31,10 +31,10 @@ describe('Game Test', () => {
         let [game, board, p1, p2, p3] = newThreePlayerGame();
 
         assert.strictEqual(game.checkGameStillGoing(), true);
-        p2.heart.hp = 0;
+        p2.heart.doDamage(p2.heart.hp);
         game.arePlayersStillAlive();
         assert.strictEqual(game.players.length, 2);
-        p3.heart.hp = 0;
+        p3.heart.doDamage(p3.heart.hp);
         game.arePlayersStillAlive();
         assert.strictEqual(game.players.length, 1);
         assert.strictEqual(game.checkGameStillGoing(), false);
