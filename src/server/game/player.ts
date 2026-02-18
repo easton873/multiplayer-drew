@@ -15,19 +15,22 @@ export class Player implements UnitObserver {
     unitCount = 0;
 
     heart: Heart;
-    hearts : Hearts;
+    hearts : Hearts = new Hearts();
 
     constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string) {
         this.board = board;
         this.heart = new Heart(this, pos, this.era.currEra.getHeart());
-        this.board.addEntity(this.heart);
-        this.hearts = new Hearts(this.heart);
+        this.addHeart(this.heart);
     }
 
     doTurn() {}
 
     notifyDeath(unit: ObservableUnit) {
         unit.unregisterObserver(this);
+        if (this.heart != null && unit == this.heart) {
+            this.heart = null;
+            return;
+        }
         this.unitCount--;
     }
 
@@ -68,6 +71,11 @@ export class Player implements UnitObserver {
         this.unitCount++;
     }
 
+    addHeart(heart : Heart) {
+        this.board.addEntity(heart);
+        this.hearts.addHeart(heart);
+    }
+
     whichUnit(s: string): GameUnit {
         let unitInfo = UNIT_MAP.get(s);
         if (!unitInfo) {
@@ -82,7 +90,7 @@ export class Player implements UnitObserver {
     }
 
     attemptUpgradeEra(): boolean {
-        if (this.era.advanceToNextEra(this.resources)) {
+        if (this.era.advanceToNextEra(this.resources) && this.hearts != null) {
             this.heart.updateHeart(this.era.currEra.getHeart());
             return true;
         }

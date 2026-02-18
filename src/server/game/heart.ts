@@ -10,10 +10,7 @@ export const HEART_NAME = "Heart";
 
 export class Hearts implements UnitObserver {
     private hearts : Heart[] = [];
-    constructor(main : Heart) {
-        this.hearts.push(main);
-        main.registerObserver(this);
-    }
+    constructor() {}
 
     notifyDeath(unit: ObservableUnit) {
         unit.unregisterObserver(this);
@@ -31,6 +28,7 @@ export class Hearts implements UnitObserver {
 
     addHeart(heart : Heart) {
         this.hearts.push(heart);
+        heart.registerObserver(this);
     }
 
     isInRange(pos : Pos) : boolean {
