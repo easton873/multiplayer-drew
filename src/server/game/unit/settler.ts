@@ -16,28 +16,16 @@ class Settler extends Unit {
         this.moveDir = this.getMoveDir();
     }
 
-    getMoveDir()  {
-        let pos = this.pos.clone();
+    getMoveDir(): { dx: number, dy: number } {
+        const pos = this.pos.clone();
         const closest = this.owner.hearts.getClosestHeart(pos);
         if (!closest || closest.pos.equals(pos)) {
-            this.moveDir = { dx: 1, dy: 0 };
-        } else {
-            const rawDx = pos.x - closest.pos.x;
-            const rawDy = pos.y - closest.pos.y;
-            const angle = Math.atan2(rawDy, rawDx);
-            const sector = ((Math.round(angle / (Math.PI / 4)) % 8) + 8) % 8;
-            const dirs = [
-                { dx: 1,  dy: 0  }, // 0: E
-                { dx: 1,  dy: 1  }, // 1: NE
-                { dx: 0,  dy: 1  }, // 2: N
-                { dx: -1, dy: 1  }, // 3: NW
-                { dx: -1, dy: 0  }, // 4: W
-                { dx: -1, dy: -1 }, // 5: SW
-                { dx: 0,  dy: -1 }, // 6: S
-                { dx: 1,  dy: -1 }, // 7: SE
-            ];
-            return dirs[sector];
+            return { dx: 1, dy: 0 };
         }
+        const rawDx = pos.x - closest.pos.x;
+        const rawDy = pos.y - closest.pos.y;
+        const magnitude = Math.sqrt(rawDx * rawDx + rawDy * rawDy);
+        return { dx: rawDx / magnitude, dy: rawDy / magnitude };
     }
 
     doMove(board: Board) {
@@ -45,10 +33,18 @@ class Settler extends Unit {
             this.spawnHeart();
             return;
         }
-        if (this.moveDir.dx > 0) this.pos.moveRight();
-        else if (this.moveDir.dx < 0) this.pos.moveLeft();
-        if (this.moveDir.dy > 0) this.pos.moveUp();
-        else if (this.moveDir.dy < 0) this.pos.moveDown();
+        const { dx, dy } = this.moveDir;
+        const absDx = Math.abs(dx);
+        const absDy = Math.abs(dy);
+        const total = absDx + absDy;
+
+        if (total === 0) {
+            this.pos.moveRight();
+        } else if (absDy === 0 || (absDx > 0 && Math.random() < absDx / total)) {
+            dx > 0 ? this.pos.moveRight() : this.pos.moveLeft();
+        } else {
+            dy > 0 ? this.pos.moveUp() : this.pos.moveDown();
+        }
         this.moveCount++;
     }
 
