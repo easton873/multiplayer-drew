@@ -9,7 +9,7 @@ import { GameUnit } from "./unit/game_unit.js";
 import { UNIT_MAP } from "./unit/all_units.js";
 
 export class Player implements UnitObserver {
-    resources: Resources = new Resources(50, 0, 0);
+    resources: Resources = new Resources(5000000, 10000000, 10000000);
     board: Board;
     era: Era = new Era();
     unitCount = 0;
@@ -59,7 +59,7 @@ export class Player implements UnitObserver {
         }
     }
 
-    protected addUnitToBoard(gameUnit : GameUnit, pos : Pos) {
+    addUnitToBoard(gameUnit : GameUnit, pos : Pos) {
         let unit = gameUnit.construct(this, pos);
         unit.registerObserver(this);
         this.board.addEntity(unit);
@@ -87,6 +87,10 @@ export class Player implements UnitObserver {
         return false
     }
 
+    atUnitCap() : boolean {
+        return this.unitCount >= this.era.getUnitLimit();
+    }
+
     getID(): string {
         return this.id;
     }
@@ -110,7 +114,7 @@ export class PlayerProxy extends Player {
 
     NewUnit(unitType: string, pos: Pos): void {
         if (this.heart.pos.distanceTo(pos) > this.era.getRadius() ||
-            this.unitCount >= this.era.getUnitLimit()) {
+            this.atUnitCap()) {
             return;
         }
         super.NewUnit(unitType, pos);

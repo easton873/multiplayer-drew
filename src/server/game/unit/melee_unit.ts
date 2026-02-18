@@ -33,7 +33,13 @@ export class MeleeUnit extends GameUnit {
 
 class soldierUnit extends MeleeUnit {
     constructor() {
-        super("Soldier", new Resources(10, 0, 0), 10, 1, 3, "#000000", "Moves once a second and does one damage to its target when adjacent to it");
+        super("Soldier", new Resources(20, 0, 0), 10, 1, 10, "#000000", "A slightly durable melee unit who moves at a moderate speed doing minimal damage");
+    }
+}
+
+class scoutUnit extends MeleeUnit {
+    constructor() {
+        super("Scout", new Resources(10, 0, 0), 5, 1, 1, "#525050", "A weak and fast melee unit");
     }
 }
 
@@ -107,6 +113,7 @@ class randomMoverUnit extends MeleeUnit {
 }
 
 export const SoldierUnit : soldierUnit = new soldierUnit();
+export const ScountUnit : scoutUnit = new scoutUnit();
 export const TankUnit : tankUnit = new tankUnit();
 export const QuickAttackerUnit : quickAttackerUnit = new quickAttackerUnit();
 export const GoblinUnit : goblinUnit = new goblinUnit();
