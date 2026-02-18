@@ -44,6 +44,19 @@ export class Hearts implements UnitObserver {
     getPlayerHeartData() : PlayerHeartData[] {
         return this.hearts.map((heart : Heart) => heart.getPlayerHeartData());
     }
+
+    getClosestHeart(pos: Pos): Heart | null {
+        let closest: Heart | null = null;
+        let closestDist = Infinity;
+        for (const heart of this.hearts) {
+            const d = pos.distanceTo(heart.pos);
+            if (d < closestDist) {
+                closestDist = d;
+                closest = heart;
+            }
+        }
+        return closest;
+    }
 }
 
 export class Heart extends ResourceUnit {
