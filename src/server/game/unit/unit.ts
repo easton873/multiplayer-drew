@@ -65,6 +65,7 @@ export abstract class Unit extends ObservableUnit {
         if (this.moveCounter.tick()) {
             this.doMove(board);
         }
+        this.pos.clamp(board.width - 1, board.height - 1);
     }
 
     abstract doMove(board : Board);

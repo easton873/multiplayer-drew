@@ -1,31 +1,25 @@
 import { Board } from "../board.js";
 import { EraHeartInfo, Heart } from "../heart.js";
 import { Player } from "../player.js";
-import { Pos } from "../pos.js";
+import { Pos, PositionDifference } from "../pos.js";
 import { Resources } from "../resources.js";
 import { GameUnit } from "./game_unit.js";
 import { ResourceUnit } from "./resource_unit.js";
 import { TargetChasingUnit, Unit, } from "./unit.js";
 
-class Settler extends Unit {
-    moveCount = 0;
-    goal = 25;
-    moveDir: { dx: number, dy: number };
-    constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string) {
+class AbstractSettler extends Unit {
+    moveCount : number = 0;
+    moveDir: PositionDifference;
+    constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string, private goal : number, private heartInfo : EraHeartInfo) {
         super(player, name, pos, hp, speed, color);
-        this.moveDir = this.getMoveDir();
-    }
 
-    getMoveDir(): { dx: number, dy: number } {
-        const pos = this.pos.clone();
-        const closest = this.owner.hearts.getClosestHeart(pos);
-        if (!closest || closest.pos.equals(pos)) {
-            return { dx: 1, dy: 0 };
+        const closest : Heart = this.owner.hearts.getStrongestHeartInRange(pos);
+        if (!closest) {
+            return;
         }
-        const rawDx = pos.x - closest.pos.x;
-        const rawDy = pos.y - closest.pos.y;
-        const magnitude = Math.sqrt(rawDx * rawDx + rawDy * rawDy);
-        return { dx: rawDx / magnitude, dy: rawDy / magnitude };
+
+        this.moveDir = closest.pos.getMoveDir(this.pos.clone(), closest.getRadius());
+        this.goal *= this.moveDir.magnitude;
     }
 
     doMove(board: Board) {
@@ -49,24 +43,29 @@ class Settler extends Unit {
     }
 
     spawnHeart() {
-        this.owner.addHeart(new Heart(this.owner, this.pos.clone(), new EraHeartInfo(10, 30, new Resources(1, 0, 0), 25)));
+        this.owner.addHeart(new Heart(this.owner, this.pos.clone(), this.heartInfo));
         this.doDamage(this.hp);
     }
 }
 
 class settlerUnit extends GameUnit {
-    static NAME = "Settler";
-        static COST = new Resources(500, 125, 0);
-        static HP = 10;
-        static SPEED = 10;
-        static COLOR = "#7d560d";
-        static BLURB = "Moves 25 blocks away from your heart and spawns a new heart";
-        constructor() {
-            super(settlerUnit.NAME, settlerUnit.COST, settlerUnit.BLURB);
-        }
-        construct(player: Player, pos: Pos): Unit {
-            return new Settler(player, settlerUnit.NAME, pos, settlerUnit.HP, settlerUnit.SPEED, settlerUnit.COLOR);
-        }
+    constructor(public name : string, public cost : Resources, public hp : number, public speed : number, public color : string, public blurb : string, public maxDist : number,
+        public heartHP : number, public heartSpeed : number, public heartResources : Resources, public heartRadius) {
+        super(name, cost, blurb);
+    }
+    construct(player: Player, pos: Pos): Unit {
+        return new AbstractSettler(player, this.name, pos, this.hp, this.speed, this.color, this.maxDist, new EraHeartInfo(this.heartHP, this.heartSpeed, this.heartResources.copy(), this.heartRadius));
+    }
 }
 
-export const SettlerUnit : settlerUnit = new settlerUnit();
+export const SettlerUnit : settlerUnit = new settlerUnit(
+    "Settler", new Resources(500, 125, 0), 10, 10,  "#7d560d", 
+    "Moves up to 50 blocks away from your heart and spawns a new heart", 
+    50, 10, 30, new Resources(1, 0, 0), 25
+);
+
+export const CityBuilderUnit : settlerUnit = new settlerUnit(
+    "City Builder", new Resources(1500, 900, 500), 40, 5,  "#171511", 
+    "Moves up to 100 blocks away from your heart and spawns a new heart", 
+    100, 100, 30, new Resources(10, 10, 10), 100
+);

@@ -50,6 +50,20 @@ export class Pos {
         this._x--;
     }
 
+    clamp(maxX : number, maxY : number) {
+        if (this._x < 0) {
+            this._x = 0;
+        } else if (this._x > maxX) {
+            this._x = maxX;
+        }
+
+        if (this._y < 0) {
+            this._y = 0;
+        } else if (this._y > maxY) {
+            this._y = maxY;
+        }
+    }
+
     distanceTo(other : Pos) {
         let x = other._x - this._x;
         let y = other._y - this._y;
@@ -87,5 +101,24 @@ export class Pos {
             this.moveDown();
         }
     }
+
+    getMoveDir(end : Pos, maxDist : number): PositionDifference {
+    if (this.equals(end)) {
+        return { dx: 1, dy: 0, magnitude: 1 };
+    }
+
+    const dist = this.distanceTo(end);
+
+    const rawDx = end.x - this.x;
+    const rawDy = end.y - this.y;
+    const magnitude = Math.sqrt(rawDx * rawDx + rawDy * rawDy);
+    return { dx: rawDx / magnitude, dy: rawDy / magnitude, magnitude: dist / maxDist };
 }
+}
+
+export class PositionDifference {
+    constructor(public dx : number, public dy : number, public magnitude : number) {}
+}
+
+
 

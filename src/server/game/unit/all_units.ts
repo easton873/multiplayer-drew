@@ -13,7 +13,7 @@ import { SummonerUnit } from "./summoner.js";
 import { TurretUnit } from "./turret.js";
 import { LoadData, UnitLoadData } from "../../../shared/bulider.js";
 import { BarracksUnit } from "./barracks.js";
-import { SettlerUnit } from "./settler.js";
+import { CityBuilderUnit, SettlerUnit } from "./settler.js";
 
 export const ALL_RESOURCE_UNITS : GameUnit[] = [
     MERCHANT_GAME_UNIT,
@@ -55,6 +55,7 @@ export const ALL_MILITARY_UNITS : GameUnit[] = [
     FireballThrowerUnit,
     SabotagerUnit,
     BarracksUnit,
+    CityBuilderUnit,
     GorillaWarfareUnit,
     
     FlareUnit,
