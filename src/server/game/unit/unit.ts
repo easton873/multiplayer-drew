@@ -1,7 +1,8 @@
 import { Board } from "../board.js";
+import { Heart } from "../heart.js";
 import { Counter } from "../move/counter.js";
 import { Player } from "../player.js";
-import { Pos } from "../pos.js";
+import { Pos, PositionDifference } from "../pos.js";
 
 export abstract class ObservableUnit {
     private observers : UnitObserver[] = [];
@@ -96,6 +97,16 @@ export abstract class Unit extends ObservableUnit {
     set speed(newSpeed : number) {
         this.moveCounter.setSpeed(newSpeed);
     } 
+
+    getDirectionFromHeart() : PositionDifference {
+        const closest : Heart = this.owner.hearts.getStrongestHeartInRange(this.pos);
+        if (!closest) { // this shouldn't ever happen
+            console.log("somehow a unit didn't have an owner with a heart 😬");
+            return Pos.GetDefaultPositionDifferrence();
+        }
+
+        return closest.pos.getMoveDir(this.pos.clone(), closest.getRadius());
+    }
 }
 
 export abstract class UnitWithTarget extends Unit implements UnitObserver {

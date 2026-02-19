@@ -1,5 +1,5 @@
 import { GameSetupData, LoadData, PlayerSetupData, UnitLoadData } from "../../shared/bulider";
-import { EraData, GameData, GeneralGameData, PlayerHeartData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
+import { EraData, GameData, GeneralGameData, GeneralHeartData, PlayerHeartData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
 import { emitDeleteUnits, emitSpawnUnit } from "../../shared/routes";
 import { removeOptions } from "../../client/main";
 
@@ -340,7 +340,7 @@ export class GameScreen {
       data.units.forEach((unit : UnitData) => {
         this.drawUnit(unit);
       });
-      this.drawMinimap(data.units);
+      this.drawMinimap(data.units, data.hearts);
     }
 
     setCanvasSize(width : number, height : number) {
@@ -446,7 +446,7 @@ export class GameScreen {
       ctx.stroke();
     }
 
-    drawMinimap(units : UnitData[]) {
+    drawMinimap(units : UnitData[], hearts : GeneralHeartData[]) {
       if (this.boardWidth <= 0 || this.boardHeight <= 0) return;
       const mw = this.minimapCanvas.width;
       const mh = this.minimapCanvas.height;
@@ -464,6 +464,20 @@ export class GameScreen {
 
       const scaleX = mw / this.boardWidth;
       const scaleY = mh / this.boardHeight;
+
+      // Territory circles — drawn before unit dots so dots appear on top
+      mctx.globalAlpha = 0.3;
+      hearts.forEach((heart) => {
+        const hx = heart.pos.x * scaleX;
+        const hy = heart.pos.y * scaleY;
+        const tileRadius = Math.sqrt(heart.radius);
+        const pixelRadius = tileRadius * (scaleX + scaleY) / 2;
+        mctx.fillStyle = heart.playerColor;
+        mctx.beginPath();
+        mctx.arc(hx, hy, pixelRadius, 0, 2 * Math.PI);
+        mctx.fill();
+      });
+      mctx.globalAlpha = 1.0;
 
       // Draw units as colored circles
       const dotRadius = Math.max(2, Math.min(scaleX, scaleY) * 0.75);

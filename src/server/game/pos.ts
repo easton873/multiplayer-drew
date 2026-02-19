@@ -102,11 +102,11 @@ export class Pos {
         }
     }
 
-    getMoveDir(end : Pos, maxDist : number): PositionDifference {
-    if (this.equals(end)) {
+    static GetDefaultPositionDifferrence() : PositionDifference {
         return { dx: 1, dy: 0, magnitude: 1 };
-    }
+    } 
 
+    getMoveDir(end : Pos, maxDist : number): PositionDifference {
     const dist = this.distanceTo(end);
 
     const rawDx = end.x - this.x;

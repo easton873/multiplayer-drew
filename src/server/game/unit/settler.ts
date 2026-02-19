@@ -4,8 +4,7 @@ import { Player } from "../player.js";
 import { Pos, PositionDifference } from "../pos.js";
 import { Resources } from "../resources.js";
 import { GameUnit } from "./game_unit.js";
-import { ResourceUnit } from "./resource_unit.js";
-import { TargetChasingUnit, Unit, } from "./unit.js";
+import { Unit, } from "./unit.js";
 
 class AbstractSettler extends Unit {
     moveCount : number = 0;
@@ -13,12 +12,11 @@ class AbstractSettler extends Unit {
     constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string, private goal : number, private heartInfo : EraHeartInfo) {
         super(player, name, pos, hp, speed, color);
 
-        const closest : Heart = this.owner.hearts.getStrongestHeartInRange(pos);
-        if (!closest) {
-            return;
+        this.moveDir = this.getDirectionFromHeart();
+        if (this.moveDir.dx == 0 && this.moveDir.dy == 0) {
+            this.moveDir = Pos.GetDefaultPositionDifferrence();
         }
-
-        this.moveDir = closest.pos.getMoveDir(this.pos.clone(), closest.getRadius());
+        
         this.goal *= this.moveDir.magnitude;
     }
 
@@ -49,8 +47,8 @@ class AbstractSettler extends Unit {
 }
 
 class settlerUnit extends GameUnit {
-    constructor(public name : string, public cost : Resources, public hp : number, public speed : number, public color : string, public blurb : string, public maxDist : number,
-        public heartHP : number, public heartSpeed : number, public heartResources : Resources, public heartRadius) {
+    constructor(public name : string, public cost : Resources, public hp : number, public speed : number, public color : string, public blurb : string, 
+        public maxDist : number, public heartHP : number, public heartSpeed : number, public heartResources : Resources, public heartRadius) {
         super(name, cost, blurb);
     }
     construct(player: Player, pos: Pos): Unit {

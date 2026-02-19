@@ -1,4 +1,4 @@
-import { GameData, UnitData, PosData, BoardData, ResourceData, EraData, PlayerSpecificData, GeneralGameData } from '../../shared/types.js';
+import { GameData, UnitData, PosData, BoardData, ResourceData, EraData, PlayerSpecificData, GeneralGameData, GeneralHeartData } from '../../shared/types.js';
 import { Board } from "./board.js";
 import { Player } from "./player.js";
 import { Unit } from "./unit/unit.js";
@@ -97,9 +97,21 @@ s
             };
             units.push(unitData);
         })
+        const hearts : GeneralHeartData[] = [];
+        this.players.forEach((player) => {
+            player.hearts.getPlayerHeartData().forEach((heartData) => {
+                hearts.push({
+                    pos: heartData.pos,
+                    radius: heartData.radius,
+                    playerColor: player.getColor(),
+                });
+            });
+        });
+
         const gameData : GeneralGameData = {
-            units: units, 
-            board: board, 
+            units: units,
+            board: board,
+            hearts: hearts,
         };
         return gameData;
     }

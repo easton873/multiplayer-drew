@@ -5,9 +5,16 @@ export interface GameData {
   generalData : GeneralGameData
 }
 
+export interface GeneralHeartData {
+  pos : PosData
+  radius : number
+  playerColor : string
+}
+
 export interface GeneralGameData {
   units : UnitData[]
   board : BoardData
+  hearts : GeneralHeartData[]
 }
 
 export interface PlayerSpecificData {
