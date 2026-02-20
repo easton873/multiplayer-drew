@@ -49,6 +49,7 @@ export abstract class Unit extends ObservableUnit {
     team : number;
     owner : Player;
     color : string;
+    freeze : boolean = false;
 
     constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string) {
         super();
@@ -63,10 +64,17 @@ export abstract class Unit extends ObservableUnit {
     }
 
     move(board : Board) {
+        if (this.freeze) {
+            return;
+        }
         if (this.moveCounter.tick()) {
             this.doMove(board);
         }
-        this.pos.clamp(board.width - 1, board.height - 1);
+        this.clamp(this.pos, board);
+    }
+
+    clamp(pos : Pos, board : Board) {
+        pos.clamp(board.width - 1, board.height - 1);
     }
 
     abstract doMove(board : Board);

@@ -3,13 +3,18 @@ import { EraHeartInfo, Heart } from "../heart.js";
 import { Player } from "../player.js";
 import { Pos, PositionDifference } from "../pos.js";
 import { Resources } from "../resources.js";
+import { Defense } from "./defense.js";
 import { GameUnit } from "./game_unit.js";
+import { MeleeUnit } from "./melee_unit.js";
+import { ResourceUnit } from "./resource_unit.js";
 import { Unit, } from "./unit.js";
 
 class Teleporter extends Unit {
     private targetPos : Pos = new Pos(0, 0);
-    private waitingGoal : number = 30 * 3; // in seconds
+    private waitingGoal : number = 30 * 15; // in seconds
     private currWaitAmount : number = 0;
+    private targets : Unit[] = [];
+    private range : number = 25;
     constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string) {
         super(player, name, pos, hp, speed, color);
 
@@ -21,14 +26,36 @@ class Teleporter extends Unit {
             Math.round(dir.dx * dir.magnitude * halfX + halfX),
             Math.round((dir.dy * dir.magnitude * halfY)  + halfY)
         );
+        this.clamp(this.targetPos, this.owner.board);
     }
 
     doMove(board: Board) {
         if (this.currWaitAmount >= this.waitingGoal) {
             this.pos = this.targetPos.clone();
+            this.targets.forEach((unit : Unit) => {
+                // teleport unit
+                unit.freeze = false;
+                unit.pos = this.targetPos.clone();
+            });
+            this. targets = [];
             return; // TODO kill unit
         }
+        board.entities.forEach((unit : Unit) => {
+            if (this != unit && // skip current unit
+            this.pos.distanceTo(unit.pos) <= this.range && // in range
+            this.isValidUnit(unit) && // is one of the units that can be telpoerted
+            !this.targets.includes(unit)) { // isn't one we've already seen
+                unit.freeze = true;
+                this.targets.push(unit);
+            }
+        });
         this.currWaitAmount++;
+    }
+
+    isValidUnit(unit : Unit) : boolean {
+        return !(unit instanceof Heart) && 
+        !(unit instanceof ResourceUnit) &&
+        !(unit instanceof Defense)
     }
 }
 
