@@ -29,6 +29,10 @@ export class Counter {
         return this.counter;
     }
 
+    get total() : number {
+        return this.speed;
+    }
+
     setSpeed(newSpeed : number) {
         this.speed = newSpeed;
         // if (this.counter > this.speed) {

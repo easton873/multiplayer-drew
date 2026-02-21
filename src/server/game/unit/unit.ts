@@ -1,3 +1,4 @@
+import { UnitRangedAttackData } from "../../../shared/types.js";
 import { Board } from "../board.js";
 import { Heart } from "../heart.js";
 import { Counter } from "../move/counter.js";
@@ -49,6 +50,7 @@ export abstract class Unit extends ObservableUnit {
     owner : Player;
     color : string;
     freeze : boolean = false;
+    attacking : boolean = false;
 
     constructor(player : Player, name : string, pos : Pos, hp : number, color : string) {
         super();
@@ -107,6 +109,17 @@ export abstract class Unit extends ObservableUnit {
 
         return closest.pos.getMoveDir(this.pos.clone(), closest.getRadius());
     }
+
+    getRangedData() : UnitRangedAttackData {
+        return {
+            attacking: this.attacking,
+            ranged: false,
+            targetX: 0,
+            targetY: 0,
+            counter: 0,
+            counterTotal: 0,
+        };
+    }
 }
 
 export abstract class UnitWithCounter extends Unit {
@@ -127,7 +140,7 @@ export abstract class UnitWithCounter extends Unit {
     } 
 }
 
-export abstract class UnitWithTarget extends UnitWithCounter implements UnitObserver {
+export abstract class UnitWithTarget extends Unit implements UnitObserver {
     private _target : Unit = null;
     notifyDeath(unit: ObservableUnit) {
         if (unit == this._target) {
@@ -190,26 +203,3 @@ export abstract class UnitWithTarget extends UnitWithCounter implements UnitObse
         }
     }
 }
-
-// export abstract class TargetChasingUnit extends UnitWithTarget {
-//     doMove(board : Board) {
-//         this.findNewTarget(board.entities);
-//         if (this.hasNoTarget()) {
-//             this.hasNoTargetMove();
-//             return;
-//         }
-//         if (this.inRange(this.target)) {
-//             this.inRangeMove(board);
-//         } else {
-//             this.pos.moveTowards(this.target.pos);
-//         }
-//     }
-
-//     hasNoTargetMove(): void {
-//         return;
-//     }
-
-//     abstract inRange(other : Unit) : boolean;
-
-//     abstract inRangeMove(board : Board);
-// }

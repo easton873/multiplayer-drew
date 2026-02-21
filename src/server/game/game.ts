@@ -94,6 +94,7 @@ s
                 playerColor: unit.owner.getColor(),
                 hp : unit.hp,
                 totalHP: unit.totalHP,
+                rangedData: unit.getRangedData(),
             };
             units.push(unitData);
         })

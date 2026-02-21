@@ -56,6 +56,16 @@ export interface UnitData {
   playerColor : string
   hp : number
   totalHP : number
+  rangedData : UnitRangedAttackData
+}
+
+export interface UnitRangedAttackData {
+  attacking : boolean
+  ranged : boolean
+  targetX : number
+  targetY : number
+  counter : number
+  counterTotal : number
 }
 
 export interface BoardData {

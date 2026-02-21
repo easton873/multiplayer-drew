@@ -1,3 +1,4 @@
+import { UnitRangedAttackData } from "../../../shared/types.js";
 import { Board } from "../board.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
@@ -16,6 +17,20 @@ export class Ranged extends TargetChasingUnit {
 
     inRange(other: Unit): boolean {
         return this.inRangeForDistance(other, this.range);
+    }
+
+    getRangedData() : UnitRangedAttackData {
+        if (!this.target) {
+            return super.getRangedData();
+        }
+        return {
+            attacking: this.attacking,
+            ranged: true,
+            targetX: this.target.pos.x,
+            targetY: this.target.pos.y,
+            counter: this.attackCounter.remaining,
+            counterTotal: this.attackCounter.total
+        };
     }
 }
 

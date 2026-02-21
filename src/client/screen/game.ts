@@ -394,6 +394,20 @@ export class GameScreen {
       this.drawBorder(unit.pos, unit.playerColor);
       this.drawUnitByPos(unit.name, unit.pos, unit.color);
       this.drawUnitHealthBar(unit);
+      this.drawRangedProjectile(unit);
+    }
+
+    drawRangedProjectile(unit : UnitData) {
+      const rd = unit.rangedData;
+      if (!rd.ranged || !rd.attacking || rd.counterTotal <= 0) return;
+      const progress = (rd.counterTotal - rd.counter) / rd.counterTotal;
+      const worldX = unit.pos.x + 0.5 + progress * (rd.targetX - unit.pos.x);
+      const worldY = unit.pos.y + 0.5 + progress * (rd.targetY - unit.pos.y);
+      const sx = (worldX - this.cameraX) * this.zoom;
+      const sy = (worldY - this.cameraY) * this.zoom;
+      const size = Math.max(1, Math.round(this.zoom * 7 / MAX_ZOOM));
+      this.ctx.fillStyle = unit.playerColor;
+      this.ctx.fillRect(sx - size / 2, sy - size / 2, size, size);
     }
 
     drawUnitByPos(name : string, pos : PosData, color : string) {

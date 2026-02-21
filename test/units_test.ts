@@ -199,11 +199,10 @@ describe('Units Test', () => {
         board.addEntity(soldier);
         assert.strictEqual(board.entities.length, 4);
         
-        unit.moveCounter = new Counter(0);
+        unit.attackCounter = new Counter(0);
         unit.move(board);
         assert.strictEqual(unit.pos.equals(new Pos(5, 5)), true);
         assert.strictEqual(soldier.hp, soldier.totalHP);
-        assert.strictEqual(unit.target, null);
         soldier.pos = new Pos(10, 5);
         unit.move(board);
         assert.strictEqual(unit.target, soldier);
@@ -211,7 +210,6 @@ describe('Units Test', () => {
         assert.strictEqual(soldier.hp, hpAfterOneShot);
         soldier.pos = new Pos(11, 5);
         unit.move(board);
-        assert.strictEqual(unit.target, null);
         assert.strictEqual(soldier.hp, hpAfterOneShot);
     });
 

@@ -1,4 +1,3 @@
-import { Board } from "../board.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
