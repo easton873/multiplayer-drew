@@ -3,14 +3,15 @@ import { Heart } from "../heart.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
+import { TargetChasingUnit } from "./combat/combat.js";
 import { Defense } from "./defense.js";
 import { GameUnit } from "./game_unit.js";
 import { ResourceUnit } from "./resource_unit.js";
-import { Unit, TargetChasingUnit } from "./unit.js";
+import { Unit } from "./unit.js";
 
 export class Healer extends TargetChasingUnit {
     constructor(player: Player, pos: Pos, public range : number, public healRange) {
-        super(player, HealerUnit.NAME, pos, HealerUnit.HP, HealerUnit.SPEED, HealerUnit.COLOR);
+        super(player, HealerUnit.NAME, pos, HealerUnit.HP, HealerUnit.COLOR, HealerUnit.SPEED, HealerUnit.SPEED);
     }
     inRange(other: Unit): boolean {
         return this.inRangeForDistance(other, this.range);
@@ -24,8 +25,8 @@ export class Healer extends TargetChasingUnit {
             }
         }
     }
-    doMove(board: Board): void {
-        super.doMove(board);
+    doAcutalMove(board: Board): void {
+        super.doAcutalMove(board);
         if (this.inRangeForDistance(this.target, this.healRange)) {
             this.healTarget();
         }

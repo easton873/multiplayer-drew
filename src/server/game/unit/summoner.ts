@@ -3,11 +3,12 @@ import { Heart } from "../heart.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
+import { TargetChasingUnit } from "./combat/combat.js";
 import { Defense } from "./defense.js";
 import { GameUnit } from "./game_unit.js";
 import { Melee } from "./melee_unit.js";
 import { ResourceUnit } from "./resource_unit.js";
-import { ObservableUnit, Unit, TargetChasingUnit } from "./unit.js";
+import { ObservableUnit, Unit } from "./unit.js";
 
 export class Summoner extends TargetChasingUnit  {
     numSummons = 3;
@@ -15,10 +16,10 @@ export class Summoner extends TargetChasingUnit  {
     summonTimer = this.summonTimerTime;
     range = 16;
     constructor(player: Player, pos: Pos) {
-        super(player, SummonerUnit.NAME, pos, SummonerUnit.HP, SummonerUnit.SPEED, SummonerUnit.COLOR);
+        super(player, SummonerUnit.NAME, pos, SummonerUnit.HP, SummonerUnit.COLOR, SummonerUnit.SPEED, SummonerUnit.SPEED);
     }
-    doMove(board: Board) {
-        super.doMove(board);
+    doAcutalMove(board: Board) {
+        super.doAcutalMove(board);
         this.summon(board);
     }
     summon(board : Board) {
@@ -66,7 +67,7 @@ export class Summonee extends Melee {
     static COLOR = "#550055";
     static DAMAGE = 1;
     constructor(player : Player, pos : Pos, public master : Unit) {
-        super(player, Summonee.NAME, pos, Summonee.HP, Summonee.SPEED, Summonee.COLOR, Summonee.DAMAGE);
+        super(player, Summonee.NAME, pos, Summonee.HP, Summonee.SPEED, Summonee.SPEED, Summonee.COLOR, Summonee.DAMAGE);
     }
     inRange(other: Unit): boolean {
         return this.pos.isAdjacent(other.pos);

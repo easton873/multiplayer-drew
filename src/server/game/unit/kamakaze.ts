@@ -2,12 +2,13 @@ import { Board } from "../board.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
+import { TargetChasingUnit } from "./combat/combat.js";
 import { GameUnit } from "./game_unit.js";
-import { Unit, TargetChasingUnit } from "./unit.js";
+import { Unit } from "./unit.js";
 
 export class Kamakaze extends TargetChasingUnit {
     constructor(player : Player, pos : Pos, name : string, hp : number, speed : number, color : string,  private damage : number, private range : number) {
-        super(player, name, pos, hp, speed, color);
+        super(player, name, pos, hp, color, speed, 1);
     }
     inRange(other: Unit): boolean {
         return this.isAdjacent(other);

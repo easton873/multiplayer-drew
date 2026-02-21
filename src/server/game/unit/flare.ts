@@ -2,13 +2,14 @@ import { Board } from "../board.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
+import { TargetChasingUnit } from "./combat/combat.js";
 import { GameUnit } from "./game_unit.js";
 import { ResourceUnit } from "./resource_unit.js";
-import { TargetChasingUnit, Unit, } from "./unit.js";
+import { Unit, } from "./unit.js";
 
 export class Flare extends TargetChasingUnit {
     constructor(player : Player, pos : Pos, name : string, hp : number, speed : number, color : string) {
-        super(player, name, pos, hp, speed, color);
+        super(player, name, pos, hp, color, speed, speed);
     }
     inRange(other: Unit): boolean {
         return this.isAdjacent(other);

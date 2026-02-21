@@ -2,14 +2,15 @@ import { Board } from "../board.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
+import { TargetChasingUnit } from "./combat/combat.js";
 import { GameUnit } from "./game_unit.js";
 import { Missile } from "./missile.js";
-import { TargetChasingUnit, Unit, } from "./unit.js";
+import { Unit } from "./unit.js";
 
 class CounterMissile extends TargetChasingUnit {
     private startPos : Pos;
     constructor(player : Player, pos : Pos, name : string, hp : number, speed : number, color : string) {
-        super(player, name, pos, hp, speed, color);
+        super(player, name, pos, hp, color, speed, speed);
         this.startPos = pos.clone();
     }
     inRange(other: Unit): boolean {

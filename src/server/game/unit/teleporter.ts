@@ -7,9 +7,9 @@ import { Defense } from "./defense.js";
 import { GameUnit } from "./game_unit.js";
 import { MeleeUnit } from "./melee_unit.js";
 import { ResourceUnit } from "./resource_unit.js";
-import { Unit, } from "./unit.js";
+import { Unit, UnitWithCounter, } from "./unit.js";
 
-class Teleporter extends Unit {
+class Teleporter extends UnitWithCounter {
     private targetPos : Pos = new Pos(0, 0);
     private waitingGoal : number = 30 * 15; // in seconds
     private currWaitAmount : number = 0;
@@ -38,18 +38,24 @@ class Teleporter extends Unit {
                 unit.pos = this.targetPos.clone();
             });
             this. targets = [];
-            return; // TODO kill unit
+            this.doDamage(this.hp);
+            return;
         }
         board.entities.forEach((unit : Unit) => {
-            if (this != unit && // skip current unit
-            this.pos.distanceTo(unit.pos) <= this.range && // in range
-            this.isValidUnit(unit) && // is one of the units that can be telpoerted
-            !this.targets.includes(unit)) { // isn't one we've already seen
+            if (this.canTeleport(unit)) { 
                 unit.freeze = true;
                 this.targets.push(unit);
             }
         });
         this.currWaitAmount++;
+    }
+
+    canTeleport(unit : Unit) : boolean {
+        return this != unit && // skip current unit
+            this.team == unit.team && // only teleport the same team
+            this.pos.distanceTo(unit.pos) <= this.range && // in range
+            this.isValidUnit(unit) && // is one of the units that can be telpoerted
+            !this.targets.includes(unit) // isn't one we've already seen
     }
 
     isValidUnit(unit : Unit) : boolean {

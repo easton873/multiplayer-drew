@@ -4,9 +4,9 @@ import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
 import { GameUnit } from "./game_unit.js";
 // import { GameUnit } from "./game_unit.js";
-import { Unit } from "./unit.js";
+import { Unit, UnitWithCounter } from "./unit.js";
 
-export class ResourceUnit extends Unit {
+export class ResourceUnit extends UnitWithCounter {
     constructor(player : Player, pos : Pos, name : string, hp : number, speed : number, protected resources : Resources, color : string) {
         super(player, name, pos, hp, speed, color);
         this.name = name;

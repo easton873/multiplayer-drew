@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Board } from "../src/server/game/board.js";
 import { Player } from "../src/server/game/player.js";
-import { Unit, TargetChasingUnit, UnitWithTarget } from "../src/server/game/unit/unit.js";
+import { Unit, UnitWithTarget } from "../src/server/game/unit/unit.js";
 import { Pos } from "../src/server/game/pos.js";
 import { Kamakaze, KamakazeUnit } from "../src/server/game/unit/kamakaze.js";
 import { Summoner } from "../src/server/game/unit/summoner.js";
@@ -11,10 +11,7 @@ import { SoldierUnit, TankUnit, GoblinUnit } from "../src/server/game/unit/melee
 import { ArcherUnit, FireballThrowerUnit, Ranged } from "../src/server/game/unit/ranged_unit.js";
 import { Counter } from "../src/server/game/move/counter.js";
 import { GorillaWarfarer, GorillaWarfareUnit } from "../src/server/game/unit/gorilla_warfare.js";
-import { MissileUnit } from "../src/server/game/unit/missile.js";
-import { Missile } from "../src/server/game/unit/missile.js";
-import { FlareUnit } from "../src/server/game/unit/flare.js";
-import { CounterMissileUnit } from "../src/server/game/unit/counter_missile.js";
+import { TargetChasingUnit } from "../src/server/game/unit/combat/combat.js";
 
 describe('Units Test', () => {
     it('archer test', () => {
@@ -28,6 +25,7 @@ describe('Units Test', () => {
         board.addEntity(targetUnit);
         
         unit.moveCounter = new Counter(0);
+        unit.attackCounter = new Counter(0);
         unit.move(board);
         assert.strictEqual(targetUnit.hp, SoldierUnit.hp);
         assert.strictEqual(unit.pos.equals(new Pos(9, 5)), true);
@@ -51,6 +49,7 @@ describe('Units Test', () => {
         assert.strictEqual(board.entities.length, 4);
         
         unit.moveCounter = new Counter(0);
+        unit.attackCounter = new Counter(0);
         unit.move(board);
         assert.strictEqual(targetUnit.hp, SoldierUnit.hp);
         assert.strictEqual(unit.pos.equals(new Pos(6, 5)), true);
@@ -73,6 +72,7 @@ describe('Units Test', () => {
         assert.strictEqual(board.entities.length, 4);
         
         unit.moveCounter = new Counter(0);
+        unit.attackCounter = new Counter(0);
         unit.move(board);
         assert.strictEqual(unit.pos.equals(new Pos(6, 5)), true);
         assert.strictEqual(unit.target, targetUnit);
@@ -113,6 +113,7 @@ describe('Units Test', () => {
         assert.strictEqual(board.entities.length, 5);
         
         unit.moveCounter = new Counter(0);
+        unit.attackCounter = new Counter(0);
         unit.summonTimer = 0;
         unit.range = 0;
         unit.move(board);
@@ -138,6 +139,7 @@ describe('Units Test', () => {
         assert.strictEqual(board.entities.length, 4);
         
         unit.moveCounter = new Counter(0);
+        unit.attackCounter = new Counter(0);
         unit.range = 9;
         unit.move(board);
         assert.strictEqual(unit.target, soldier);
@@ -177,6 +179,7 @@ describe('Units Test', () => {
         unit.target = soldier;
         
         unit.moveCounter = new Counter(0);
+        unit.attackCounter = new Counter(0);
         assert.strictEqual(unit.pos.equals(new Pos(5, 5)), true);
         unit.move(board);
         assert.strictEqual(soldier.hp, soldier.totalHP - unit.damage);

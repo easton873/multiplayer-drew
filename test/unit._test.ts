@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { Board } from "../src/server/game/board.js";
 import { Player, PlayerProxy } from "../src/server/game/player.js";
-import { Unit, TargetChasingUnit } from "../src/server/game/unit/unit.js";
+import { Unit, UnitWithCounter } from "../src/server/game/unit/unit.js";
 import { Pos } from "../src/server/game/pos.js";
 import { MINER_GAME_UNIT, MINER_SPEED } from "../src/server/game/unit/resource_unit.js";
 import { Resources } from "../src/server/game/resources.js";
@@ -11,6 +11,7 @@ import { GameUnit } from "../src/server/game/unit/game_unit.js";
 import { SoldierUnit } from "../src/server/game/unit/melee_unit.js";
 import { Counter } from "../src/server/game/move/counter.js";
 import { EraHeartInfo } from "../src/server/game/heart.js";
+import { TargetChasingUnit } from "../src/server/game/unit/combat/combat.js";
 
 describe('Unit Test', () => {
     it ('spawn all units', () => {
@@ -93,7 +94,7 @@ describe('Unit Test', () => {
     it('counter test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
-        let unit : Unit = MINER_GAME_UNIT.construct(player, new Pos(0, 0));
+        let unit : UnitWithCounter = MINER_GAME_UNIT.construct(player, new Pos(0, 0)) as UnitWithCounter;
         let startingResrouces = player.resources;
         assert.strictEqual(unit.moveCounter.remaining, MINER_SPEED);
         unit.move(board);

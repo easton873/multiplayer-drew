@@ -4,9 +4,9 @@ import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
 import { GameUnit } from "./game_unit.js";
 import { SoldierUnit } from "./melee_unit.js";
-import { Unit } from "./unit.js";
+import { Unit, UnitWithCounter } from "./unit.js";
 
-export class Spawner extends Unit {
+export class Spawner extends UnitWithCounter {
     constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string, protected unitToSpawn : GameUnit) {
         super(player, name, pos, hp, speed, color);
     }

@@ -45,13 +45,12 @@ export abstract class Unit extends ObservableUnit {
     pos : Pos;
     totalHP : number;
     hp : number;
-    moveCounter : Counter;
     team : number;
     owner : Player;
     color : string;
     freeze : boolean = false;
 
-    constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string) {
+    constructor(player : Player, name : string, pos : Pos, hp : number, color : string) {
         super();
         this.team = player.getTeam();
         this.owner = player;
@@ -59,7 +58,6 @@ export abstract class Unit extends ObservableUnit {
         this.pos = pos;
         this.totalHP = hp;
         this.hp = hp;
-        this.moveCounter = new Counter(speed);
         this.color = color;
     }
 
@@ -67,9 +65,7 @@ export abstract class Unit extends ObservableUnit {
         if (this.freeze) {
             return;
         }
-        if (this.moveCounter.tick()) {
-            this.doMove(board);
-        }
+        this.doAcutalMove(board);
         this.clamp(this.pos, board);
     }
 
@@ -77,7 +73,7 @@ export abstract class Unit extends ObservableUnit {
         pos.clamp(board.width - 1, board.height - 1);
     }
 
-    abstract doMove(board : Board);
+    abstract doAcutalMove(board : Board);
 
     doDamage(damage : number) {
         this.hp -= damage;
@@ -102,10 +98,6 @@ export abstract class Unit extends ObservableUnit {
         return this.pos.isAdjacent(other.pos);
     }
 
-    set speed(newSpeed : number) {
-        this.moveCounter.setSpeed(newSpeed);
-    } 
-
     getDirectionFromHeart() : PositionDifference {
         const closest : Heart = this.owner.hearts.getStrongestHeartInRange(this.pos);
         if (!closest) { // this shouldn't ever happen
@@ -117,7 +109,25 @@ export abstract class Unit extends ObservableUnit {
     }
 }
 
-export abstract class UnitWithTarget extends Unit implements UnitObserver {
+export abstract class UnitWithCounter extends Unit {
+    moveCounter : Counter;
+    constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string){
+        super(player, name, pos, hp, color);
+        this.moveCounter = new Counter(speed);
+    }
+    doAcutalMove(board: Board) {
+        if (this.moveCounter.tick()) {
+            this.doMove(board);
+        }
+    }
+    abstract doMove(board : Board);
+
+    set speed(newSpeed : number) {
+        this.moveCounter.setSpeed(newSpeed);
+    } 
+}
+
+export abstract class UnitWithTarget extends UnitWithCounter implements UnitObserver {
     private _target : Unit = null;
     notifyDeath(unit: ObservableUnit) {
         if (unit == this._target) {
@@ -181,25 +191,25 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
     }
 }
 
-export abstract class TargetChasingUnit extends UnitWithTarget {
-    doMove(board : Board) {
-        this.findNewTarget(board.entities);
-        if (this.hasNoTarget()) {
-            this.hasNoTargetMove();
-            return;
-        }
-        if (this.inRange(this.target)) {
-            this.inRangeMove(board);
-        } else {
-            this.pos.moveTowards(this.target.pos);
-        }
-    }
+// export abstract class TargetChasingUnit extends UnitWithTarget {
+//     doMove(board : Board) {
+//         this.findNewTarget(board.entities);
+//         if (this.hasNoTarget()) {
+//             this.hasNoTargetMove();
+//             return;
+//         }
+//         if (this.inRange(this.target)) {
+//             this.inRangeMove(board);
+//         } else {
+//             this.pos.moveTowards(this.target.pos);
+//         }
+//     }
 
-    hasNoTargetMove(): void {
-        return;
-    }
+//     hasNoTargetMove(): void {
+//         return;
+//     }
 
-    abstract inRange(other : Unit) : boolean;
+//     abstract inRange(other : Unit) : boolean;
 
-    abstract inRangeMove(board : Board);
-}
+//     abstract inRangeMove(board : Board);
+// }

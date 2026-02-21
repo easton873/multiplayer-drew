@@ -12,7 +12,7 @@ export class GorillaWarfarer extends Ranged {
     retreatDist = 625;
     originalSpeed;
     constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string, public damage : number, public range : number) {
-        super(player, name, pos, hp, speed, color, damage, range);
+        super(player, name, pos, hp, speed, speed, color, damage, range);
         this.originalSpeed = speed;
     }
     doMove(board: Board): void {
@@ -27,7 +27,7 @@ export class GorillaWarfarer extends Ranged {
     inRangeMove(board: Board): void {
         super.inRangeMove(board);
         this.retreating = true;
-        this.speed = 1;
+        this.moveSpeed = 1;
     }
     retreat() : boolean {
         if (!this.retreating || !this.retreatPos) {
@@ -42,17 +42,17 @@ export class GorillaWarfarer extends Ranged {
     }
     reset() {
         this.retreating = false;
-        this.speed = this.originalSpeed;
+        this.moveSpeed = this.originalSpeed;
         this.retreatPos = null;
     }
 }
 
 class gorillaWarfareUnit extends RangedUnit {
     constructor() {
-        super("Gorilla Warfarer", new Resources(100, 100, 100), 5, 3, 5, "#ff66ff", "A unit that attacks and then retreats, then repeats", 25)
+        super("Gorilla Warfarer", new Resources(100, 100, 250), 5, 5, 3, 5, "#ff66ff", "A unit that attacks and then retreats, then repeats", 25)
     }
     construct(player: Player, pos: Pos): Unit {
-        return new GorillaWarfarer(player, this.name, pos, this.hp, this.speed, this.color, this.damage, this.range);
+        return new GorillaWarfarer(player, this.name, pos, this.hp, this.moveSpeed, this.color, this.damage, this.range);
     }
 }
 

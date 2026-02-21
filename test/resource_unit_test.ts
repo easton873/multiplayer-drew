@@ -4,12 +4,13 @@ import { Player } from "../src/server/game/player.js";
 import { Pos } from "../src/server/game/pos.js";
 import { Resources } from "../src/server/game/resources.js";
 import { LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT } from "../src/server/game/unit/resource_unit.js";
+import { Unit, UnitWithCounter } from "../src/server/game/unit/unit.js";
 
 describe('Resource Unit Tests', () => {
     it('Merchant test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
-        let unit = MERCHANT_GAME_UNIT.construct(player, new Pos(0, 0));
+        let unit : UnitWithCounter = MERCHANT_GAME_UNIT.construct(player, new Pos(0, 0)) as UnitWithCounter;
 
         player.resources = new Resources(0, 0, 0);
         let r = player.resources.copy();
@@ -22,7 +23,7 @@ describe('Resource Unit Tests', () => {
     it('Lumberjack test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
-        let unit = LUMBER_JACK_GAME_UNIT.construct(player, new Pos(0, 0));
+        let unit : UnitWithCounter = LUMBER_JACK_GAME_UNIT.construct(player, new Pos(0, 0)) as UnitWithCounter;
 
         player.resources = new Resources(0, 0, 0);
         let r = player.resources.copy();
@@ -35,7 +36,7 @@ describe('Resource Unit Tests', () => {
     it('Miner test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
-        let unit = MINER_GAME_UNIT.construct(player, new Pos(0, 0));
+        let unit : UnitWithCounter = MINER_GAME_UNIT.construct(player, new Pos(0, 0)) as UnitWithCounter;
 
         player.resources = new Resources(0, 0, 0);
         let r = player.resources.copy();

@@ -4,9 +4,9 @@ import { Player } from "../player.js";
 import { Pos, PositionDifference } from "../pos.js";
 import { Resources } from "../resources.js";
 import { GameUnit } from "./game_unit.js";
-import { Unit, } from "./unit.js";
+import { Unit, UnitWithCounter, } from "./unit.js";
 
-class AbstractSettler extends Unit {
+class AbstractSettler extends UnitWithCounter {
     moveCount : number = 0;
     moveDir: PositionDifference;
     constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string, private goal : number, private heartInfo : EraHeartInfo) {

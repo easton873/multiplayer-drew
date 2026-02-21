@@ -6,7 +6,7 @@ import { HealerUnit } from "./healer.js";
 import { KamakazeUnit } from "./kamakaze.js";
 import { GoblinUnit, QuickAttackerUnit, RandomMoverUnit, SabotagerUnit, ScountUnit, SoldierUnit, TankUnit } from "./melee_unit.js";
 import { BallisticMissileUnit, MissileUnit, UnitMissileUnit } from "./missile.js";
-import { ArcherUnit, FireballThrowerUnit } from "./ranged_unit.js";
+import { ArcherUnit, FireballThrowerUnit, SniperUnit } from "./ranged_unit.js";
 import { CARPENTER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT, MASON_GAME_UNIT, SCAVENGER_GAME_UNIT, SCULPTOR_GAME_UNIT, ARCHITECT_GAME_UNIT, BANKER_GAME_UNIT, ALCHEMIST_GAME_UNIT, ENGINEER_GAME_UNIT, DRUID_GAME_UNIT } from "./resource_unit.js";
 import { ScarecrowUnit } from "./scarecrow.js";
 import { SummonerUnit } from "./summoner.js";
@@ -54,6 +54,7 @@ export const ALL_MILITARY_UNITS : GameUnit[] = [
     new SummonerUnit(),
     // new HealerUnit(),
     FireballThrowerUnit,
+    SniperUnit,
     SabotagerUnit,
     BarracksUnit,
     CityBuilderUnit,
