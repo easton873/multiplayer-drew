@@ -29,7 +29,10 @@ Real-time multiplayer strategy/tower defense game. Express + Socket.IO backend, 
 - **`Player`** — Owns resources, era, heart (base unit), and unit count. `PlayerProxy` extends it to enforce placement radius/unit limits for human players.
 - **`Board`** — Spatial entity manager. Observes unit deaths to remove them from the entity list.
 - **`Era`** — Progression system (6 eras). Each era unlocks units, increases heart HP, resource rates, placement radius, and unit cap. Advancing costs resources.
-- **`Unit`** hierarchy — `Unit` → `UnitWithTarget` → `TargetChasingUnit`. Units use the Observer pattern to notify owners on death. All unit types registered in `unit/all_units.ts` via `UNIT_MAP`.
+- **`Unit`** hierarchy — Two parallel branches under `Unit`:
+  - **Combat branch**: `Unit` → `UnitWithTarget` → `CombatUnit` → `TargetChasingUnit`. Concrete leaves: `Melee`, `Ranged` (+ static `Defense` subclass for Turret/Scarecrow), `Kamakaze`, `Flare`, `CounterMissile`, `Summoner`, `Healer`.
+  - **Non-combat branch**: `Unit` → `UnitWithCounter`. Concrete leaves: `ResourceUnit` (12 resource generators), `Barracks` (spawner), `AbstractSettler`, `Teleporter`.
+  - Units use the Observer pattern (`ObservableUnit` base) to notify owners on death. All types registered in `unit/all_units.ts` via `UNIT_MAP`; constructed via `GameUnit` factory objects.
 - **`Heart`** — The player's base unit. If it dies, the player is eliminated.
 - **Resources** — Three types: gold, wood, stone. Resource units generate them passively.
 

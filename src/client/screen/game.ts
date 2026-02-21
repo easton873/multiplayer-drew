@@ -441,8 +441,9 @@ export class GameScreen {
     drawBorder(pos : PosData, color : string) {
       let x : number = (pos.x - this.cameraX) * this.zoom;
       let y : number = (pos.y - this.cameraY) * this.zoom;
-      this.ctx.fillStyle = color;
-      this.ctx.fillRect(x - 2, y - 2, this.zoom + 4, this.zoom + 4);
+      this.ctx.strokeStyle = color;
+      this.ctx.lineWidth = 2;
+      this.ctx.strokeRect(x - 1, y - 1, this.zoom + 2, this.zoom + 2);
     }
 
     drawCircles(hearts : PlayerHeartData[], color : string) {
