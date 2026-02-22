@@ -54,10 +54,9 @@ export class Game {
     }
 
     checkGameStillGoing() : boolean {
-        if (this.players.length <= 1) {
-            return false;
-        }
-        return true;
+        let teams : Set<number> = new Set<number>();
+        this.players.map((player : Player) => teams.add(player.getTeam()));
+        return teams.size > 1 ;
     }
 s
     get players() {

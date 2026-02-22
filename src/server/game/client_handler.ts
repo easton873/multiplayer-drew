@@ -139,8 +139,14 @@ export class ClientHandler extends RouteReceiver {
                             let p = this.room.players.get(id);
                             winner = p.getJoinData().name;
                         }
+                    } else if (game.players.length > 1) {
+                        let player = game.players[0];
+                        if (id) {
+                            winner = "Team " + player.getTeam();
+                        }
                     }
                     this.room.reset();
+                    emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
                     emitGameOver(this.io, winner);
                 } 
             }, 1000 / FRAME_RATE);

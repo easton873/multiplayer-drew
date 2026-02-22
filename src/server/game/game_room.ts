@@ -143,8 +143,10 @@ export class SetupPlayer {
 
     reset() {
         SetupPlayer.DefaultTeam = -1;
-        this.team = null;
-        this.pos = null
+        if (this.team !== null && this.team < 0) {
+            this.team = null;
+        }
+        this.pos = null;
     }
 
     update(other : PlayerWaitingData) {
