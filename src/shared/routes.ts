@@ -2,13 +2,15 @@ import { Game } from '../server/game/game.js';
 import { GameRoom } from '../server/game/game_room.js';
 import { DefaultEventsMap, Server, Socket } from 'socket.io';
 import { BoardData, GameData, PosData } from './types.js';
-import { ComputerWaitingData, GameWaitingData, PlayerSetupData, PlayerWaitingData } from './bulider.js';
+import { ComputerWaitingData, EditComputerData, GameWaitingData, PlayerSetupData, PlayerWaitingData } from './bulider.js';
 
 // socket events
 export const JOIN_ROOM_KEY = "join";
 export const CREATE_ROOM_KEY = "create";
 export const UPDATE_PLAYER_KEY = "update";
 export const ADD_COMPUTER_KEY = "add computer";
+export const EDIT_COMPUTER_KEY = "edit computer";
+export const REMOVE_COMPUTER_KEY = "remove computer";
 export const UPDATE_BOARD_KEY = "board update";
 export const START_GAME_KEY = "start";
 const SUBMIT_START_POS_KEY = "submit start pos";
@@ -24,6 +26,8 @@ export abstract class RouteReceiver {
         client.on(JOIN_ROOM_KEY, (playerName : string, color : string) => this.handleJoinRoom(playerName, color));
         client.on(UPDATE_PLAYER_KEY, (player : PlayerWaitingData) => this.handleUpdateSetupPlayer(player));
         client.on(ADD_COMPUTER_KEY, (data : ComputerWaitingData) => this.handleAddComputerPlayer(data));
+        client.on(EDIT_COMPUTER_KEY, (data : EditComputerData) => this.handleEditComputerPlayer(data));
+        client.on(REMOVE_COMPUTER_KEY, (id : string) => this.handleRemoveComputerPlayer(id));
         client.on(UPDATE_BOARD_KEY, (board : BoardData) => this.handleBoardUpdate(board));
         client.on(START_GAME_KEY, () => this.handleStartGame());
         client.on(SUBMIT_START_POS_KEY, (pos : PosData) => this.handleSubmitStartPos(pos));
@@ -35,6 +39,8 @@ export abstract class RouteReceiver {
     abstract handleJoinRoom(playerName : string, color : string);
     abstract handleUpdateSetupPlayer(player : PlayerWaitingData);
     abstract handleAddComputerPlayer(data : ComputerWaitingData);
+    abstract handleEditComputerPlayer(data : EditComputerData);
+    abstract handleRemoveComputerPlayer(id : string);
     abstract handleBoardUpdate(board : BoardData);
     abstract handleStartGame();
     abstract handleSubmitStartPos(pos : PosData);
@@ -54,6 +60,14 @@ export function emitUpdateSetupPlayer(socket : any, player : PlayerWaitingData) 
 
 export function emitAddComputer(socket : any, data : ComputerWaitingData) {
     socket.emit(ADD_COMPUTER_KEY, data);
+}
+
+export function emitEditComputer(socket : any, data : EditComputerData) {
+    socket.emit(EDIT_COMPUTER_KEY, data);
+}
+
+export function emitRemoveComputer(socket : any, id : string) {
+    socket.emit(REMOVE_COMPUTER_KEY, id);
 }
 
 export function emitBoardUpdate(socket : any, game : BoardData) {

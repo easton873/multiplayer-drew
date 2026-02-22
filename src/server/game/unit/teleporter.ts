@@ -31,11 +31,16 @@ class Teleporter extends UnitWithCounter {
 
     doMove(board: Board) {
         if (this.currWaitAmount >= this.waitingGoal) {
-            this.pos = this.targetPos.clone();
+            const origin = this.pos.clone();
+            const targetPos = this.targetPos.clone();
             this.targets.forEach((unit : Unit) => {
                 // teleport unit
                 unit.freeze = false;
-                unit.pos = this.targetPos.clone();
+                unit.pos = new Pos(
+                    unit.pos.x - origin.x + targetPos.x,
+                    unit.pos.y - origin.y + targetPos.y,
+                );
+                this.clamp(unit.pos, board);
             });
             this. targets = [];
             this.doDamage(this.hp);

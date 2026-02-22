@@ -1,12 +1,12 @@
 import { BoardData, GeneralGameData, PosData } from "../../shared/types.js";
-import { RouteReceiver} from "../../shared/routes.js";
+import { RouteReceiver } from "../../shared/routes.js";
 import { Game } from "./game.js";
 import { GameRoom } from "./game_room.js";
 import { emitGameBuilt, emitGameOver, emitGameState, emitJoinSuccess, emitLoadData, emitPlayerWaitingInfo, emitSetPosSuccess, emitSpectatorGameState, emitStartSuccess, emitUpgradeEraSuccess, emitWaitingRoomUpdate } from "../../shared/client.js";
 import { Pos } from "./pos.js";
 import { DefaultEventsMap, Server, Socket } from "socket.io";
 import { Player } from "./player.js";
-import { ComputerWaitingData, PlayerWaitingData } from "../../shared/bulider.js";
+import { ComputerWaitingData, EditComputerData, PlayerWaitingData } from "../../shared/bulider.js";
 import { loadData } from "./unit/all_units.js";
 
 const FRAME_RATE = 30;
@@ -206,6 +206,18 @@ export class ClientHandler extends RouteReceiver {
         if (player.attemptUpgradeEra()) {
             emitUpgradeEraSuccess(this.client, player.era.getEraData());
         }
+    }
+
+    handleEditComputerPlayer(data : EditComputerData) {
+        if (!this.isLeader()) return;
+        this.room.editComputerPlayer(data.id, data);
+        emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
+    }
+
+    handleRemoveComputerPlayer(id : string) {
+        if (!this.isLeader()) return;
+        this.room.removeComputerPlayer(id);
+        emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 
     isLeader() : boolean {

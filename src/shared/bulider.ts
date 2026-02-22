@@ -25,6 +25,17 @@ export interface PlayerWaitingData {
     leader : boolean
     team : number
     color : string
+    id : string
+    isComputer : boolean
+    difficulty? : string
+}
+
+export interface EditComputerData {
+    id : string
+    name : string
+    team : number
+    color : string
+    difficulty : string
 }
 
 export interface ComputerWaitingData {

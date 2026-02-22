@@ -123,6 +123,22 @@
         <button id="waitingStartButton" class="pixel-btn">Start Game</button>
       </div>
     </div>
+
+    <!-- Edit Computer Modal -->
+    <div id="editComputerModal" class="modal-overlay hidden">
+      <div class="pixel-panel modal-panel">
+        <h3 class="pixel-panel__title">Edit Computer</h3>
+        <input type="text" id="editComputerName" class="pixel-input" placeholder="Name">
+        <input type="number" id="editComputerTeam" class="pixel-input" placeholder="Team">
+        <input type="color" id="editComputerColor">
+        <select id="editComputerDifficulty" class="pixel-select"></select>
+        <div class="modal-buttons">
+          <button id="editComputerSave" class="pixel-btn">Save</button>
+          <button id="editComputerRemove" class="pixel-btn pixel-btn--secondary">Remove</button>
+          <button id="editComputerCancel" class="pixel-btn pixel-btn--secondary">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Game Over Screen -->

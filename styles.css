@@ -409,6 +409,50 @@ input[type="color"].pixel-input {
   width: 70px;
 }
 
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal-panel {
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+/* Edit button on computer player cards */
+.player-card__edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 6px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.player-card__edit-btn:hover {
+  color: var(--accent-cyan);
+}
+
 /* ============================================================
    GAME HUD / CONTROLS BAR
    ============================================================ */

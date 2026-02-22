@@ -1,4 +1,4 @@
-import { GameWaitingData, PlayerWaitingData, PlayerSetupData, GameSetupData } from "../../shared/bulider.js";
+import { EditComputerData, GameWaitingData, PlayerWaitingData, PlayerSetupData, GameSetupData } from "../../shared/bulider.js";
 import { Game } from "./game.js";
 import { Pos } from "./pos.js";
 import { Board } from "./board.js";
@@ -33,6 +33,18 @@ export class GameRoom {
         let computer = new SetupComputerPlayer(handler, id, name, client, color, false, difficulty);
         computer.updateTeam(team);
         this.players.set(id, computer);
+    }
+
+    removeComputerPlayer(id : string) {
+        this.players.delete(id);
+    }
+
+    editComputerPlayer(id : string, data : EditComputerData) {
+        let player = this.players.get(id);
+        if (!player || !player.getJoinData().isComputer) {
+            return;
+        }
+        (player as SetupComputerPlayer).updateComputerData(data.name, data.color, data.team, data.difficulty);
     }
 
     updatePlayer(id : string, data : PlayerWaitingData) {
@@ -180,7 +192,7 @@ export class SetupPlayer {
     }
 
     getJoinData() : PlayerWaitingData {
-        return {ready: this.ready, name: this.name, leader: this.isLeader, color: this.color, team: this.team};
+        return {ready: this.ready, name: this.name, leader: this.isLeader, color: this.color, team: this.team, id: this.id, isComputer: false};
     }
 
     getSetupData() : PlayerSetupData {
@@ -215,6 +227,18 @@ class SetupComputerPlayer extends SetupPlayer {
     constructor(protected handler : ClientHandler, id : string, name: string, client : GameClient, color : string, isLeader : boolean, private difficulty : string) {
         super(id, name, client, color, isLeader);
     }
+
+    updateComputerData(name : string, color : string, team : number, difficulty : string) {
+        this.name = name;
+        this.color = color;
+        this.team = team;
+        this.difficulty = difficulty;
+    }
+
+    getJoinData() : PlayerWaitingData {
+        return {ready: this.ready, name: this.name, leader: this.getIsLeader(), color: this.color, team: this.team, id: this.id, isComputer: true, difficulty: this.difficulty};
+    }
+
     createPlayer(board : Board) : Player {
         if (this.team == null) {
             this.team = SetupPlayer.DefaultTeam--;
