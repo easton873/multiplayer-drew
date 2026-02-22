@@ -162,6 +162,7 @@ export class SetupPlayer {
     }
 
     update(other : PlayerWaitingData) {
+        this.name = other.name;
         this.team = Math.abs(other.team);
         this.color = other.color;
         this.ready = other.ready;

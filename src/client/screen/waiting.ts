@@ -15,10 +15,6 @@ export class WaitingScreen {
     public heightLabel = document.getElementById("heightLabel") as HTMLLabelElement;
     public addComputerDiv = document.getElementById("addComputerDiv") as HTMLDivElement;
     public addComputerButton = document.getElementById("addComputerButton") as HTMLButtonElement;
-    public addComputerName = document.getElementById("addComputerName") as HTMLInputElement;
-    public addComputerTeam = document.getElementById("addComputerTeam") as HTMLInputElement;
-    public addComputerColor = document.getElementById("addComputerColor") as HTMLInputElement;
-    public addComputerDifficulty = document.getElementById("addComputerDifficulty") as HTMLSelectElement;
 
     public waitingPlayerControls = document.getElementById("playerControlsDiv") as HTMLDivElement;
 
@@ -39,16 +35,11 @@ export class WaitingScreen {
       this.heightInput.value = "100";
 
       this.addComputerButton.onclick = () => {
-        let team = parseInt(this.addComputerTeam.value);
-        if (Number.isNaN(team)) {
-          return;
-        }
-        console.log(this.addComputerDifficulty.value == "");
         emitAddComputer(this.socket, {
-          name: this.addComputerName.value,
-          team:  team,
-          color: this.addComputerColor.value,
-          difficulty: this.addComputerDifficulty.value,
+          name: "",
+          team: null,
+          color: "#000000",
+          difficulty: this.difficulties[0] || "",
         });
       };
 
@@ -66,63 +57,66 @@ export class WaitingScreen {
       }
 
       this.waitingPlayerControls.innerHTML = '';
-      const playerNameLabel = document.createElement('label');
-      playerNameLabel.innerText = p.name;
-      playerNameLabel.className = "pixel-label";
+
+      const nameInput = document.createElement('input');
+      nameInput.type = "text";
+      nameInput.className = "pixel-input";
+      nameInput.value = p.name;
 
       const colorSelect = document.createElement('input');
       colorSelect.type = "color";
       colorSelect.value = p.color;
-      colorSelect.onchange = () => {
-        p.color = colorSelect.value;
-        emitUpdateSetupPlayer(this.socket, p);
-      };
-
-      this.widthInput.onchange = () => {this.boardUpdate()};
-      this.heightInput.onchange = () => {this.boardUpdate()};
 
       const teamInput = document.createElement('input');
       teamInput.type = "number";
       teamInput.className = "pixel-input";
       teamInput.placeholder = "Team";
+
+      const submitBtn = document.createElement('button');
+      submitBtn.className = "pixel-btn player-submit-btn hidden";
+      submitBtn.innerText = "✓";
+
+      const markDirty = () => submitBtn.classList.remove("hidden");
+
+      nameInput.oninput = () => { p.name = nameInput.value; markDirty(); };
+      colorSelect.oninput = () => { p.color = colorSelect.value; markDirty(); };
       teamInput.onkeyup = () => {
         let team = null;
-        if (teamInput.value != "") {
+        if (teamInput.value !== "") {
           team = parseInt(teamInput.value);
-          if (Number.isNaN(team)) {
-            team = null;
-          }
+          if (Number.isNaN(team)) team = null;
         }
         p.team = team;
-        emitUpdateSetupPlayer(this.socket, p);
+        markDirty();
       };
+
+      submitBtn.onclick = () => {
+        emitUpdateSetupPlayer(this.socket, p);
+        submitBtn.classList.add("hidden");
+      };
+
+      this.widthInput.onchange = () => { this.boardUpdate(); };
+      this.heightInput.onchange = () => { this.boardUpdate(); };
 
       const span = document.createElement('span');
       span.className = "player-controls-row";
-      span.appendChild(playerNameLabel);
+      span.appendChild(nameInput);
       span.appendChild(colorSelect);
       span.appendChild(teamInput);
+      span.appendChild(submitBtn);
 
       this.waitingPlayerControls.appendChild(span);
     }
 
     fillComputerSelect(difficulties : string[]) {
       this.difficulties = difficulties;
-      let temp = this.addComputerDifficulty.value;
-      removeOptions(this.addComputerDifficulty);
       removeOptions(this.editDifficulty);
       difficulties.forEach((difficulty : string) => {
-        const optionElement = document.createElement('option');
-        optionElement.value = difficulty;
-        optionElement.text = difficulty;
-        this.addComputerDifficulty.add(optionElement);
-
         const editOption = document.createElement('option');
         editOption.value = difficulty;
         editOption.text = difficulty;
         this.editDifficulty.add(editOption);
       });
-      if (temp) this.addComputerDifficulty.value = temp;
     }
 
     drawPlayerList(data : PlayerWaitingData[]) {

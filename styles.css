@@ -438,6 +438,15 @@ input[type="color"].pixel-input {
   flex-wrap: wrap;
 }
 
+/* Submit button in player controls row */
+.player-submit-btn {
+  padding: 4px 10px;
+  font-size: var(--font-size-sm);
+  background: var(--accent-green);
+  color: var(--bg-dark);
+  flex-shrink: 0;
+}
+
 /* Edit button on computer player cards */
 .player-card__edit-btn {
   background: none;
