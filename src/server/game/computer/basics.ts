@@ -1,3 +1,4 @@
+import { Board } from "../board.js";
 import { FIFTH_ERA_NAME, FOURTH_ERA_NAME, SECOND_ERA_NAME, SIXTH_ERA_NAME, STARTING_ERA_NAME, THIRD_ERA_NAME } from "../era.js";
 import { PlayerProxy } from "../player.js";
 import { Pos } from "../pos.js";
@@ -9,8 +10,14 @@ import { ArcherUnit, FireballThrowerUnit } from "../unit/ranged_unit.js";
 import { CARPENTER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MASON_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT, SCAVENGER_GAME_UNIT } from "../unit/resource_unit.js";
 import { SummonerUnit } from "../unit/summoner.js";
 import { Unit } from "../unit/unit.js";
+import { getRandomIndex } from "../utils.js";
 
 export abstract class BaseComputerPlayer extends PlayerProxy {
+    protected territory : Pos[] = [];
+    constructor(team: number, pos: Pos, board: Board, id: string, name: string, color: string) {
+        super(team, pos, board, id, name, color);
+        this.rebuildTerritory();
+    }
     doTurn(): void {
         switch(this.era.getEraData().eraName) {
             case STARTING_ERA_NAME:
@@ -63,8 +70,14 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
         if (this.countUnit(unit) < targetCount) {
             savings.add(unit.getUnitCreationInfo().getCost())
             if (this.resources.canAfford(savings)) {
-                this.placeUnit(unit, this.heart.pos);
+                this.placeUnit(unit, this.randomPosInBase());
             }
+        }
+    }
+
+    maintainCountOfUnitsV2(unit : GameUnit, targetCount : number) {
+        for (let i = 0; i < targetCount; i++) {
+            this.placeUnit(unit, this.randomPosInBase());
         }
     }
 
@@ -77,7 +90,10 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
     }
 
     advanceEra() {
-        this.era.advanceToNextEra(this.resources);
+        if (this.era.canAffordNextEra(this.resources)) {
+            this.era.advanceToNextEra(this.resources);
+            this.rebuildTerritory();
+        }
     }
 
     spamUnits(unit : GameUnit, num : number) {
@@ -88,6 +104,23 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
         if (this.resources.canAfford(cost)) {
             this.placeUnit(unit, this.heart.pos.clone(), num);
         }
+    }
+
+    rebuildTerritory() {
+        let spots : Pos[] = [];
+        for (let y = 0; y < this.board.height; y++) {
+            for (let x = 0; x < this.board.width; x++) {
+                let pos : Pos = new Pos(x, y);
+                if (this.heart.isInRange(pos)) {
+                    spots.push(pos);
+                }
+            }
+        }
+        this.territory = spots;
+    }
+
+    randomPosInBase() : Pos {        
+        return getRandomIndex(this.territory);
     }
 }
 

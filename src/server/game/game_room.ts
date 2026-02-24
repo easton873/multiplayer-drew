@@ -229,7 +229,7 @@ class SetupComputerPlayer extends SetupPlayer {
         super(id, name, client, color, isLeader);
     }
 
-    updateComputerData(name : string, color : string, team : number, difficulty : string) {
+    updateComputerData(name : string, color : string, team : number | null, difficulty : string) {
         this.name = name;
         this.color = color;
         this.team = team;

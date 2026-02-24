@@ -134,12 +134,17 @@ export class WaitingScreen {
         teamSpan.className = "player-card__team";
         teamSpan.innerText = p.team ? `Team ${p.team}` : "";
 
+        const typeSpan = document.createElement('span');
+        typeSpan.className = "player-card__type";
+        typeSpan.innerText = p.isComputer ? (p.difficulty ?? "Computer") : "Human";
+
         const li = document.createElement('li');
         li.className = "player-card";
         li.style.borderLeftColor = p.color;
         li.appendChild(nameSpan);
         li.appendChild(colorSwatch);
         li.appendChild(teamSpan);
+        li.appendChild(typeSpan);
 
         if (p.isComputer && this.isLeader) {
           const editBtn = document.createElement('button');
@@ -163,8 +168,8 @@ export class WaitingScreen {
       }
 
       this.editSave.onclick = () => {
-        const team = parseInt(this.editTeam.value);
-        if (Number.isNaN(team)) return;
+        const teamRaw = parseInt(this.editTeam.value);
+        const team = Number.isNaN(teamRaw) ? null : teamRaw;
         emitEditComputer(this.socket, {
           id: p.id,
           name: this.editName.value,

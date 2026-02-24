@@ -33,7 +33,7 @@ export interface PlayerWaitingData {
 export interface EditComputerData {
     id : string
     name : string
-    team : number
+    team : number | null
     color : string
     difficulty : string
 }

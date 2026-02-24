@@ -3,6 +3,7 @@ import { PlayerProxy } from "../player.js";
 import { Pos } from "../pos.js";
 import { ComputerPlayer, WinnerComputerPlayer } from "./basics.js";
 import { NoOpComputer } from "./nop.js";
+import { RandomComputer } from "./random.js";
 import { SimpleComputer } from "./simple.js";
 import { WaveComputer } from "./wave.js";
 
@@ -36,6 +37,7 @@ const BASIC_KEY = "Basic";
 const SIMPLE_KEY = "Simple";
 const WAVE_KEY = "Wave";
 const NOP_KEY = "NoOp";
+const RANDOM_KEY = "Random";
 
 export function CreateComputer(difficulty : string, team: number, pos: Pos, board: Board, id: string, name: string, color: string) : PlayerProxy {
     switch (difficulty) {
@@ -49,6 +51,8 @@ export function CreateComputer(difficulty : string, team: number, pos: Pos, boar
             return new WaveComputer(team, pos, board, id, name, color);
         case NOP_KEY:
             return new NoOpComputer(team, pos, board, id, name, color);
+        case RANDOM_KEY:
+            return new RandomComputer(team, pos, board, id, name, color);
         default:
             return new ComputerPlayer(team, pos, board, id, name, color);
     }
@@ -60,4 +64,5 @@ export const ComputerDifficulties : string[] = [
     SIMPLE_KEY,
     WAVE_KEY,
     NOP_KEY,
+    RANDOM_KEY,
 ];

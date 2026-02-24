@@ -278,6 +278,12 @@ export class GameScreen {
       }
     }
 
+    resetMode() {
+      this.isDelete = false;
+      this.modeIndicator.textContent = "ADD";
+      this.modeIndicator.className = "hud-mode hud-mode--add";
+    }
+
     drawSetupGame(data : GameSetupData) {
       if (!data) {
         return;
@@ -405,7 +411,7 @@ export class GameScreen {
       const worldY = unit.pos.y + 0.5 + progress * (rd.targetY - unit.pos.y);
       const sx = (worldX - this.cameraX) * this.zoom;
       const sy = (worldY - this.cameraY) * this.zoom;
-      const size = Math.max(1, Math.round(this.zoom * 7 / MAX_ZOOM));
+      const size = Math.max(3, Math.round(this.zoom * 7 / MAX_ZOOM));
       this.ctx.fillStyle = unit.playerColor;
       this.ctx.fillRect(sx - size / 2, sy - size / 2, size, size);
     }
