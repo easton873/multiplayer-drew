@@ -4,11 +4,6 @@ import { PlayerProxy } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
 import { GameUnit } from "../unit/game_unit.js";
-import { GorillaWarfareUnit } from "../unit/gorilla_warfare.js";
-import { QuickAttackerUnit, RandomMoverUnit, SoldierUnit } from "../unit/melee_unit.js";
-import { ArcherUnit, FireballThrowerUnit } from "../unit/ranged_unit.js";
-import { CARPENTER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MASON_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT, SCAVENGER_GAME_UNIT } from "../unit/resource_unit.js";
-import { SummonerUnit } from "../unit/summoner.js";
 import { Unit } from "../unit/unit.js";
 import { getRandomIndex } from "../utils.js";
 
@@ -50,16 +45,19 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
     abstract fifthEra();
     abstract sixthEra();
 
-    placeUnit(unit : GameUnit, pos : Pos, num : number = 1) {
+    placeUnit(unit : GameUnit, pos : Pos, num : number = 1) : boolean {
         for (let i = 0; i < num; i++) {
-            this.NewUnit(unit.getName(), pos.clone());
+            if (!this.NewUnit(unit.getName(), pos.clone())) {
+                return false;
+            }
         }
+        return true;
     }
     
     countUnit(gameUnit : GameUnit) : number {
         let count = 0;
         this.board.entities.forEach((unit : Unit) => {
-            if (unit.name == gameUnit.getName()) {
+            if (unit.team == this.getTeam() && unit.name == gameUnit.getName()) {
                 count++
             }
         });
@@ -70,15 +68,20 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
         if (this.countUnit(unit) < targetCount) {
             savings.add(unit.getUnitCreationInfo().getCost())
             if (this.resources.canAfford(savings)) {
-                this.placeUnit(unit, this.randomPosInBase());
+                this.placeUnit(unit, this.randomPosInTerritory());
             }
         }
     }
 
-    maintainCountOfUnitsV2(unit : GameUnit, targetCount : number) {
-        for (let i = 0; i < targetCount; i++) {
-            this.placeUnit(unit, this.randomPosInBase());
+    maintainCountOfUnitsV2(unit : GameUnit, targetCount : number) : boolean {
+        if (this.countUnit(unit) < targetCount) {
+            for (let i = 0; i < targetCount; i++) {
+                if (!this.placeUnit(unit, this.randomPosInTerritory())) {
+                    return false;
+                }
+            }
         }
+        return true;
     }
 
     protectBase(defenseUnit : GameUnit) {
@@ -111,7 +114,7 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
         for (let y = 0; y < this.board.height; y++) {
             for (let x = 0; x < this.board.width; x++) {
                 let pos : Pos = new Pos(x, y);
-                if (this.heart.isInRange(pos)) {
+                if (this.hearts.isInRange(pos)) {
                     spots.push(pos);
                 }
             }
@@ -119,102 +122,7 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
         this.territory = spots;
     }
 
-    randomPosInBase() : Pos {        
+    randomPosInTerritory() : Pos {        
         return getRandomIndex(this.territory);
-    }
-}
-
-export class WinnerComputerPlayer extends BaseComputerPlayer {
-    private savings = new Resources(25, 0, 0);
-    firstEra() {
-        this.protectBase(SoldierUnit);
-        if (!this.resources.canAfford(new Resources(35, 0, 0))) {
-            return;
-        }
-        this.maintainCountOfUnits(MERCHANT_GAME_UNIT, 15);
-        this.advanceEra();
-    }
-    secontEra() {
-        this.protectBase(QuickAttackerUnit);
-        this.maintainCountOfUnits(MERCHANT_GAME_UNIT, 25);
-        this.maintainCountOfUnits(LUMBER_JACK_GAME_UNIT, 15);
-        this.maintainCountOfUnits(RandomMoverUnit, 10);
-        this.era.advanceToNextEra(this.resources);
-    }
-    thirdEra() {
-        this.maintainCountOfUnits(CARPENTER_GAME_UNIT, 20);
-        this.maintainCountOfUnits(MINER_GAME_UNIT, 10);
-        this.maintainCountOfUnits(RandomMoverUnit, 15);
-        this.maintainCountOfUnits(SoldierUnit, 15);
-        this.maintainCountOfUnits(GorillaWarfareUnit, 2);
-        this.maintainCountOfUnits(new SummonerUnit(), 3);
-        this.maintainCountOfUnits(FireballThrowerUnit, 1);
-        this.era.advanceToNextEra(this.resources);
-    }
-    fourthEra() {
-        this.maintainCountOfUnits(SCAVENGER_GAME_UNIT, 30);
-        this.maintainCountOfUnits(MASON_GAME_UNIT, 10);
-    }
-    fifthEra() {
-        return;
-    }
-    sixthEra() {
-        return;
-    }
-
-    maintainCountOfUnits(unit: GameUnit, targetCount: number): void {
-        super.maintainCountOfUnits(unit, targetCount, this.savings.copy());
-    }
-
-    maintainResourceUnit(unit: GameUnit, targetCount: number) {
-
-    }
-
-    // advanceToNextEra(savings : Resources, newSavings : Resources) {
-    //     savings.add(this.era.nextEraCost);
-    //     if (this.resources.canAfford(savings)) {
-    //         this.era.advanceToNextEra(this.resources);
-    //         this.savings = newSavings;
-    //     }
-    // }
-}
-
-export class ComputerPlayer extends PlayerProxy {
-    private targetMerchantNum : number = 15;
-    private placed : number = 0;
-    doTurn() : void {
-        // return;
-        if (this.resources.canAfford(MERCHANT_GAME_UNIT.getUnitCreationInfo().getCost()) &&
-        this.unitCount < this.targetMerchantNum) {
-            let pos = this.heart.pos.clone();
-            this.NewUnit(MERCHANT_GAME_UNIT.getName(), pos);
-        } else if (this.unitCount >= this.targetMerchantNum) {
-            let pos = this.heart.pos.clone();
-            if (this.placed >= 3) {
-                if (this.resources.canAfford(ArcherUnit.getUnitCreationInfo().getCost())) {
-                    this.NewUnit(ArcherUnit.getName(), pos);
-                    this.placed = 0;
-                }
-            } else {
-                if (this.resources.canAfford(SoldierUnit.getUnitCreationInfo().getCost())) {
-                    this.NewUnit(SoldierUnit.getName(), pos);
-                    this.placed++;
-                }
-            }
-        }
-
-        if (this.era.canAffordNextEra(this.resources)) {
-            this.era.advanceToNextEra(this.resources);
-        }
-    }
-
-    countUnit(unitType : new (...args: any[]) => Unit) : number {
-        let count = 0;
-        this.board.entities.forEach((unit : Unit) => {
-            if (unit instanceof unitType) {
-                count++
-            }
-        });
-        return count;
     }
 }

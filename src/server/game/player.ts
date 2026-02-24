@@ -52,16 +52,18 @@ export class Player implements UnitObserver {
         }
     }
 
-    NewUnit(unitType: string, pos: Pos) {
+    NewUnit(unitType: string, pos: Pos) : boolean {
         let gameUnit: GameUnit = this.whichUnit(unitType);
         if (!gameUnit) {
-            return;
+            return false;
         }
         let unitCost = gameUnit.getUnitCreationInfo().getCost()
         if (this.resources.canAfford(unitCost)) {
             this.resources.spend(unitCost);
             this.addUnitToBoard(gameUnit, pos);
+            return true;
         }
+        return false;
     }
 
     addUnitToBoard(gameUnit : GameUnit, pos : Pos) {
@@ -119,11 +121,11 @@ export class PlayerProxy extends Player {
         super(team, pos, board, id, name, color);
     }
 
-    NewUnit(unitType: string, pos: Pos): void {
+    NewUnit(unitType: string, pos: Pos): boolean {
         if (!this.hearts.isInRange(pos) ||
             this.atUnitCap()) {
-            return;
+            return false;
         }
-        super.NewUnit(unitType, pos);
+        return super.NewUnit(unitType, pos);
     }
 }
