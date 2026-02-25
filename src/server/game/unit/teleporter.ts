@@ -43,7 +43,7 @@ class Teleporter extends UnitWithCounter {
                 this.clamp(unit.pos, board);
             });
             this. targets = [];
-            this.doDamage(this.hp);
+            this.kill();
             return;
         }
         board.entities.forEach((unit : Unit) => {

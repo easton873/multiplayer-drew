@@ -7,11 +7,13 @@ import { Kamakaze, KamakazeUnit } from "../src/server/game/unit/kamakaze.js";
 import { Summoner } from "../src/server/game/unit/summoner.js";
 import { Healer, HealerUnit } from "../src/server/game/unit/healer.js";
 import { Turret, TurretUnit } from "../src/server/game/unit/turret.js";
-import { SoldierUnit, TankUnit, GoblinUnit } from "../src/server/game/unit/melee_unit.js";
+import { SoldierUnit, GoblinUnit } from "../src/server/game/unit/melee_unit.js";
 import { ArcherUnit, FireballThrowerUnit, Ranged } from "../src/server/game/unit/ranged_unit.js";
 import { Counter } from "../src/server/game/move/counter.js";
 import { GorillaWarfarer, GorillaWarfareUnit } from "../src/server/game/unit/gorilla_warfare.js";
 import { TargetChasingUnit } from "../src/server/game/unit/combat/combat.js";
+import { TankUnit } from "../src/server/game/unit/tank.js";
+import { CatapultUnit } from "../src/server/game/unit/catapult.js";
 
 describe('Units Test', () => {
     it('archer test', () => {
@@ -80,6 +82,11 @@ describe('Units Test', () => {
         let beforeHP = targetUnit.hp;
         unit.move(board);
         assert.strictEqual(targetUnit.hp, beforeHP - TankUnit.damage);
+
+        // tank only takes 1 damage no matter what
+        beforeHP = unit.hp;
+        unit.takeDamage(10000);
+        assert.strictEqual(unit.hp, beforeHP - 1);
     });
 
     it('goblin test', () => {
@@ -211,6 +218,27 @@ describe('Units Test', () => {
         soldier.pos = new Pos(11, 5);
         unit.move(board);
         assert.strictEqual(soldier.hp, hpAfterOneShot);
+
+        // turret takes less damage from soldier
+        let startingHP = unit.hp;
+        soldier.doDamage(unit, 10);
+        assert.strictEqual(unit.hp, startingHP - 1);
+    });
+
+    it('Catapult test', () => {
+        let board : Board = new Board(30, 30);
+        let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
+        let turret : Turret = new Turret(player, new Pos(15, 15));
+        let catapult = CatapultUnit.construct(p2, new Pos(15, 10)) as Ranged;
+        board.addEntity(turret);
+        board.addEntity(catapult);
+        assert.strictEqual(board.entities.length, 4);
+
+        catapult.attackCounter = new Counter(0);
+        catapult.move(board);
+        catapult.move(board);
+        assert.strictEqual(board.entities.length, 3);
     });
 
     it('Gorilla Warfare test', () => {

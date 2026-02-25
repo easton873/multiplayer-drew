@@ -4,6 +4,7 @@ import { Heart } from "../heart.js";
 import { Counter } from "../move/counter.js";
 import { Player } from "../player.js";
 import { Pos, PositionDifference } from "../pos.js";
+import { DamageTaker } from "./damage.js";
 
 export abstract class ObservableUnit {
     private observers : UnitObserver[] = [];
@@ -41,7 +42,7 @@ export interface UnitObserver {
     notifyDeath(unit : ObservableUnit); // when implementing this, unregister the observer
 }
 
-export abstract class Unit extends ObservableUnit {
+export abstract class Unit extends ObservableUnit implements DamageTaker {
     name : string;
     pos : Pos;
     totalHP : number;
@@ -77,11 +78,39 @@ export abstract class Unit extends ObservableUnit {
 
     abstract doAcutalMove(board : Board);
 
-    doDamage(damage : number) {
+    doDamage(unit : Unit, damage : number) {
+        unit.takeNormalWeaponDamage(damage);
+    }
+
+    takeDamage(damage : number) {
         this.hp -= damage;
         if (this.isDead()) {
             this.notifyObserversDeath();
         }
+    }
+
+    takeGenericDamage(damage: number) {
+        this.takeDamage(damage);
+    }
+
+    takeNormalWeaponDamage(damage: number) {
+        this.takeDamage(damage);
+    }
+
+    takeExplosionDamage(damage: number) {
+        this.takeDamage(damage);
+    }
+
+    takeSiegeDamage(damage: number) {
+        this.takeDamage(this.lessenDamage(damage, .5));
+    }
+
+    kill() {
+        this.takeDamage(this.hp);
+    }
+    
+    lessenDamage(damage : number, percentage : number) : number {
+        return Math.max(damage * percentage, 1);
     }
 
     isDead() : boolean {
@@ -137,7 +166,7 @@ export abstract class UnitWithCounter extends Unit {
 
     set speed(newSpeed : number) {
         this.moveCounter.setSpeed(newSpeed);
-    } 
+    }
 }
 
 export abstract class UnitWithTarget extends Unit implements UnitObserver {
@@ -195,7 +224,7 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
         for (let i = 0; i < board.entities.length; ++i) {
             let unit = board.entities[i];
             if (this.inRangeFromPoint(unit, range, pos)) {
-                unit.doDamage(damage);
+                this.doDamage(unit, damage);
             }
             if (unit.isDead()) { // if doDamage killed them, then this list is shorter
                 i--;

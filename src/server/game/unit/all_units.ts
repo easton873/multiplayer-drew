@@ -4,7 +4,7 @@ import { GameUnit } from "./game_unit.js";
 import { GorillaWarfareUnit } from "./gorilla_warfare.js";
 import { HealerUnit } from "./healer.js";
 import { KamakazeUnit } from "./kamakaze.js";
-import { GoblinUnit, QuickAttackerUnit, RandomMoverUnit, SabotagerUnit, ScountUnit, SoldierUnit, TankUnit } from "./melee_unit.js";
+import { GoblinUnit, QuickAttackerUnit, RandomMoverUnit, SabotagerUnit, ScountUnit, SoldierUnit } from "./melee_unit.js";
 import { BallisticMissileUnit, MissileUnit, UnitMissileUnit } from "./missile.js";
 import { ArcherUnit, FireballThrowerUnit, SniperUnit } from "./ranged_unit.js";
 import { CARPENTER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT, MASON_GAME_UNIT, SCAVENGER_GAME_UNIT, SCULPTOR_GAME_UNIT, ARCHITECT_GAME_UNIT, BANKER_GAME_UNIT, ALCHEMIST_GAME_UNIT, ENGINEER_GAME_UNIT, DRUID_GAME_UNIT } from "./resource_unit.js";
@@ -15,6 +15,8 @@ import { LoadData, UnitLoadData } from "../../../shared/bulider.js";
 import { BarracksUnit } from "./barracks.js";
 import { CityBuilderUnit, SettlerUnit } from "./settler.js";
 import { TeleporterUnit } from "./teleporter.js";
+import { TankUnit } from "./tank.js";
+import { CatapultUnit } from "./catapult.js";
 
 export const ALL_RESOURCE_UNITS : GameUnit[] = [
     MERCHANT_GAME_UNIT,
@@ -60,6 +62,7 @@ export const ALL_MILITARY_UNITS : GameUnit[] = [
     CityBuilderUnit,
     TeleporterUnit,
     GorillaWarfareUnit,
+    CatapultUnit,
     
     FlareUnit,
     CounterMissileUnit,

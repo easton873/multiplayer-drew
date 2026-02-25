@@ -14,7 +14,7 @@ export class Melee extends TargetChasingUnit {
         super(player, name, pos, hp, color, moveSpeed, attackSpeed);
     }
     inRangeMove(board : Board) {
-        this.target.doDamage(this.damage);
+        this.doDamage(this.target, this.damage);
     }
 
     inRange(other: Unit): boolean {
@@ -42,12 +42,6 @@ class soldierUnit extends MeleeUnit {
 class scoutUnit extends MeleeUnit {
     constructor() {
         super("Scout", new Resources(10, 0, 0), 5, 5, 1, 1, "#525050", "A weak and fast melee unit");
-    }
-}
-
-class tankUnit extends MeleeUnit {
-    constructor() {
-        super("Tank", new Resources(50, 50, 50), 30, 10, 1, 50, "#AAAAAA", "50 HP, moves once every 3 seconds and does 1 damage to its target when adjacent to it");
     }
 }
 
@@ -116,7 +110,6 @@ class randomMoverUnit extends MeleeUnit {
 
 export const SoldierUnit : soldierUnit = new soldierUnit();
 export const ScountUnit : scoutUnit = new scoutUnit();
-export const TankUnit : tankUnit = new tankUnit();
 export const QuickAttackerUnit : quickAttackerUnit = new quickAttackerUnit();
 export const GoblinUnit : goblinUnit = new goblinUnit();
 export const SabotagerUnit : sabotagerUnit = new sabotagerUnit();

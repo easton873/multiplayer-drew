@@ -9,7 +9,7 @@ import { GameUnit } from "./unit/game_unit.js";
 import { UNIT_MAP } from "./unit/all_units.js";
 
 export class Player implements UnitObserver {
-    resources: Resources = new Resources(50, 0, 0);
+    resources: Resources = new Resources(500000, 1000000, 1000000);
     board: Board;
     era: Era = new Era();
     unitCount = 0;
@@ -46,7 +46,7 @@ export class Player implements UnitObserver {
         for (let i = 0; i < this.board.entities.length; ++i) {
             let entity = this.board.entities[i];
             if (!(entity instanceof Heart) && entity.owner == this && entity.pos.equals(pos)) {
-                entity.doDamage(entity.hp); // board is an observer so needs i--
+                entity.kill(); // board is an observer so needs i--
                 --i;
             }
         }

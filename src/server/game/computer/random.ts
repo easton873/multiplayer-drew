@@ -61,6 +61,5 @@ export class RandomComputer extends BaseComputerPlayer {
 
     setNextUnit() {
         this.nextUnit = getRandomIndex(this.era.availableUnits);
-        console.log(this.nextUnit.getName());
     }
 }

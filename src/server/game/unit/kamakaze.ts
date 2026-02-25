@@ -22,7 +22,7 @@ export class Kamakaze extends TargetChasingUnit {
 
     explode(board : Board) {
         this.doDamageInArea(board, this.pos, this.range, this.damage);
-        this.doDamage(this.hp); // make sure this unit died too
+        this.kill(); // make sure this unit died too
     }
 }
 

@@ -57,7 +57,7 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
     countUnit(gameUnit : GameUnit) : number {
         let count = 0;
         this.board.entities.forEach((unit : Unit) => {
-            if (unit.team == this.getTeam() && unit.name == gameUnit.getName()) {
+            if (unit.owner == this && unit.name == gameUnit.getName()) {
                 count++
             }
         });

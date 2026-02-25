@@ -17,8 +17,8 @@ class CounterMissile extends TargetChasingUnit {
         return this.inRangeForDistance(other, 5);
     }
     inRangeMove(board: Board) {
-        this.target.doDamage(this.target.hp);
-        this.doDamage(this.hp);
+        this.target.kill();
+        this.kill();
         return;
     }
 

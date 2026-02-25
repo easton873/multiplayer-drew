@@ -4,8 +4,9 @@ import { EraData, UnitCreationData } from "../../shared/types.js";
 import { GameUnit } from "./unit/game_unit.js";
 import { ALL_MILITARY_UNITS, ALL_RESOURCE_UNITS, ALL_UNITS } from "./unit/all_units.js";
 import { LUMBER_JACK_GAME_UNIT, MASON_GAME_UNIT, MINER_GAME_UNIT, SCULPTOR_GAME_UNIT, ALCHEMIST_GAME_UNIT } from "./unit/resource_unit.js";
-import { QuickAttackerUnit, TankUnit } from "./unit/melee_unit.js";
+import { QuickAttackerUnit } from "./unit/melee_unit.js";
 import { MissileUnit } from "./unit/missile.js";
+import { TankUnit } from "./unit/tank.js";
 
 export const STARTING_ERA_NAME = "The Starting Era";
 export const SECOND_ERA_NAME = "The Second Era";

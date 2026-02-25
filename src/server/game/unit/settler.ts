@@ -42,7 +42,7 @@ class AbstractSettler extends UnitWithCounter {
 
     spawnHeart() {
         this.owner.addHeart(new Heart(this.owner, this.pos.clone(), this.heartInfo));
-        this.doDamage(this.hp);
+        this.kill();
     }
 }
 

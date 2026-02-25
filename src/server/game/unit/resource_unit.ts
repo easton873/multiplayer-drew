@@ -14,6 +14,10 @@ export class ResourceUnit extends UnitWithCounter {
     doMove(_ : Board) {
         this.owner.resources.add(this.resources);
     }
+
+    takeSiegeDamage(damage: number): void {
+        this.takeDamage(damage);
+    }
 }
 
 export class GameResourceUnit extends GameUnit {

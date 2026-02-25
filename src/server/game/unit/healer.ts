@@ -9,6 +9,9 @@ import { GameUnit } from "./game_unit.js";
 import { ResourceUnit } from "./resource_unit.js";
 import { Unit } from "./unit.js";
 
+// This probably breaks because when a unit takes damage it could die and then the target
+// of a unit becomes null, this is a bug I just found, but I haven't looksed so I don't
+// know if that is quite it.
 export class Healer extends TargetChasingUnit {
     constructor(player: Player, pos: Pos, public range : number, public healRange) {
         super(player, HealerUnit.NAME, pos, HealerUnit.HP, HealerUnit.COLOR, HealerUnit.SPEED, HealerUnit.SPEED);

@@ -45,7 +45,7 @@ describe('Unit Test', () => {
         unit.target = targetUnit;
         assert.strictEqual(targetUnit.TESTObservers.length, 1);
         targetUnit.hp = 1;
-        targetUnit.doDamage(1);
+        targetUnit.takeDamage(1);
         assert.strictEqual(unit.target, null);
         assert.strictEqual(targetUnit.TESTObservers.length, 0);
     });
@@ -87,7 +87,7 @@ describe('Unit Test', () => {
         assert.strictEqual(targetUnit.TESTObservers.length, 3);
         unit2.move(board);
         assert.strictEqual(targetUnit.TESTObservers.length, 3);
-        targetUnit.doDamage(targetUnit.hp);
+        targetUnit.kill();
         assert.strictEqual(targetUnit.TESTObservers.length, 0);
     });
 
@@ -171,7 +171,7 @@ describe('Unit Test', () => {
         let attacker : TargetChasingUnit = (board.entities[3] as TargetChasingUnit);
         attacker.target = target;
         assert.strictEqual(target.TESTObservers.length, 3);
-        target.doDamage(target.hp);
+        target.kill();
         assert.strictEqual(target.hp, 0);
         assert.strictEqual(target.TESTObservers.length, 0);
         assert.strictEqual(player.unitCount, 0);
