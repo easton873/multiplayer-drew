@@ -2,29 +2,12 @@ import { UnitRangedAttackData } from "../../../shared/types.js";
 import { Board } from "../board.js";
 import { Heart } from "../heart.js";
 import { Counter } from "../move/counter.js";
+import { ObservedBy } from "../observer.js";
 import { Player } from "../player.js";
 import { Pos, PositionDifference } from "../pos.js";
 import { DamageTaker } from "./damage.js";
 
-export abstract class ObservableUnit {
-    private observers : UnitObserver[] = [];
-
-    get TESTObservers() {
-        return this.observers;
-    }
-
-    registerObserver(o : UnitObserver) {
-        this.observers.push(o);
-    }
-
-    unregisterObserver(o : UnitObserver) {
-        let index = this.observers.findIndex((observer : UnitObserver) => observer === o);
-        if (index == -1) {
-            console.log("issue removing observer");
-        }
-        this.observers.splice(index, 1);
-    }
-
+export abstract class ObservableUnit extends ObservedBy<UnitObserver> {
     notifyObserversDeath() {
         let currLength = this.observers.length;
         for (let i = 0; i < this.observers.length; ++i) {
