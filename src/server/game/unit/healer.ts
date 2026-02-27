@@ -3,89 +3,50 @@ import { Heart } from "../heart.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
-import { TargetChasingUnit } from "./combat/combat.js";
 import { Defense } from "./defense.js";
-import { GameUnit } from "./game_unit.js";
+import { Ranged, RangedUnit } from "./ranged_unit.js";
 import { ResourceUnit } from "./resource_unit.js";
 import { Unit } from "./unit.js";
 
 // This probably breaks because when a unit takes damage it could die and then the target
 // of a unit becomes null, this is a bug I just found, but I haven't looksed so I don't
 // know if that is quite it.
-export class Healer extends TargetChasingUnit {
-    constructor(player: Player, pos: Pos, public range : number, public healRange) {
-        super(player, HealerUnit.NAME, pos, HealerUnit.HP, HealerUnit.COLOR, HealerUnit.SPEED, HealerUnit.SPEED);
-    }
-    inRange(other: Unit): boolean {
-        return this.inRangeForDistance(other, this.range);
-    }
+export class Healer extends Ranged {
     inRangeMove(board: Board) {
-        return
-        if (this.target.hp < this.target.totalHP) {
-            this.target.hp += 2;
-            if (this.target.hp > this.target.totalHP) {
-                this.target.hp = this.target.totalHP;
-            }
-        }
-    }
-    doAcutalMove(board: Board): void {
-        super.doAcutalMove(board);
-        if (this.inRangeForDistance(this.target, this.healRange)) {
-            this.healTarget();
-        }
+        this.healTarget();
     }
     healTarget() {
-        if (this.target.hp < this.target.totalHP) {
-            this.target.hp += 2;
-            if (this.target.hp > this.target.totalHP) {
-                this.target.hp = this.target.totalHP;
-            }
+        this.target.hp += this.damage;
+        this.clampHealth(this.target);
+    }
+    clampHealth(unit : Unit) {
+        if (unit.hp > unit.totalHP) {
+            unit.hp = unit.totalHP;
         }
     }
     findNewTarget(units: Unit[]): void {
-        if (this.hasTarget() && this.target.hp < this.target.totalHP) {
-            return;
-        }
-        
-        // either have no target or target is at full health
-        this.target = null;
-        // now no target
-        // find a target not at full health
         this.findTargetWithPredicate(units, (unit : Unit) => {
-            return unit.team == this.team && unit != this &&
-                unit.hp < unit.totalHP &&
-                !(unit instanceof Heart) &&
-                !(unit instanceof Healer);
+            return this.isOnSameTeam(unit) &&
+            unit.hp < unit.totalHP; // has to need healing
         });
         if (this.hasTarget()) {
             return;
         }
-        // if this point is reached, none of your units need healing
-        // so just find the closest unit to hang out with
         this.findTargetWithPredicate(units, (unit : Unit) => {
-            return unit.team == this.team && unit != this &&
-                !(unit instanceof Heart) &&
-                !(unit instanceof ResourceUnit) &&
-                !(unit instanceof Defense) &&
-                !(unit instanceof Healer);
+            return this.isOnSameTeam(unit);
         });
     }
+
+    isOnSameTeam(unit : Unit) : boolean {
+        return this != unit && // won't target self
+        unit.team == this.team; // has to be same team
+    }
 }
 
-export class HealerUnit extends GameUnit {
-    static NAME = "Healer";
-    static COST = new Resources(20, 100, 20);
-    static HP = 5;
-    static SPEED = 8;
-    static COLOR = "#DDDDDD";
-    static BLURB = "Targets friendly non-building units and heals them 2 hp every second or so";
-    static RANGE = 16;
-    static HEAL_RANGE = 25;
-    constructor() {
-        super(HealerUnit.NAME, HealerUnit.COST, HealerUnit.BLURB);
-    }
+class healerUnit extends RangedUnit {
     construct(player: Player, pos: Pos): Unit {
-        return new Healer(player, pos, HealerUnit.RANGE, HealerUnit.HEAL_RANGE);
+        return new Healer(player, this.name, pos, this.hp, this.moveSpeed, this.attackSpeed, this.color, this.damage, this.range);
     }
-
 }
+
+export const HealerUnit : healerUnit = new healerUnit("Healer", new Resources(20, 100, 20), 8, 8, 2, 5, "#DDDDDD", "Targets friendly non-building units and heals them 2 hp every second or so", 25);

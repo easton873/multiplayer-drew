@@ -16,6 +16,12 @@ export class Spawner extends UnitWithCounter {
         }
         this.owner.addUnitToBoard(this.unitToSpawn, this.pos.clone());
     }
+    takeSiegeDamage(damage: number): void {
+        this.takeDamage(damage);
+    }
+    takeNormalWeaponDamage(damage: number): void {
+        this.takeDamage(this.lessenDamage(damage, .3));
+    }
 }
 
 export class Barracks extends Spawner {

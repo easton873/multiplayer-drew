@@ -51,18 +51,19 @@ export const ALL_MILITARY_UNITS : GameUnit[] = [
     RandomMoverUnit,
     SettlerUnit,
     new TurretUnit(),
+    CatapultUnit,
     
     TankUnit,
     new SummonerUnit(),
-    // new HealerUnit(),
+    HealerUnit,
     FireballThrowerUnit,
-    SniperUnit,
     SabotagerUnit,
+    
     BarracksUnit,
     CityBuilderUnit,
+    SniperUnit,
     TeleporterUnit,
     GorillaWarfareUnit,
-    CatapultUnit,
     
     FlareUnit,
     CounterMissileUnit,
@@ -79,7 +80,6 @@ export const ALL_MILITARY_UNITS : GameUnit[] = [
     // area turret
     // longbowman
     // regen soldier
-    // teleporter
     // missionary (converts unit)
 ];
 

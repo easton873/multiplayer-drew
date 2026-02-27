@@ -89,10 +89,6 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
         }
     }
 
-    takeGenericDamage(damage: number) {
-        this.takeDamage(damage);
-    }
-
     takeNormalWeaponDamage(damage: number) {
         this.takeDamage(damage);
     }

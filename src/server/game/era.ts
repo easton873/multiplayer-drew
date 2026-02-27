@@ -7,6 +7,8 @@ import { LUMBER_JACK_GAME_UNIT, MASON_GAME_UNIT, MINER_GAME_UNIT, SCULPTOR_GAME_
 import { QuickAttackerUnit } from "./unit/melee_unit.js";
 import { MissileUnit } from "./unit/missile.js";
 import { TankUnit } from "./unit/tank.js";
+import { FlareUnit } from "./unit/flare.js";
+import { BarracksUnit } from "./unit/barracks.js";
 
 export const STARTING_ERA_NAME = "The Starting Era";
 export const SECOND_ERA_NAME = "The Second Era";
@@ -194,7 +196,7 @@ class ThirdEra extends BaseEra implements EraState {
         return THIRD_ERA_NAME;
     }
     getAvailableUnits(): GameUnit[] {
-        return this.getUnits(MASON_GAME_UNIT, MissileUnit);
+        return this.getUnits(MASON_GAME_UNIT, BarracksUnit);
     }
 }
 
@@ -209,7 +211,7 @@ class FourthEra extends BaseEra implements EraState {
         return FOURTH_ERA_NAME;
     }
     getAvailableUnits(): GameUnit[] {
-        return this.getUnits(SCULPTOR_GAME_UNIT, MissileUnit);
+        return this.getUnits(SCULPTOR_GAME_UNIT, FlareUnit);
     }
 }
 

@@ -12,7 +12,7 @@ class Catapult extends Ranged {
 
     inRangeMove(board: Board): void {
         this.doDamageInArea(board, this.target.pos, 3, 2);
-        if (this.target) { // if the target takes damage, it could die
+        if (this.hasTarget()) { // if the target takes damage, it could die
             this.doDamage(this.target, this.damage);
         }
     }

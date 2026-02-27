@@ -137,7 +137,7 @@ describe('Units Test', () => {
         let board : Board = new Board(10, 10);
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
-        let unit : Healer = new Healer(player, new Pos(7, 5), HealerUnit.RANGE, HealerUnit.HEAL_RANGE);
+        let unit : Healer = HealerUnit.construct(player, new Pos(7, 5)) as Healer;
         let soldier = SoldierUnit.construct(player, new Pos(9, 5));
         let soldier2 = SoldierUnit.construct(player, new Pos(9, 5));
         let soldier3 = SoldierUnit.construct(player, new Pos(8, 5));
@@ -149,6 +149,7 @@ describe('Units Test', () => {
         unit.attackCounter = new Counter(0);
         unit.range = 9;
         unit.move(board);
+
         assert.strictEqual(unit.target, soldier);
         board.addEntity(soldier2);
         soldier2.hp = soldier2.totalHP - 1;
@@ -157,7 +158,10 @@ describe('Units Test', () => {
         assert.strictEqual(soldier2.hp, soldier2.totalHP);
         board.addEntity(soldier3);
         unit.move(board);
-        assert.strictEqual(unit.target, soldier3);
+        // This test used to pass because the healer would retarget sombody closer if his current target
+        // was healed all the way. At the moment we would rather he just keep the same target and not
+        // switch just because he can.
+        // assert.strictEqual(unit.target, soldier3);
 
         soldier2.hp = soldier2.totalHP - 1;
         soldier2.pos = new Pos(12, 5);
@@ -165,6 +169,8 @@ describe('Units Test', () => {
         unit.move(board);
         assert.strictEqual(unit.target, soldier2);
         assert.strictEqual(unit.pos.equals(new Pos(8, 5)), true);
+        unit.move(board);
+        unit.move(board);
         assert.strictEqual(soldier2.hp, soldier2.totalHP);
     });
 
