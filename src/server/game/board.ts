@@ -1,7 +1,8 @@
-import { Unit, UnitObserver } from "./unit/unit.js";
+import { Unit, UnitObserver, QueueDeathObserver } from "./unit/unit.js";
 
-export class Board implements UnitObserver {
+export class Board implements UnitObserver, QueueDeathObserver {
     entities : Unit[] = [];
+    private pendingDeaths : Unit[] = [];
     constructor(private _width : number,  private _height : number) {
         this.entities
     }
@@ -20,9 +21,27 @@ export class Board implements UnitObserver {
         unit.unregisterObserver(this);
     }
 
+    queueDeath(unit: Unit) {
+        this.pendingDeaths.push(unit);
+    }
+
+    processDeaths() {
+        let deaths = this.pendingDeaths;
+        this.pendingDeaths = [];
+        for (let i = 0; i < deaths.length; ++i) {
+            deaths[i].notifyObserversDeath();
+        }
+    }
+
+    moveUnit(unit: Unit) {
+        unit.move(this);
+        this.processDeaths();
+    }
+
     addEntity(entity : Unit) {
         this.entities.push(entity);
         entity.registerObserver(this);
+        entity.registerQueueDeathObserver(this);
     }
 
     closestEntity(entity : Unit) : Unit {

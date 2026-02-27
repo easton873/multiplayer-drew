@@ -8,6 +8,7 @@ import { DamageTaker } from "./damage.js";
 
 export abstract class ObservableUnit {
     private observers : UnitObserver[] = [];
+    private queueDeathObservers : QueueDeathObserver[] = [];
 
     get TESTObservers() {
         return this.observers;
@@ -25,6 +26,18 @@ export abstract class ObservableUnit {
         this.observers.splice(index, 1);
     }
 
+    registerQueueDeathObserver(o : QueueDeathObserver) {
+        this.queueDeathObservers.push(o);
+    }
+
+    unregisterQueueDeathObserver(o : QueueDeathObserver) {
+        let index = this.queueDeathObservers.findIndex((observer : QueueDeathObserver) => observer === o);
+        if (index == -1) {
+            console.log("issue removing queue death observer");
+        }
+        this.queueDeathObservers.splice(index, 1);
+    }
+
     notifyObserversDeath() {
         let currLength = this.observers.length;
         for (let i = 0; i < this.observers.length; ++i) {
@@ -36,10 +49,20 @@ export abstract class ObservableUnit {
             }
         }
     }
+
+    notifyQueueDeathObservers() {
+        for (let i = 0; i < this.queueDeathObservers.length; ++i) {
+            this.queueDeathObservers[i].queueDeath(this as unknown as Unit);
+        }
+    }
 }
 
 export interface UnitObserver {
     notifyDeath(unit : ObservableUnit); // when implementing this, unregister the observer
+}
+
+export interface QueueDeathObserver {
+    queueDeath(unit : Unit);
 }
 
 export abstract class Unit extends ObservableUnit implements DamageTaker {
@@ -83,9 +106,10 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
     }
 
     takeDamage(damage : number) {
+        if (this.isDead()) return;
         this.hp -= damage;
         if (this.isDead()) {
-            this.notifyObserversDeath();
+            this.notifyQueueDeathObservers();
         }
     }
 
@@ -103,6 +127,10 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
 
     kill() {
         this.takeDamage(this.hp);
+    }
+
+    public TESTkill() {
+        this.notifyObserversDeath();
     }
     
     lessenDamage(damage : number, percentage : number) : number {
@@ -221,9 +249,6 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
             let unit = board.entities[i];
             if (this.inRangeFromPoint(unit, range, pos)) {
                 this.doDamage(unit, damage);
-            }
-            if (unit.isDead()) { // if doDamage killed them, then this list is shorter
-                i--;
             }
         }
     }

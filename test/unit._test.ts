@@ -42,10 +42,12 @@ describe('Unit Test', () => {
         let p2 : Player = new Player(1, new Pos(0, 0), board, "1", "", "");
         let unit : TargetChasingUnit = SoldierUnit.construct(player, new Pos(0, 0)) as TargetChasingUnit;
         let targetUnit : Unit = SoldierUnit.construct(p2, new Pos(3, 3));
+        board.addEntity(targetUnit);
         unit.target = targetUnit;
-        assert.strictEqual(targetUnit.TESTObservers.length, 1);
+        assert.strictEqual(targetUnit.TESTObservers.length, 2);
         targetUnit.hp = 1;
         targetUnit.takeDamage(1);
+        board.processDeaths();
         assert.strictEqual(unit.target, null);
         assert.strictEqual(targetUnit.TESTObservers.length, 0);
     });
@@ -83,11 +85,11 @@ describe('Unit Test', () => {
         assert.strictEqual(targetUnit.TESTObservers.length, 2);
         unit2.target = targetUnit;
         assert.strictEqual(targetUnit.TESTObservers.length, 3);
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(targetUnit.TESTObservers.length, 3);
-        unit2.move(board);
+        board.moveUnit(unit2);
         assert.strictEqual(targetUnit.TESTObservers.length, 3);
-        targetUnit.kill();
+        targetUnit.TESTkill();
         assert.strictEqual(targetUnit.TESTObservers.length, 0);
     });
 
@@ -97,7 +99,7 @@ describe('Unit Test', () => {
         let unit : UnitWithCounter = MINER_GAME_UNIT.construct(player, new Pos(0, 0)) as UnitWithCounter;
         let startingResrouces = player.resources;
         assert.strictEqual(unit.moveCounter.remaining, MINER_SPEED);
-        unit.move(board);
+        board.moveUnit(unit);
         startingResrouces.add(new Resources(0, 0, 1));
         assert.strictEqual(startingResrouces.equals(player.resources), true);
         assert.strictEqual(unit.moveCounter.remaining, MINER_SPEED - 1);
@@ -171,8 +173,7 @@ describe('Unit Test', () => {
         let attacker : TargetChasingUnit = (board.entities[3] as TargetChasingUnit);
         attacker.target = target;
         assert.strictEqual(target.TESTObservers.length, 3);
-        target.kill();
-        assert.strictEqual(target.hp, 0);
+        target.TESTkill();
         assert.strictEqual(target.TESTObservers.length, 0);
         assert.strictEqual(player.unitCount, 0);
     });

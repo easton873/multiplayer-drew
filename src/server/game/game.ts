@@ -23,7 +23,7 @@ export class Game {
 
     move() {
         this.board.entities.forEach((entity : Unit) => {
-            entity.move(this.board);
+            this.board.moveUnit(entity);
         })
     }
 

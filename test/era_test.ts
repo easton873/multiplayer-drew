@@ -55,7 +55,7 @@ describe('Era Test', () => {
         player.heart.updateHeart(player.era.currEra.getHeart());
         let startResources = player.resources.copy();
         player.heart.moveCounter = new Counter(0);
-        player.heart.move(board);
+        board.moveUnit(player.heart);
         startResources.add(firstHeartInfo);
         assert.strictEqual(player.resources.equals(startResources), true);
         assert.strictEqual(player.heart.hp, startHP);

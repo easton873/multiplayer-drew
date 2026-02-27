@@ -28,12 +28,12 @@ describe('Units Test', () => {
         
         unit.moveCounter = new Counter(0);
         unit.attackCounter = new Counter(0);
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(targetUnit.hp, SoldierUnit.hp);
         assert.strictEqual(unit.pos.equals(new Pos(9, 5)), true);
         assert.strictEqual(unit.target, targetUnit);
 
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(targetUnit.hp, SoldierUnit.hp - ArcherUnit.damage);
         assert.strictEqual(unit.pos.equals(new Pos(9, 5)), true);
         assert.strictEqual(unit.target, targetUnit);
@@ -52,12 +52,12 @@ describe('Units Test', () => {
         
         unit.moveCounter = new Counter(0);
         unit.attackCounter = new Counter(0);
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(targetUnit.hp, SoldierUnit.hp);
         assert.strictEqual(unit.pos.equals(new Pos(6, 5)), true);
         assert.strictEqual(unit.target, targetUnit);
 
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(targetUnit.hp, SoldierUnit.hp - KamakazeUnit.damage);
         assert.strictEqual(board.entities.length, 2);
     });
@@ -75,12 +75,12 @@ describe('Units Test', () => {
         
         unit.moveCounter = new Counter(0);
         unit.attackCounter = new Counter(0);
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(unit.pos.equals(new Pos(6, 5)), true);
         assert.strictEqual(unit.target, targetUnit);
 
         let beforeHP = targetUnit.hp;
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(targetUnit.hp, beforeHP - TankUnit.damage);
 
         // tank only takes 1 damage no matter what
@@ -100,10 +100,10 @@ describe('Units Test', () => {
         assert.strictEqual(board.entities.length, 4);
         
         unit.moveCounter = new Counter(0);
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(unit.target, p2.heart);
 
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(unit.target, p2.heart);
     });
 
@@ -123,13 +123,13 @@ describe('Units Test', () => {
         unit.attackCounter = new Counter(0);
         unit.summonTimer = 0;
         unit.range = 0;
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(unit.target, soldier);
         assert.strictEqual(board.entities.length, 6);
         assert.strictEqual(unit.summonTimer, unit.summonTimerTime);
         assert.strictEqual(unit.numSummons, 2);
         assert.strictEqual(unit.pos.equals(soldier.pos), true);
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(unit.summonTimer, unit.summonTimerTime - 1);
     });
 
@@ -148,16 +148,16 @@ describe('Units Test', () => {
         unit.moveCounter = new Counter(0);
         unit.attackCounter = new Counter(0);
         unit.range = 9;
-        unit.move(board);
+        board.moveUnit(unit);
 
         assert.strictEqual(unit.target, soldier);
         board.addEntity(soldier2);
         soldier2.hp = soldier2.totalHP - 1;
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(unit.target, soldier2);
         assert.strictEqual(soldier2.hp, soldier2.totalHP);
         board.addEntity(soldier3);
-        unit.move(board);
+        board.moveUnit(unit);
         // This test used to pass because the healer would retarget sombody closer if his current target
         // was healed all the way. At the moment we would rather he just keep the same target and not
         // switch just because he can.
@@ -166,11 +166,11 @@ describe('Units Test', () => {
         soldier2.hp = soldier2.totalHP - 1;
         soldier2.pos = new Pos(12, 5);
         assert.strictEqual(unit.pos.equals(new Pos(7, 5)), true);
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(unit.target, soldier2);
         assert.strictEqual(unit.pos.equals(new Pos(8, 5)), true);
-        unit.move(board);
-        unit.move(board);
+        board.moveUnit(unit);
+        board.moveUnit(unit);
         assert.strictEqual(soldier2.hp, soldier2.totalHP);
     });
 
@@ -194,7 +194,7 @@ describe('Units Test', () => {
         unit.moveCounter = new Counter(0);
         unit.attackCounter = new Counter(0);
         assert.strictEqual(unit.pos.equals(new Pos(5, 5)), true);
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(soldier.hp, soldier.totalHP - unit.damage);
         assert.strictEqual(soldier2.hp, soldier2.totalHP - unit.damage);
         assert.strictEqual(soldier3.hp, soldier3.totalHP - unit.damage);
@@ -213,16 +213,16 @@ describe('Units Test', () => {
         assert.strictEqual(board.entities.length, 4);
         
         unit.attackCounter = new Counter(0);
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(unit.pos.equals(new Pos(5, 5)), true);
         assert.strictEqual(soldier.hp, soldier.totalHP);
         soldier.pos = new Pos(10, 5);
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(unit.target, soldier);
         let hpAfterOneShot = soldier.totalHP - unit.damage;
         assert.strictEqual(soldier.hp, hpAfterOneShot);
         soldier.pos = new Pos(11, 5);
-        unit.move(board);
+        board.moveUnit(unit);
         assert.strictEqual(soldier.hp, hpAfterOneShot);
 
         // turret takes less damage from soldier
@@ -242,8 +242,8 @@ describe('Units Test', () => {
         assert.strictEqual(board.entities.length, 4);
 
         catapult.attackCounter = new Counter(0);
-        catapult.move(board);
-        catapult.move(board);
+        board.moveUnit(catapult);
+        board.moveUnit(catapult);
         assert.strictEqual(board.entities.length, 3);
     });
 
@@ -258,18 +258,18 @@ describe('Units Test', () => {
         assert.strictEqual(board.entities.length, 4);
         
         unit.moveCounter = new Counter(0);
-        unit.move(board);
+        board.moveUnit(unit);
         // assert.strictEqual(unit.target, soldier);
         // assert.strictEqual(unit.retreatPos, null);
-        // unit.move(board);
+        // board.moveUnit(unit);
         // assert.strictEqual(unit.retreatPos.equals(new Pos(18, 16)), true);
         // for (let i = 0; i < 12; ++i) {
-        //     unit.move(board);
+        //     board.moveUnit(unit);
         // }
         // assert.strictEqual(unit.retreating, true);
         // assert.strictEqual(unit.pos.equals(new Pos(18, 5)), true);
-        // unit.move(board);
-        // unit.move(board);
+        // board.moveUnit(unit);
+        // board.moveUnit(unit);
         // assert.strictEqual(unit.pos.equals(new Pos(18, 6)), true);
     });
 
@@ -284,17 +284,17 @@ describe('Units Test', () => {
     //     let counterMissile2 : UnitWithTarget = CounterMissileUnit.construct(p2, new Pos(5, 15)) as UnitWithTarget;
     //     board.addEntity(unit);
     //     assert.strictEqual(board.entities.length, 3);
-    //     unit.move(board);
+    //     board.moveUnit(unit);
     //     assert.strictEqual(unit.target, p2.heart);
     //     board.addEntity(soldier)
-    //     unit.move(board);
+    //     board.moveUnit(unit);
     //     assert.strictEqual(unit.target, p2.heart);
     //     board.addEntity(flare);
-    //     unit.move(board);
+    //     board.moveUnit(unit);
     //     assert.strictEqual(unit.target, flare);
     //     board.addEntity(counterMissile);
     //     counterMissile.move(board);
-    //     unit.move(board);
+    //     board.moveUnit(unit);
     //     // assert.strictEqual(unit.target, flare);
     //     // assert.strictEqual(counterMissile.target, unit);
     //     board.addEntity(counterMissile2);

@@ -46,7 +46,7 @@ export class Player implements UnitObserver {
         for (let i = 0; i < this.board.entities.length; ++i) {
             let entity = this.board.entities[i];
             if (!(entity instanceof Heart) && entity.owner == this && entity.pos.equals(pos)) {
-                entity.kill(); // board is an observer so needs i--
+                entity.notifyObserversDeath();
                 --i;
             }
         }
