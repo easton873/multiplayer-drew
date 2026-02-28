@@ -13,10 +13,8 @@ export class Missile extends Kamakaze {
         super(player, pos, name, hp, speed, color, damage, range);
     }
     
-    findNewTarget(units : Unit[]) {
-        this.findTargetWithPredicate(units, (unit : Unit) => {
-            return unit.team != this.team && this.willTarget(unit);
-        });
+    isValidTarget(unit: Unit): boolean {
+        return super.isValidTarget(unit) && this.willTarget(unit);
     }
 
     willTarget(unit : Unit) : boolean {

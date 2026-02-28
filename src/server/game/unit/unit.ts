@@ -225,12 +225,11 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
     }
 
     findNewTarget(units : Unit[]) {
-        // if (this.hasTarget()) {
-        //     return;
-        // }
-        this.findTargetWithPredicate(units, (unit : Unit) => {
-            return unit.team != this.team;
-        });
+        this.findTargetWithPredicate(units, (unit : Unit) => this.isValidTarget(unit));
+    }
+
+    isValidTarget(unit : Unit) : boolean {
+        return unit.team != this.team;
     }
 
     findTargetWithPredicate(units : Unit[], predicate : (unit : Unit) => boolean) {

@@ -22,14 +22,8 @@ class CounterMissile extends TargetChasingUnit {
         return;
     }
 
-    findNewTarget(units : Unit[]) {
-        this.findTargetWithPredicate(units, (unit : Unit) => {
-            return unit.team != this.team && this.willTarget(unit);
-        });
-    }
-    
-    willTarget(unit : Unit) : boolean {
-        return unit instanceof Missile;
+    isValidTarget(unit: Unit): boolean {
+        return super.isValidTarget(unit) && unit instanceof Missile;
     }
 
     hasNoTargetMove(): void {

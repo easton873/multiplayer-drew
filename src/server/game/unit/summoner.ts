@@ -50,13 +50,15 @@ export class Summoner extends TargetChasingUnit  {
         if (this.hasTarget()) {
             return;
         }
-        this.findTargetWithPredicate(units, (unit : Unit) => {
-            return unit.team == this.team && unit != this &&
+        super.findNewTarget(units);
+    }
+
+    isValidTarget(unit: Unit): boolean {
+        return unit.team == this.team && unit != this &&
               !(unit instanceof Heart) &&
               !(unit instanceof ResourceUnit) &&
               !(unit instanceof Defense) &&
               !(unit instanceof Summoner);
-        });
     }
 }
 

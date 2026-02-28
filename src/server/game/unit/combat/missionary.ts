@@ -57,11 +57,9 @@ class Missionary extends TargetChasingUnit {
         }
     }
 
-    findNewTarget(units: Unit[]): void {
-        this.findTargetWithPredicate(units, (unit : Unit) : boolean => {
-            return unit.team != this.team &&
+    isValidTarget(unit: Unit): boolean {
+        return unit.team != this.team &&
             !(unit instanceof Heart);
-        });
     }
 }
 
