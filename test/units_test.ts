@@ -14,6 +14,7 @@ import { GorillaWarfarer, GorillaWarfareUnit } from "../src/server/game/unit/gor
 import { TargetChasingUnit } from "../src/server/game/unit/combat/combat.js";
 import { TankUnit } from "../src/server/game/unit/tank.js";
 import { CatapultUnit } from "../src/server/game/unit/catapult.js";
+import { MissionaryUnit } from "../src/server/game/unit/combat/missionary.js";
 
 describe('Units Test', () => {
     it('archer test', () => {
@@ -271,6 +272,88 @@ describe('Units Test', () => {
         // board.moveUnit(unit);
         // board.moveUnit(unit);
         // assert.strictEqual(unit.pos.equals(new Pos(18, 6)), true);
+    });
+
+    it('missionary conversion test', () => {
+        let board: Board = new Board(10, 10);
+        let player: Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        let p2: Player = new Player(1, new Pos(10, 10), board, "1", "", "");
+
+        let missionary = MissionaryUnit.construct(player, new Pos(5, 5)) as TargetChasingUnit;
+        let soldier = SoldierUnit.construct(p2, new Pos(5, 5));
+        p2.addUnit(soldier);  // register p2 as observer so notifyDeath works correctly
+        board.addEntity(missionary);
+        board.addEntity(soldier);
+        assert.strictEqual(board.entities.length, 4);  // 2 hearts + missionary + soldier
+
+        // initial observer/unit-count state (p2 + board = 2)
+        assert.strictEqual(soldier.TESTObservers.length, 2);
+        assert.strictEqual(p2.unitCount, 1);
+        assert.strictEqual(player.unitCount, 0);
+
+        missionary.target = soldier;
+        missionary.moveCounter = new Counter(0);
+        missionary.attackCounter = new Counter(0);
+        board.moveUnit(missionary);
+
+        // entity count unchanged - soldier was converted, not killed
+        assert.strictEqual(board.entities.length, 4);
+
+        // soldier now belongs to player
+        assert.strictEqual(soldier.owner, player);
+        assert.strictEqual(soldier.team, player.getTeam());
+
+        // p2 unregistered, player registered (board + player = 2)
+        assert.strictEqual(soldier.TESTObservers.length, 2);
+        assert.strictEqual(p2.unitCount, 0);
+        assert.strictEqual(player.unitCount, 1);
+
+        // missionary cleared its target
+        assert.strictEqual(missionary.target, null);
+    });
+
+    it('missionary does not target hearts', () => {
+        let board: Board = new Board(10, 10);
+        let player: Player = new Player(0, new Pos(9, 9), board, "0", "", "");
+        let p2: Player = new Player(1, new Pos(3, 3), board, "1", "", "");
+
+        // missionary at (3, 3), p2 heart also at (3, 3) - within range 5
+        let missionary = MissionaryUnit.construct(player, new Pos(3, 3)) as TargetChasingUnit;
+        board.addEntity(missionary);
+        // board: player.heart (9,9), p2.heart (3,3), missionary (3,3) - no non-heart enemies
+
+        missionary.moveCounter = new Counter(0);
+        missionary.attackCounter = new Counter(0);
+        board.moveUnit(missionary);
+
+        // missionary must not have targeted p2's heart
+        assert.strictEqual(missionary.target, null);
+    });
+
+    it('missionary does not convert when at unit cap', () => {
+        let board: Board = new Board(10, 10);
+        let player: Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        let p2: Player = new Player(1, new Pos(10, 10), board, "1", "", "");
+
+        let missionary = MissionaryUnit.construct(player, new Pos(5, 5)) as TargetChasingUnit;
+        let soldier = SoldierUnit.construct(p2, new Pos(5, 5));
+        p2.addUnit(soldier);
+        board.addEntity(missionary);
+        board.addEntity(soldier);
+
+        // force player to unit cap
+        player.unitCount = player.era.getUnitLimit();
+
+        missionary.target = soldier;
+        missionary.moveCounter = new Counter(0);
+        missionary.attackCounter = new Counter(0);
+        board.moveUnit(missionary);
+
+        // soldier not converted
+        assert.strictEqual(soldier.owner, p2);
+        assert.strictEqual(soldier.TESTObservers.length, 3);  // p2 + board + missionary (still targeting)
+        assert.strictEqual(p2.unitCount, 1);
+        assert.strictEqual(player.unitCount, player.era.getUnitLimit());
     });
 
     // it('missiles and what not test', () => {

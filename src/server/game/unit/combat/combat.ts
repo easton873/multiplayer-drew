@@ -4,7 +4,7 @@ import { Player } from "../../player.js";
 import { Pos } from "../../pos.js";
 import { ObservableUnit, Unit, UnitWithTarget } from "../unit.js";
 
-export abstract class CombatUnit extends UnitWithTarget implements ObservableUnit {
+export abstract class CombatUnit extends UnitWithTarget {
     public attackCounter : Counter;
     public moveCounter : Counter;
     constructor(player : Player, name : string, pos : Pos, hp : number, color : string, moveSpeed : number, attackSpeed : number) {
@@ -36,6 +36,10 @@ export abstract class CombatUnit extends UnitWithTarget implements ObservableUni
 
     set moveSpeed(newSpeed : number) {
         this.moveCounter.setSpeed(newSpeed);
+    }
+
+    get moveSpeed() : number {
+        return this.moveCounter.total;
     }
 
     set attackSpeed(newSpeed : number) {

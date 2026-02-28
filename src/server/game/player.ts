@@ -68,9 +68,13 @@ export class Player implements UnitObserver {
 
     addUnitToBoard(gameUnit : GameUnit, pos : Pos) {
         let unit = gameUnit.construct(this, pos);
-        unit.registerObserver(this);
+        this.addUnit(unit);
         this.board.addEntity(unit);
-        this.unitCount++;
+    }
+
+    addUnit(unit : Unit) {
+         unit.registerObserver(this);
+         this.unitCount++;
     }
 
     addHeart(heart : Heart) {

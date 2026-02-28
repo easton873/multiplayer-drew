@@ -40,4 +40,8 @@ export class Counter {
         // }
         this.counter = this.speed;
     }
+
+    hasOneTickLeft() : boolean {
+        return this.counter == 1;
+    }
 }

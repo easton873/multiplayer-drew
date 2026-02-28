@@ -59,5 +59,5 @@ class fireballThrowerUnit extends RangedUnit {
 }
 
 export const ArcherUnit : RangedUnit = new RangedUnit("Archer", new Resources(40, 0, 0), 10, 10, 3, 1, "#66ffff", "With 1 HP, shoots its target from 4 blocks away for 1 damage", 16);
-export const SniperUnit : RangedUnit = new RangedUnit("Sniper", new Resources(30, 250, 60), 60, 30, 20, 3, "#1b6026", "Shoots really far and slow", 625);
+export const SniperUnit : RangedUnit = new RangedUnit("Sniper", new Resources(30, 250, 60), 60, 30, 20, 3, "#1b6026", "Shoots really far and slow", 400);
 export const FireballThrowerUnit : fireballThrowerUnit = new fireballThrowerUnit();

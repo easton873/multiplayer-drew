@@ -26,14 +26,14 @@ Real-time multiplayer strategy/tower defense game. Express + Socket.IO backend, 
 
 ### Key abstractions
 
-- **`Player`** — Owns resources, era, heart (base unit), and unit count. `PlayerProxy` extends it to enforce placement radius/unit limits for human players.
-- **`Board`** — Spatial entity manager. Observes unit deaths to remove them from the entity list.
+- **`Player`** — Owns resources, era, a `Hearts` collection of one or more Heart units, and unit count. `PlayerProxy` extends it to enforce placement radius/unit limits for human players.
+- **`Board`** — Spatial entity manager with two-phase death processing. Implements `QueueDeathObserver` (called immediately when a unit's HP hits 0, adds to `pendingDeaths[]`) and `UnitObserver` (called during `processDeaths()`, removes unit from `entities[]`). After each `moveUnit()` call, `processDeaths()` fires `notifyObserversDeath()` on all queued units so entity removal never happens mid-iteration.
 - **`Era`** — Progression system (6 eras). Each era unlocks units, increases heart HP, resource rates, placement radius, and unit cap. Advancing costs resources.
 - **`Unit`** hierarchy — Two parallel branches under `Unit`:
   - **Combat branch**: `Unit` → `UnitWithTarget` → `CombatUnit` → `TargetChasingUnit`. Concrete leaves: `Melee`, `Ranged` (+ static `Defense` subclass for Turret/Scarecrow), `Kamakaze`, `Flare`, `CounterMissile`, `Summoner`, `Healer`.
   - **Non-combat branch**: `Unit` → `UnitWithCounter`. Concrete leaves: `ResourceUnit` (12 resource generators), `Barracks` (spawner), `AbstractSettler`, `Teleporter`.
   - Units use the Observer pattern (`ObservableUnit` base) to notify owners on death. All types registered in `unit/all_units.ts` via `UNIT_MAP`; constructed via `GameUnit` factory objects.
-- **`Heart`** — The player's base unit. If it dies, the player is eliminated.
+- **`Heart`** — A player's base unit (extends `ResourceUnit`). Players can own multiple Hearts, tracked by the `Hearts` collection. The player is eliminated when all their Hearts are destroyed (`Hearts.isDead()` returns true when the array empties). Each Heart has a configurable `radius` defining its unit-placement zone; `PlayerProxy` checks `Hearts.isInRange()` to enforce placement restrictions.
 - **Resources** — Three types: gold, wood, stone. Resource units generate them passively.
 
 ### Computer AI
