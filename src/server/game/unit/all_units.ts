@@ -18,7 +18,7 @@ import { TeleporterUnit } from "./teleporter.js";
 import { TankUnit } from "./tank.js";
 import { CatapultUnit } from "./catapult.js";
 import { MissionaryUnit } from "./combat/missionary.js";
-import { AssassainUnit, NinjaUnit, SpyUnit } from "./combat/ninja.js";
+import { AssassainUnit, NinjaUnit, SpyUnit } from "./combat/stealth.js";
 
 export const ALL_RESOURCE_UNITS : GameUnit[] = [
     MERCHANT_GAME_UNIT,

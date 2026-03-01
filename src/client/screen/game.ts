@@ -333,11 +333,16 @@ export class GameScreen {
       this.resourceLabel.innerText = this.formatResources(data.resources);
       this.setHp(data);
       this.setUnitCount(data);
-      this.drawGeneralGameData(data.generalData);
+      this.drawGeneralGameData(data.generalData, data.friendlyInvisibleUnits);
       this.drawCircles(data.playerData.hearts, "black");
+      this.ctx.globalAlpha = 0.2;
+      data.friendlyInvisibleUnits.forEach((unit : UnitData) => {
+        this.drawUnit(unit);
+      });
+      this.ctx.globalAlpha = 1.0;
     }
 
-    drawGeneralGameData(data : GeneralGameData) {
+    drawGeneralGameData(data : GeneralGameData, extraMinimapUnits : UnitData[] = []) {
       this.setCanvasSize(data.board.width, data.board.height);
       this.updatePanScroll();
       this.updateKeyScroll();
@@ -346,7 +351,7 @@ export class GameScreen {
       data.units.forEach((unit : UnitData) => {
         this.drawUnit(unit);
       });
-      this.drawMinimap(data.units, data.hearts);
+      this.drawMinimap([...data.units, ...extraMinimapUnits], data.hearts);
     }
 
     setCanvasSize(width : number, height : number) {

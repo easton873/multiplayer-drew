@@ -3,6 +3,7 @@ export interface GameData {
   resources : ResourceData
   era : EraData
   generalData : GeneralGameData
+  friendlyInvisibleUnits : UnitData[]
 }
 
 export interface GeneralHeartData {

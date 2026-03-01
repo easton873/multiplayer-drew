@@ -71,11 +71,18 @@ export class Game {
         let heart : PlayerSpecificData = player.getPlayerSpecificData();
         let resources : ResourceData = player.resources.getResourceData();
         let era : EraData = player.era.getEraData();
+        const friendlyInvisibleUnits : UnitData[] = [];
+        this.board.entities.forEach((unit : Unit) => {
+            if (unit.isInvisible() && unit.team === player.getTeam()) {
+                friendlyInvisibleUnits.push(unit.getUnitData());
+            }
+        });
         const gameData : GameData = {
             playerData: heart,
-            resources: resources, 
+            resources: resources,
             era: era,
             generalData: this.generalGameData(),
+            friendlyInvisibleUnits,
         };
         return gameData;
     }

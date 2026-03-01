@@ -15,7 +15,7 @@ import { TargetChasingUnit } from "../src/server/game/unit/combat/combat.js";
 import { TankUnit } from "../src/server/game/unit/tank.js";
 import { CatapultUnit } from "../src/server/game/unit/catapult.js";
 import { MissionaryUnit } from "../src/server/game/unit/combat/missionary.js";
-import { NinjaUnit, SpyUnit, AssassainUnit } from "../src/server/game/unit/combat/ninja.js";
+import { NinjaUnit, SpyUnit, AssassainUnit } from "../src/server/game/unit/combat/stealth.js";
 import { MERCHANT_GAME_UNIT } from "../src/server/game/unit/resource_unit.js";
 
 describe('Units Test', () => {
