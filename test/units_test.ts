@@ -15,7 +15,8 @@ import { TargetChasingUnit } from "../src/server/game/unit/combat/combat.js";
 import { TankUnit } from "../src/server/game/unit/tank.js";
 import { CatapultUnit } from "../src/server/game/unit/catapult.js";
 import { MissionaryUnit } from "../src/server/game/unit/combat/missionary.js";
-import { NinjaUnit } from "../src/server/game/unit/combat/ninja.js";
+import { NinjaUnit, SpyUnit, AssassainUnit } from "../src/server/game/unit/combat/ninja.js";
+import { MERCHANT_GAME_UNIT } from "../src/server/game/unit/resource_unit.js";
 
 describe('Units Test', () => {
     it('archer test', () => {
@@ -372,7 +373,7 @@ describe('Units Test', () => {
         ninja.attackCounter = new Counter(0);
         board.moveUnit(ninja);
 
-        assert.strictEqual(ninja.invisible, true);
+        assert.strictEqual(ninja.isInvisible(), true);
     });
 
     it('ninja becomes visible when close to an enemy', () => {
@@ -391,7 +392,7 @@ describe('Units Test', () => {
         ninja.attackCounter = new Counter(0);
         board.moveUnit(ninja);
 
-        assert.strictEqual(ninja.invisible, false);
+        assert.strictEqual(ninja.isInvisible(), false);
     });
 
     it('ninja is not targetable when invisible', () => {
@@ -400,7 +401,7 @@ describe('Units Test', () => {
         let p2: Player = new Player(1, new Pos(0, 0), board, "1", "", "");
         let ninja: TargetChasingUnit = NinjaUnit.construct(player, new Pos(5, 5)) as TargetChasingUnit;
         let p2Soldier: TargetChasingUnit = SoldierUnit.construct(p2, new Pos(6, 5)) as TargetChasingUnit;
-        ninja.invisible = true;
+        ninja.goInvisible();
         board.addEntity(ninja);
         board.addEntity(p2Soldier);
 
@@ -411,6 +412,107 @@ describe('Units Test', () => {
         // invisible ninja is skipped; p2Soldier should target player's heart instead
         assert.strictEqual(p2Soldier.target, player.heart);
         assert.notStrictEqual(p2Soldier.target, ninja);
+    });
+
+    it('spy turns invisible while walking toward first target', () => {
+        let board: Board = new Board(20, 20);
+        let player: Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        let p2: Player = new Player(1, new Pos(19, 19), board, "1", "", "");
+        let spy: TargetChasingUnit = SpyUnit.construct(player, new Pos(10, 5)) as TargetChasingUnit;
+        let merchant = MERCHANT_GAME_UNIT.construct(p2, new Pos(0, 5));
+        // dist² from spy (10,5) to merchant (0,5) = 100 > 9 (SpyUnit.range)
+        board.addEntity(spy);
+        board.addEntity(merchant);
+
+        spy.moveCounter = new Counter(0);
+        spy.attackCounter = new Counter(0);
+        board.moveUnit(spy);
+
+        assert.strictEqual(spy.isInvisible(), true);
+    });
+
+    it('spy does not go invisible again after already going invisible once', () => {
+        let board: Board = new Board(20, 20);
+        let player: Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        let p2: Player = new Player(1, new Pos(19, 19), board, "1", "", "");
+        let spy: TargetChasingUnit = SpyUnit.construct(player, new Pos(10, 5)) as TargetChasingUnit;
+        let merchant = MERCHANT_GAME_UNIT.construct(p2, new Pos(0, 5));
+        board.addEntity(spy);
+        board.addEntity(merchant);
+
+        spy.moveCounter = new Counter(0);
+        spy.attackCounter = new Counter(0);
+        // Move 1: spy goes invisible for the first time, moves from (10,5) to (9,5)
+        board.moveUnit(spy);
+        assert.strictEqual(spy.isInvisible(), true);
+
+        // Simulate spy reaching its target and becoming visible again
+        spy.goVisibile();
+
+        // Move 2: merchant still far (dist² from (9,5) to (0,5) = 81 > 9)
+        // goInvisible() is now a no-op since goneInvisible=true
+        board.moveUnit(spy);
+        assert.strictEqual(spy.isInvisible(), false);
+    });
+
+    it('assassin insta-kills first target and becomes visible', () => {
+        let board: Board = new Board(20, 20);
+        let player: Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        let p2: Player = new Player(1, new Pos(19, 19), board, "1", "", "");
+        let assassin: TargetChasingUnit = AssassainUnit.construct(player, new Pos(5, 5)) as TargetChasingUnit;
+        let soldier = SoldierUnit.construct(p2, new Pos(6, 5));  // adjacent: dist²=1
+        soldier.totalHP = 1000;
+        soldier.hp = 1000;
+        board.addEntity(assassin);
+        board.addEntity(soldier);
+        assert.strictEqual(board.entities.length, 4);
+
+        assassin.moveCounter = new Counter(0);
+        assassin.attackCounter = new Counter(0);
+        board.moveUnit(assassin);
+
+        assert.strictEqual(board.entities.length, 3);    // soldier insta-killed and removed
+        assert.strictEqual(assassin.isInvisible(), false); // assassin revealed after assassination
+    });
+
+    it('after assassination, assassin stays visible and deals normal melee damage', () => {
+        let board: Board = new Board(20, 20);
+        let player: Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        let p2: Player = new Player(1, new Pos(19, 19), board, "1", "", "");
+        let assassin: TargetChasingUnit = AssassainUnit.construct(player, new Pos(5, 5)) as TargetChasingUnit;
+        let soldier1 = SoldierUnit.construct(p2, new Pos(6, 5));  // adjacent: dist²=1
+        let soldier2 = SoldierUnit.construct(p2, new Pos(8, 5));  // dist²=9
+        board.addEntity(assassin);
+        board.addEntity(soldier1);
+        board.addEntity(soldier2);
+        assert.strictEqual(board.entities.length, 5);
+
+        // Move 1: assassinate soldier1
+        assassin.moveCounter = new Counter(0);
+        assassin.attackCounter = new Counter(0);
+        board.moveUnit(assassin);
+        assert.strictEqual(board.entities.length, 4);
+        assert.strictEqual(assassin.isInvisible(), false);
+
+        // Move 2: retarget to soldier2 (dist²=9), doMove → (5,5) → (6,5)
+        assassin.moveCounter = new Counter(0);
+        assassin.attackCounter = new Counter(0);
+        board.moveUnit(assassin);
+        assert.strictEqual(assassin.isInvisible(), false);
+        assert.strictEqual(assassin.pos.equals(new Pos(6, 5)), true);
+
+        // Move 3: doMove from (6,5) toward soldier2 (8,5) → (7,5)
+        assassin.moveCounter = new Counter(0);
+        board.moveUnit(assassin);
+        assert.strictEqual(assassin.pos.equals(new Pos(7, 5)), true);
+
+        // Move 4: soldier2 at (8,5) from (7,5): dist²=1, adjacent → inRangeMove → normal melee damage
+        assassin.moveCounter = new Counter(0);
+        assassin.attackCounter = new Counter(0);
+        board.moveUnit(assassin);
+        assert.strictEqual(soldier2.hp, SoldierUnit.hp - AssassainUnit.damage);  // normal damage, not insta-kill
+        assert.strictEqual(board.entities.length, 4);   // soldier2 still alive
+        assert.strictEqual(assassin.isInvisible(), false);
     });
 
     // it('missiles and what not test', () => {

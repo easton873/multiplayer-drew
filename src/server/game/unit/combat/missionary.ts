@@ -29,32 +29,18 @@ class Missionary extends TargetChasingUnit {
         this.target = null;
     }
 
-    doMove(board: Board): void {
-        if (this.tryTickAttackCounter()) {
-            return;
-        }
-        super.doMove(board);
-    }
-
     hasNoTargetMove(): void {
-        this.tryTickAttackCounter();
-    }
-
-    tryTickAttackCounter() : boolean {
         if (!this.attackCounter.hasOneTickLeft()) {
-            this.tickAttackCounter();
-            return true;
-        }
-        return false;
-    }
-
-    tickAttackCounter() {
-        for (let i = 0; i < this.moveSpeed; i++) {
-            if (this.attackCounter.hasOneTickLeft()) {
-                break;
-            }
             this.attackCounter.tick();
         }
+    }
+
+    tickMoveCounter(): boolean {
+        if (!this.attackCounter.hasOneTickLeft()) {
+            this.attackCounter.tick();
+            return false;
+        }
+        return super.tickMoveCounter();
     }
 
     isValidTarget(unit: Unit): boolean {

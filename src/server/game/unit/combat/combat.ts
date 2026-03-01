@@ -14,7 +14,7 @@ export abstract class CombatUnit extends UnitWithTarget {
     }
 
     doAcutalMove(board: Board) {
-        this.findNewTarget(board.entities); // guarentee a target
+        this.findNewTarget(board.entities); // guarentee a target sort of
         if (this.hasNoTarget()) {
             this.hasNoTargetMove();
             return;
@@ -27,11 +27,15 @@ export abstract class CombatUnit extends UnitWithTarget {
             return;
         } else {
             this.attacking = false;
-            if (this.moveCounter.tick()) {
+            if (this.tickMoveCounter()) {
                 this.doMove(board);
             }
             return;
         }
+    }
+
+    tickMoveCounter() : boolean {
+        return this.moveCounter.tick()
     }
 
     set moveSpeed(newSpeed : number) {

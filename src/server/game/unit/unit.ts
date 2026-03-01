@@ -74,7 +74,7 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
     owner : Player;
     color : string;
     freeze : boolean = false;
-    invisible : boolean = false;
+    private invisible : boolean = false;
     attacking : boolean = false;
 
     constructor(player : Player, name : string, pos : Pos, hp : number, color : string) {
@@ -162,6 +162,18 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
         }
 
         return closest.pos.getMoveDir(this.pos.clone(), closest.getRadius());
+    }
+
+    isInvisible() : boolean {
+        return this.invisible;
+    }
+
+    goInvisible() {
+        this.invisible = true;
+    }
+
+    goVisibile() {
+        this.invisible = false;
     }
 
     getUnitData() : UnitData {
@@ -257,7 +269,7 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
         let currDist = -1;
         units.forEach((unit : Unit) => {
             let dist = this.pos.distanceTo(unit.pos);
-            if (predicate(unit) && (currDist == -1 || dist < currDist) && !unit.invisible) {
+            if (predicate(unit) && (currDist == -1 || dist < currDist) && !unit.isInvisible()) {
                 this.target = unit;
                 currDist = dist;
             }

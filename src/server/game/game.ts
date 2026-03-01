@@ -58,7 +58,7 @@ export class Game {
         this.players.map((player : Player) => teams.add(player.getTeam()));
         return teams.size > 1 ;
     }
-s
+
     get players() {
         return this._players
     }
@@ -84,7 +84,7 @@ s
         let board : BoardData = {width: this.board.width, height: this.board.height};
         let units : UnitData[] = [];
         this.board.entities.forEach((unit : Unit) => {
-            if (unit.invisible) {
+            if (unit.isInvisible()) {
                 return;
             }
             const unitData : UnitData = unit.getUnitData();
