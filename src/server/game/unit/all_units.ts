@@ -18,6 +18,7 @@ import { TeleporterUnit } from "./teleporter.js";
 import { TankUnit } from "./tank.js";
 import { CatapultUnit } from "./catapult.js";
 import { MissionaryUnit } from "./combat/missionary.js";
+import { NinjaUnit } from "./combat/ninja.js";
 
 export const ALL_RESOURCE_UNITS : GameUnit[] = [
     MERCHANT_GAME_UNIT,
@@ -58,6 +59,7 @@ export const ALL_MILITARY_UNITS : GameUnit[] = [
     new SummonerUnit(),
     HealerUnit,
     MissionaryUnit,
+    NinjaUnit,
     FireballThrowerUnit,
     SabotagerUnit,
     

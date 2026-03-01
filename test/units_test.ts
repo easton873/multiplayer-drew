@@ -15,6 +15,7 @@ import { TargetChasingUnit } from "../src/server/game/unit/combat/combat.js";
 import { TankUnit } from "../src/server/game/unit/tank.js";
 import { CatapultUnit } from "../src/server/game/unit/catapult.js";
 import { MissionaryUnit } from "../src/server/game/unit/combat/missionary.js";
+import { NinjaUnit } from "../src/server/game/unit/combat/ninja.js";
 
 describe('Units Test', () => {
     it('archer test', () => {
@@ -354,6 +355,62 @@ describe('Units Test', () => {
         assert.strictEqual(soldier.TESTObservers.length, 3);  // p2 + board + missionary (still targeting)
         assert.strictEqual(p2.unitCount, 1);
         assert.strictEqual(player.unitCount, player.era.getUnitLimit());
+    });
+
+    it('ninja is invisible when far from an enemy', () => {
+        let board: Board = new Board(20, 20);
+        let player: Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        // Place p2 heart far from the ninja so it doesn't trigger the proximity check
+        let p2: Player = new Player(1, new Pos(19, 19), board, "1", "", "");
+        let ninja: TargetChasingUnit = NinjaUnit.construct(player, new Pos(10, 5)) as TargetChasingUnit;
+        let soldier = SoldierUnit.construct(p2, new Pos(0, 5));
+        // From ninja (10,5): soldier dist²=100, p2 heart (19,19) dist²=277 — both > 25
+        board.addEntity(ninja);
+        board.addEntity(soldier);
+
+        ninja.moveCounter = new Counter(0);
+        ninja.attackCounter = new Counter(0);
+        board.moveUnit(ninja);
+
+        assert.strictEqual(ninja.invisible, true);
+    });
+
+    it('ninja becomes visible when close to an enemy', () => {
+        let board: Board = new Board(20, 20);
+        let player: Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        let p2: Player = new Player(1, new Pos(0, 0), board, "1", "", "");
+        let ninja: TargetChasingUnit = NinjaUnit.construct(player, new Pos(9, 5)) as TargetChasingUnit;
+        let soldier = SoldierUnit.construct(p2, new Pos(5, 5));
+        // distance² = (9-5)²+(5-5)² = 16 ≤ 25, proximity check passes
+        // Δx=4, not adjacent, so doMove (not inRangeMove) is called
+        ninja.target = soldier;
+        board.addEntity(ninja);
+        board.addEntity(soldier);
+
+        ninja.moveCounter = new Counter(0);
+        ninja.attackCounter = new Counter(0);
+        board.moveUnit(ninja);
+
+        assert.strictEqual(ninja.invisible, false);
+    });
+
+    it('ninja is not targetable when invisible', () => {
+        let board: Board = new Board(10, 10);
+        let player: Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        let p2: Player = new Player(1, new Pos(0, 0), board, "1", "", "");
+        let ninja: TargetChasingUnit = NinjaUnit.construct(player, new Pos(5, 5)) as TargetChasingUnit;
+        let p2Soldier: TargetChasingUnit = SoldierUnit.construct(p2, new Pos(6, 5)) as TargetChasingUnit;
+        ninja.invisible = true;
+        board.addEntity(ninja);
+        board.addEntity(p2Soldier);
+
+        p2Soldier.moveCounter = new Counter(0);
+        p2Soldier.attackCounter = new Counter(0);
+        board.moveUnit(p2Soldier);
+
+        // invisible ninja is skipped; p2Soldier should target player's heart instead
+        assert.strictEqual(p2Soldier.target, player.heart);
+        assert.notStrictEqual(p2Soldier.target, ninja);
     });
 
     // it('missiles and what not test', () => {

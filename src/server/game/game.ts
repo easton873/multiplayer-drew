@@ -84,17 +84,10 @@ s
         let board : BoardData = {width: this.board.width, height: this.board.height};
         let units : UnitData[] = [];
         this.board.entities.forEach((unit : Unit) => {
-            const unitPos : PosData = unit.pos.getPosData();
-            const unitData : UnitData = {
-                name: unit.name,
-                pos : unitPos,
-                team: unit.team,
-                color: unit.color,
-                playerColor: unit.owner.getColor(),
-                hp : unit.hp,
-                totalHP: unit.totalHP,
-                rangedData: unit.getRangedData(),
-            };
+            if (unit.invisible) {
+                return;
+            }
+            const unitData : UnitData = unit.getUnitData();
             units.push(unitData);
         })
         const hearts : GeneralHeartData[] = [];

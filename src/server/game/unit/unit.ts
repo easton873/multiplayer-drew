@@ -1,4 +1,4 @@
-import { UnitRangedAttackData } from "../../../shared/types.js";
+import { UnitData, UnitRangedAttackData } from "../../../shared/types.js";
 import { Board } from "../board.js";
 import { Heart } from "../heart.js";
 import { Counter } from "../move/counter.js";
@@ -74,6 +74,7 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
     owner : Player;
     color : string;
     freeze : boolean = false;
+    invisible : boolean = false;
     attacking : boolean = false;
 
     constructor(player : Player, name : string, pos : Pos, hp : number, color : string) {
@@ -163,6 +164,26 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
         return closest.pos.getMoveDir(this.pos.clone(), closest.getRadius());
     }
 
+    getUnitData() : UnitData {
+        return {
+            name: this.name,
+            pos : this.pos.getPosData(),
+            team: this.team,
+            color: this.color,
+            playerColor: this.owner.getColor(),
+            hp : this.hp,
+            totalHP: this.totalHP,
+            rangedData: this.getRangedData(),
+        };
+        // if (this.invisible) {
+        //     let invisibleColor = "#00000000";
+        //     data.name = "";
+        //     data.color = invisibleColor;
+        //     data.playerColor = invisibleColor;
+        // }
+        // return data;
+    }
+
     getRangedData() : UnitRangedAttackData {
         return {
             attacking: this.attacking,
@@ -236,7 +257,7 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
         let currDist = -1;
         units.forEach((unit : Unit) => {
             let dist = this.pos.distanceTo(unit.pos);
-            if (predicate(unit) && (currDist == -1 || dist < currDist)) {
+            if (predicate(unit) && (currDist == -1 || dist < currDist) && !unit.invisible) {
                 this.target = unit;
                 currDist = dist;
             }
