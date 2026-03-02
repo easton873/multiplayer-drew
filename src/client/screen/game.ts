@@ -4,6 +4,7 @@ import { emitDeleteUnits, emitSpawnUnit } from "../../shared/routes";
 import { removeOptions } from "../../client/main";
 
 const ZOOM_FACTOR = 1.1;
+const HOTKEY_STORAGE_KEY = 'drew_hotkeys';
 const MIN_ZOOM = 2;
 const MAX_ZOOM = 40;
 const PAN_SCROLL_SPEED = 0.008;
@@ -27,6 +28,9 @@ export class GameScreen {
     public nextEraLabel = document.getElementById('nextEraLabel') as HTMLLabelElement;
     public modeIndicator = document.getElementById('modeIndicator') as HTMLSpanElement;
     public fullscreenButton = document.getElementById('fullscreenButton') as HTMLButtonElement;
+    public unitPickerButton = document.getElementById('unitPickerButton') as HTMLButtonElement;
+    public unitPickerPopup  = document.getElementById('unitPickerPopup') as HTMLDivElement;
+    public unitPickerGrid   = document.getElementById('unitPickerGrid') as HTMLDivElement;
     public setupBanner = document.getElementById('setupBanner')!;
     public minimapCanvas = document.getElementById('minimap') as HTMLCanvasElement;
     public minimapCtx : CanvasRenderingContext2D = this.minimapCanvas.getContext('2d')!;
@@ -74,6 +78,16 @@ export class GameScreen {
         this.unitCostLabel.innerText = this.formatResources(cost);
         this.unitInfoTooltip.textContent = this.getUnitSelect().blurb;
       }
+
+      this.unitPickerButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleUnitPicker();
+      });
+      document.addEventListener('click', (e) => {
+        if (!this.unitPickerPopup.contains(e.target as Node)) {
+          this.closeUnitPicker();
+        }
+      });
 
       this.bg.src = '/bg.png';
 
@@ -599,7 +613,9 @@ export class GameScreen {
       this.unitSelect.dispatchEvent(new Event('change', { bubbles: true }));
       this.eraNameLabel.innerText = 'Era: ' + era.eraName;
       this.nextEraLabel.innerText = 'Next Era Cost:\n' + this.formatResources(era.nextEraCost);
+      this.restoreHotkeys();
       this.updateHotkeyLabels();
+      this.updateUnitPickerButton();
     }
 
     getUnitSelect() : UnitCreationData {
@@ -630,12 +646,14 @@ export class GameScreen {
         let number : number = parseInt(event.key);
         if (!Number.isNaN(number) && this.isCombinationPressed(['Control'])) {
           this.hotKeys.set(event.key, this.getUnitSelect());
+          this.saveHotkeys();
           this.updateHotkeyLabels();
           return;
         }
         if (this.hotKeys.has(event.key)) {
           this.unitSelect.value = JSON.stringify(this.hotKeys.get(event.key));
           this.unitSelect.dispatchEvent(new Event('change', { bubbles: true }));
+          this.updateUnitPickerButton();
         }
     }
 
@@ -658,6 +676,102 @@ export class GameScreen {
       });
     }
 
+    saveHotkeys() {
+      const saved: Record<string, string> = {};
+      this.hotKeys.forEach((unit, key) => {
+        saved[key] = unit.name;
+      });
+      localStorage.setItem(HOTKEY_STORAGE_KEY, JSON.stringify(saved));
+    }
+
+    restoreHotkeys() {
+      const raw = localStorage.getItem(HOTKEY_STORAGE_KEY);
+      if (!raw) return;
+      const saved: Record<string, string> = JSON.parse(raw);
+      const available = new Map<string, UnitCreationData>();
+      for (let i = 0; i < this.unitSelect.options.length; i++) {
+        const data: UnitCreationData = JSON.parse(this.unitSelect.options[i].value);
+        available.set(data.name, data);
+      }
+      this.hotKeys.clear();
+      Object.entries(saved).forEach(([key, unitName]) => {
+        const unit = available.get(unitName);
+        if (unit) this.hotKeys.set(key, unit);
+      });
+    }
+
+    toggleUnitPicker() {
+      if (this.unitPickerPopup.classList.contains('hidden')) {
+        this.openUnitPicker();
+      } else {
+        this.closeUnitPicker();
+      }
+    }
+
+    openUnitPicker() {
+      const rect = this.unitPickerButton.getBoundingClientRect();
+      const popupMaxH = window.innerHeight * 0.7;
+      let top = rect.top;
+      if (top + popupMaxH > window.innerHeight) {
+        top = window.innerHeight - popupMaxH - 8;
+      }
+      this.unitPickerPopup.style.top = top + 'px';
+      this.unitPickerPopup.classList.remove('hidden');
+      this.renderUnitPickerGrid();
+    }
+
+    closeUnitPicker() {
+      this.unitPickerPopup.classList.add('hidden');
+    }
+
+    renderUnitPickerGrid() {
+      this.unitPickerGrid.innerHTML = '';
+      const nameToKey = new Map<string, string>();
+      this.hotKeys.forEach((unit, key) => nameToKey.set(unit.name, key));
+      const selectedName = this.unitSelect.value ? this.getUnitSelect().name : '';
+
+      for (let i = 0; i < this.unitSelect.options.length; i++) {
+        const data: UnitCreationData = JSON.parse(this.unitSelect.options[i].value);
+        const card = document.createElement('div');
+        card.className = 'unit-card' + (data.name === selectedName ? ' selected' : '');
+
+        const cvs = document.createElement('canvas');
+        cvs.width = 56;
+        cvs.height = 56;
+        const ctx2 = cvs.getContext('2d')!;
+        if (this.images.has(data.name)) {
+          ctx2.drawImage(this.images.get(data.name)!, 0, 0, 56, 56);
+        } else {
+          ctx2.fillStyle = '#555';
+          ctx2.fillRect(0, 0, 56, 56);
+        }
+
+        const lbl = document.createElement('div');
+        lbl.className = 'unit-card-label';
+        const key = nameToKey.get(data.name);
+        lbl.textContent = key ? `[${key}] ${data.name}` : data.name;
+
+        card.appendChild(cvs);
+        card.appendChild(lbl);
+        card.addEventListener('click', () => {
+          this.unitSelect.value = JSON.stringify(data);
+          this.unitSelect.dispatchEvent(new Event('change', { bubbles: true }));
+          this.updateUnitPickerButton();
+          this.closeUnitPicker();
+        });
+        this.unitPickerGrid.appendChild(card);
+      }
+    }
+
+    updateUnitPickerButton() {
+      if (!this.unitSelect.value) return;
+      const data = this.getUnitSelect();
+      const nameToKey = new Map<string, string>();
+      this.hotKeys.forEach((unit, key) => nameToKey.set(unit.name, key));
+      const key = nameToKey.get(data.name);
+      this.unitPickerButton.textContent = key ? `[${key}] ${data.name}` : data.name;
+    }
+
     updateHotkeyLabels() {
       const nameToKey = new Map<string, string>();
       this.hotKeys.forEach((unit, key) => {
@@ -669,6 +783,10 @@ export class GameScreen {
         const data : UnitCreationData = JSON.parse(option.value);
         const key = nameToKey.get(data.name);
         option.text = key ? `[${key}] ${data.name}` : data.name;
+      }
+
+      if (!this.unitPickerPopup.classList.contains('hidden')) {
+        this.renderUnitPickerGrid();
       }
     }
 }

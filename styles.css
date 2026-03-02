@@ -807,3 +807,71 @@ canvas#game {
     padding: 16px;
   }
 }
+
+/* ============================================================
+   UNIT PICKER POPUP
+   ============================================================ */
+.unit-picker-btn {
+  width: 100%;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unit-picker-popup {
+  position: fixed;
+  right: 283px; /* sidebar 280px + 3px border */
+  width: 300px;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: var(--bg-medium);
+  border: 3px solid var(--border-purple);
+  z-index: 200;
+  padding: 8px;
+}
+
+.unit-picker-popup.hidden {
+  display: none;
+}
+
+.unit-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.unit-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  border: 2px solid var(--border-purple);
+  padding: 6px 4px;
+  background: var(--bg-dark);
+  transition: border-color 0.1s;
+}
+
+.unit-card:hover {
+  border-color: var(--accent-cyan);
+}
+
+.unit-card.selected {
+  border-color: var(--accent-green);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.unit-card canvas {
+  width: 56px;
+  height: 56px;
+  image-rendering: pixelated;
+}
+
+.unit-card-label {
+  font-size: 9px;
+  text-align: center;
+  color: var(--text-primary);
+  word-break: break-word;
+  line-height: 1.2;
+}

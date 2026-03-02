@@ -32,7 +32,8 @@
 
         <!-- Unit -->
         <div class="hud-group">
-          <select id="unitSelect" class="pixel-select"></select>
+          <select id="unitSelect" class="pixel-select" style="display:none"></select>
+          <button id="unitPickerButton" class="pixel-btn unit-picker-btn">Select Unit</button>
           <label id="unitInfoLabel" class="tooltip-wrapper">&#9432;
             <span id="unitInfoTooltip" class="tooltip-text">unit info</span>
           </label>
@@ -58,6 +59,10 @@
         </div>
 
       </div>
+    </div>
+    <!-- Unit Picker Popup -->
+    <div id="unitPickerPopup" class="unit-picker-popup hidden">
+      <div id="unitPickerGrid" class="unit-picker-grid"></div>
     </div>
   </div>
 
