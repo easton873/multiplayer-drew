@@ -104,14 +104,22 @@ export class Era {
     }
 
     getEraData() : EraData {
-        let unitCreationData : UnitCreationData[] = [];
-        this.currEra.getAvailableUnits().forEach((info : GameUnit) => {
-            unitCreationData.push(info.getUnitCreationInfo().getUnitCreationData());
+        const resourceSet = new Set<GameUnit>(ALL_RESOURCE_UNITS);
+        const resourceCreationData: UnitCreationData[] = [];
+        const militaryCreationData: UnitCreationData[] = [];
+        this.currEra.getAvailableUnits().forEach((unit: GameUnit) => {
+            const data = unit.getUnitCreationInfo().getUnitCreationData();
+            if (resourceSet.has(unit)) {
+                resourceCreationData.push(data);
+            } else {
+                militaryCreationData.push(data);
+            }
         });
         return {
             eraName: this.currEra.getName(),
             nextEraCost: this.currEra.nextEraCost().getResourceData(),
-            availableUnits: unitCreationData,
+            resourceUnits: resourceCreationData,
+            militaryUnits: militaryCreationData,
         }
     }
 

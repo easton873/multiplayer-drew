@@ -875,3 +875,28 @@ canvas#game {
   word-break: break-word;
   line-height: 1.2;
 }
+
+.unit-selected-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 4px 6px;
+  background: var(--bg-dark);
+  border: 2px solid var(--border-purple);
+}
+
+.unit-selected-indicator canvas {
+  width: 28px;
+  height: 28px;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+.unit-selected-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

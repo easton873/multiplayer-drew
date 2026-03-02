@@ -28,9 +28,12 @@ export class GameScreen {
     public nextEraLabel = document.getElementById('nextEraLabel') as HTMLLabelElement;
     public modeIndicator = document.getElementById('modeIndicator') as HTMLSpanElement;
     public fullscreenButton = document.getElementById('fullscreenButton') as HTMLButtonElement;
-    public unitPickerButton = document.getElementById('unitPickerButton') as HTMLButtonElement;
+    public resourcePickerButton = document.getElementById('resourcePickerButton') as HTMLButtonElement;
+    public militaryPickerButton = document.getElementById('militaryPickerButton') as HTMLButtonElement;
     public unitPickerPopup  = document.getElementById('unitPickerPopup') as HTMLDivElement;
     public unitPickerGrid   = document.getElementById('unitPickerGrid') as HTMLDivElement;
+    public unitSelectedCanvas = document.getElementById('unitSelectedCanvas') as HTMLCanvasElement;
+    public unitSelectedLabel  = document.getElementById('unitSelectedLabel') as HTMLSpanElement;
     public setupBanner = document.getElementById('setupBanner')!;
     public minimapCanvas = document.getElementById('minimap') as HTMLCanvasElement;
     public minimapCtx : CanvasRenderingContext2D = this.minimapCanvas.getContext('2d')!;
@@ -63,6 +66,10 @@ export class GameScreen {
 
     private pressedKeys : Set<string> = new Set<string>();
     private hotKeys : Map<string, UnitCreationData> = new Map<string, UnitCreationData>();
+    private resourceUnitsList: UnitCreationData[] = [];
+    private militaryUnitsList: UnitCreationData[] = [];
+    private activePickerButton: HTMLButtonElement | null = null;
+    private activePickerUnits: UnitCreationData[] = [];
 
     // Setup render loop state
     private setupRafId : number = 0;
@@ -79,9 +86,21 @@ export class GameScreen {
         this.unitInfoTooltip.textContent = this.getUnitSelect().blurb;
       }
 
-      this.unitPickerButton.addEventListener('click', (e) => {
+      this.resourcePickerButton.addEventListener('click', (e) => {
         e.stopPropagation();
-        this.toggleUnitPicker();
+        if (!this.unitPickerPopup.classList.contains('hidden') && this.activePickerButton === this.resourcePickerButton) {
+          this.closeUnitPicker();
+        } else {
+          this.openUnitPicker(this.resourcePickerButton, this.resourceUnitsList);
+        }
+      });
+      this.militaryPickerButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!this.unitPickerPopup.classList.contains('hidden') && this.activePickerButton === this.militaryPickerButton) {
+          this.closeUnitPicker();
+        } else {
+          this.openUnitPicker(this.militaryPickerButton, this.militaryUnitsList);
+        }
       });
       document.addEventListener('click', (e) => {
         if (!this.unitPickerPopup.contains(e.target as Node)) {
@@ -607,8 +626,10 @@ export class GameScreen {
     }
 
     upgradeEra(era : EraData) {
-      let ogVal = this.unitSelect.value
-      this.fillSelect(this.unitSelect, era.availableUnits);
+      this.resourceUnitsList = era.resourceUnits;
+      this.militaryUnitsList = era.militaryUnits;
+      const ogVal = this.unitSelect.value;
+      this.fillSelect(this.unitSelect, [...era.resourceUnits, ...era.militaryUnits]);
       if (ogVal) this.unitSelect.value = ogVal;
       this.unitSelect.dispatchEvent(new Event('change', { bubbles: true }));
       this.eraNameLabel.innerText = 'Era: ' + era.eraName;
@@ -648,6 +669,7 @@ export class GameScreen {
           this.hotKeys.set(event.key, this.getUnitSelect());
           this.saveHotkeys();
           this.updateHotkeyLabels();
+          this.updateUnitPickerButton();
           return;
         }
         if (this.hotKeys.has(event.key)) {
@@ -700,16 +722,10 @@ export class GameScreen {
       });
     }
 
-    toggleUnitPicker() {
-      if (this.unitPickerPopup.classList.contains('hidden')) {
-        this.openUnitPicker();
-      } else {
-        this.closeUnitPicker();
-      }
-    }
-
-    openUnitPicker() {
-      const rect = this.unitPickerButton.getBoundingClientRect();
+    openUnitPicker(button: HTMLButtonElement, units: UnitCreationData[]) {
+      this.activePickerButton = button;
+      this.activePickerUnits = units;
+      const rect = button.getBoundingClientRect();
       const popupMaxH = window.innerHeight * 0.7;
       let top = rect.top;
       if (top + popupMaxH > window.innerHeight) {
@@ -717,21 +733,20 @@ export class GameScreen {
       }
       this.unitPickerPopup.style.top = top + 'px';
       this.unitPickerPopup.classList.remove('hidden');
-      this.renderUnitPickerGrid();
+      this.renderUnitPickerGrid(units);
     }
 
     closeUnitPicker() {
       this.unitPickerPopup.classList.add('hidden');
     }
 
-    renderUnitPickerGrid() {
+    renderUnitPickerGrid(units: UnitCreationData[]) {
       this.unitPickerGrid.innerHTML = '';
       const nameToKey = new Map<string, string>();
       this.hotKeys.forEach((unit, key) => nameToKey.set(unit.name, key));
       const selectedName = this.unitSelect.value ? this.getUnitSelect().name : '';
 
-      for (let i = 0; i < this.unitSelect.options.length; i++) {
-        const data: UnitCreationData = JSON.parse(this.unitSelect.options[i].value);
+      for (const data of units) {
         const card = document.createElement('div');
         card.className = 'unit-card' + (data.name === selectedName ? ' selected' : '');
 
@@ -769,7 +784,15 @@ export class GameScreen {
       const nameToKey = new Map<string, string>();
       this.hotKeys.forEach((unit, key) => nameToKey.set(unit.name, key));
       const key = nameToKey.get(data.name);
-      this.unitPickerButton.textContent = key ? `[${key}] ${data.name}` : data.name;
+      this.unitSelectedLabel.textContent = key ? `[${key}] ${data.name}` : data.name;
+      const ctx2 = this.unitSelectedCanvas.getContext('2d')!;
+      ctx2.clearRect(0, 0, 28, 28);
+      if (this.images.has(data.name)) {
+        ctx2.drawImage(this.images.get(data.name)!, 0, 0, 28, 28);
+      } else {
+        ctx2.fillStyle = '#555';
+        ctx2.fillRect(0, 0, 28, 28);
+      }
     }
 
     updateHotkeyLabels() {
@@ -786,7 +809,7 @@ export class GameScreen {
       }
 
       if (!this.unitPickerPopup.classList.contains('hidden')) {
-        this.renderUnitPickerGrid();
+        this.renderUnitPickerGrid(this.activePickerUnits);
       }
     }
 }
