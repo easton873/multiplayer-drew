@@ -121,4 +121,4 @@ class assassainUnit extends MeleeUnit {
 
 export const NinjaUnit : ninjaUnit = new ninjaUnit("Ninja", new Resources(333, 56, 0), 7, 3, 20, "#000000", "Invisible until its time for combat", 25);
 export const SpyUnit : spyUnit = new spyUnit("Spy", new Resources(350, 25, 125), 9, 1, 10, "#ac2020", "Turns invisible and attacks resources", 9);
-export const AssassainUnit : assassainUnit = new assassainUnit("Assassain", new Resources(300, 0, 0), 5, 3, 20, "#660b0b", "Assassainates its target very effectively")
+export const AssassainUnit : assassainUnit = new assassainUnit("Assassin", new Resources(300, 0, 0), 5, 3, 20, "#660b0b", "Assassainates its target very effectively")
