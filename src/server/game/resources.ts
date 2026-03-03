@@ -9,6 +9,12 @@ export class Resources {
         this.stone += other.stone;
     }
 
+    multiply(scalar : number) {
+        this.gold *= scalar;
+        this.wood *= scalar;
+        this.stone *= scalar;
+    }
+
     spend(other : Resources) {
         this.gold -= other.gold;
         this.wood -= other.wood;

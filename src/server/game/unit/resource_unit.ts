@@ -7,7 +7,7 @@ import { GameUnit } from "./game_unit.js";
 import { Unit, UnitWithCounter } from "./unit.js";
 
 export class ResourceUnit extends UnitWithCounter {
-    constructor(player : Player, pos : Pos, name : string, hp : number, speed : number, protected resources : Resources, color : string) {
+    constructor(player : Player, pos : Pos, name : string, hp : number, speed : number, public resources : Resources, color : string) {
         super(player, name, pos, hp, speed, color);
         this.name = name;
     }
@@ -103,7 +103,7 @@ const ALCHEMIST_COST = new Resources(500, 300, 200);
 const ENGINEER_COST = new Resources(600, 300, 100);
 const DRUID_COST = new Resources(300, 400, 200);
 
-export const MINER_SPEED = 20;
+export const MINER_SPEED = 30;
 
 export const MERCHANT_GAME_UNIT = new GameResourceUnit(MERCHANT_NAME, MERCHANT_COST, 1, 30, MERCHANT_PRODUCTION, MERCHANT_COLOR, MERCHANT_BLURB);
 export const LUMBER_JACK_GAME_UNIT = new GameResourceUnit(LUMBER_JACK_NAME, LUMBER_JACK_COST, 1, 30, LUMBER_JACK_PRODUCTION, LUMBER_JACK_COLOR, LUMBER_JACK_BLURB);

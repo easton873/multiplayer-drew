@@ -9,7 +9,7 @@ import { Player } from "./player.js";
 import { ComputerWaitingData, EditComputerData, PlayerWaitingData } from "../../shared/bulider.js";
 import { loadData } from "./unit/all_units.js";
 
-const FRAME_RATE = 30;
+export const FRAME_RATE = 30;
 const ROOM_CODE = "roomcode";
 
 export interface GameClient {

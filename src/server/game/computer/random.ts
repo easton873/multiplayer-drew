@@ -1,6 +1,9 @@
-import { PlayerProxy } from "../player.js";
+import { FRAME_RATE } from "../client_handler.js";
+import { Pos } from "../pos.js";
+import { Resources } from "../resources.js";
 import { GameUnit } from "../unit/game_unit.js";
-import { LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT } from "../unit/resource_unit.js";
+import { LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, ResourceUnit } from "../unit/resource_unit.js";
+import { Unit } from "../unit/unit.js";
 import { getRandomIndex } from "../utils.js";
 import { BaseComputerPlayer } from "./basics.js";
 
@@ -11,45 +14,27 @@ import { BaseComputerPlayer } from "./basics.js";
 // randomly select building one of those (or at least the first 2, miner might be a problem because what
 // you make no wood)
 export class RandomComputer extends BaseComputerPlayer {
-    private resourcesReady : boolean = false;
     private nextUnit : GameUnit = null;
     firstEra() {
-        this.maintainCountOfUnitsV2(MERCHANT_GAME_UNIT, 10);
     }
     secontEra() {
-        this.maintainCountOfUnitsV2(MERCHANT_GAME_UNIT, 15);
-        this.maintainCountOfUnitsV2(LUMBER_JACK_GAME_UNIT, 8)
     }
     thirdEra() {
-        this.maintainCountOfUnitsV2(MERCHANT_GAME_UNIT, 20);
-        this.maintainCountOfUnitsV2(MINER_GAME_UNIT, 10);
-        this.maintainCountOfUnitsV2(LUMBER_JACK_GAME_UNIT, 15);
     }
     fourthEra() {
-        this.thirdEra();
     }
     fifthEra() {
-        this.thirdEra();
     }
     sixthEra() {
-        this.thirdEra();
     }
     doTurn(): void {
-        this.resourcesReady = true;
         this.advanceEra();
-
-        super.doTurn();
-
-        if (!this.resourcesReady) {
-            return;
-        }
 
         this.placeRandomUnit();
     }
 
     maintainCountOfUnitsV2(unit: GameUnit, targetCount: number): boolean {
         if (!super.maintainCountOfUnitsV2(unit, targetCount)) {
-            this.resourcesReady = false;
             return false;
         }
         return true;
@@ -60,6 +45,10 @@ export class RandomComputer extends BaseComputerPlayer {
             this.setNextUnit();
         }
 
+        if (!this.nextUnit) {
+            return;
+        }
+
         if (this.placeUnit(this.nextUnit, this.randomPosInTerritory())) {
             this.setNextUnit();
         }
@@ -67,5 +56,27 @@ export class RandomComputer extends BaseComputerPlayer {
 
     setNextUnit() {
         this.nextUnit = getRandomIndex(this.era.availableUnits);
+        if (this.nextUnit == MERCHANT_GAME_UNIT || this.nextUnit == LUMBER_JACK_GAME_UNIT) {
+            return;
+        }
+        let rateOfIncome : Resources = this.getRateOfIncome();
+        rateOfIncome.multiply(3); // can we produce it in 3 seconds or less
+        if (rateOfIncome.canAfford(this.nextUnit.getUnitCreationInfo().getCost())) {
+            return;
+        }
+        this.nextUnit = null;
+    }
+
+    getRateOfIncome() : Resources { // returns production per second
+        let result : Resources = new Resources(0, 0, 0);
+        this.board.entities.forEach((unit : Unit) => {
+            if (unit.owner == this && unit instanceof ResourceUnit) {
+                let productionRate : number = FRAME_RATE / unit.moveCounter.total;
+                let production : Resources = unit.resources.copy();
+                production.multiply(productionRate);
+                result.add(production);
+            }
+        });
+        return result;
     }
 }
