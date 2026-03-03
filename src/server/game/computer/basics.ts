@@ -3,14 +3,15 @@ import { FIFTH_ERA_NAME, FOURTH_ERA_NAME, SECOND_ERA_NAME, SIXTH_ERA_NAME, START
 import { PlayerProxy } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
+import { ResourceData } from "../../../shared/types.js";
 import { GameUnit } from "../unit/game_unit.js";
 import { Unit } from "../unit/unit.js";
 import { getRandomIndex } from "../utils.js";
 
 export abstract class BaseComputerPlayer extends PlayerProxy {
     protected territory : Pos[] = [];
-    constructor(team: number, pos: Pos, board: Board, id: string, name: string, color: string) {
-        super(team, pos, board, id, name, color);
+    constructor(team: number, pos: Pos, board: Board, id: string, name: string, color: string, startingResources?: ResourceData) {
+        super(team, pos, board, id, name, color, startingResources);
         this.rebuildTerritory();
     }
     doTurn(): void {

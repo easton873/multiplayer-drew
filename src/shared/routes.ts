@@ -1,7 +1,7 @@
 import { Game } from '../server/game/game.js';
 import { GameRoom } from '../server/game/game_room.js';
 import { DefaultEventsMap, Server, Socket } from 'socket.io';
-import { BoardData, GameData, PosData } from './types.js';
+import { BoardData, GameData, PosData, ResourceData } from './types.js';
 import { ComputerWaitingData, EditComputerData, GameWaitingData, PlayerSetupData, PlayerWaitingData } from './bulider.js';
 
 // socket events
@@ -12,6 +12,7 @@ export const ADD_COMPUTER_KEY = "add computer";
 export const EDIT_COMPUTER_KEY = "edit computer";
 export const REMOVE_COMPUTER_KEY = "remove computer";
 export const UPDATE_BOARD_KEY = "board update";
+export const UPDATE_RESOURCES_KEY = "resources update";
 export const START_GAME_KEY = "start";
 const SUBMIT_START_POS_KEY = "submit start pos";
 
@@ -29,6 +30,7 @@ export abstract class RouteReceiver {
         client.on(EDIT_COMPUTER_KEY, (data : EditComputerData) => this.handleEditComputerPlayer(data));
         client.on(REMOVE_COMPUTER_KEY, (id : string) => this.handleRemoveComputerPlayer(id));
         client.on(UPDATE_BOARD_KEY, (board : BoardData) => this.handleBoardUpdate(board));
+        client.on(UPDATE_RESOURCES_KEY, (r : ResourceData) => this.handleResourceUpdate(r));
         client.on(START_GAME_KEY, () => this.handleStartGame());
         client.on(SUBMIT_START_POS_KEY, (pos : PosData) => this.handleSubmitStartPos(pos));
         client.on(UNIT_SPAWN_KEY, (pos : PosData, unitType : string) => this.handleSpawnUnit(pos, unitType));
@@ -42,6 +44,7 @@ export abstract class RouteReceiver {
     abstract handleEditComputerPlayer(data : EditComputerData);
     abstract handleRemoveComputerPlayer(id : string);
     abstract handleBoardUpdate(board : BoardData);
+    abstract handleResourceUpdate(resources : ResourceData);
     abstract handleStartGame();
     abstract handleSubmitStartPos(pos : PosData);
     abstract handleSpawnUnit(pos : PosData, unitType : string);
@@ -72,6 +75,10 @@ export function emitRemoveComputer(socket : any, id : string) {
 
 export function emitBoardUpdate(socket : any, game : BoardData) {
     socket.emit(UPDATE_BOARD_KEY, game);
+}
+
+export function emitResourceUpdate(socket : any, resources : ResourceData) {
+    socket.emit(UPDATE_RESOURCES_KEY, resources);
 }
 
 export function emitStartGme(socket : any){

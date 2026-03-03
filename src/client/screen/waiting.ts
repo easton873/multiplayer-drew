@@ -1,5 +1,6 @@
-import { emitAddComputer, emitBoardUpdate, emitEditComputer, emitRemoveComputer, emitUpdateSetupPlayer } from "../../shared/routes";
+import { emitAddComputer, emitBoardUpdate, emitEditComputer, emitRemoveComputer, emitResourceUpdate, emitUpdateSetupPlayer } from "../../shared/routes";
 import { PlayerWaitingData } from "../../shared/bulider";
+import { ResourceData } from "../../shared/types";
 import { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io";
 import { removeOptions } from "../../client/main";
@@ -13,6 +14,10 @@ export class WaitingScreen {
     public heightInput = document.getElementById("heightInput") as HTMLInputElement;
     public widthLabel = document.getElementById("widthLabel") as HTMLLabelElement;
     public heightLabel = document.getElementById("heightLabel") as HTMLLabelElement;
+    public startingResourcesDiv = document.getElementById("startingResourcesDiv") as HTMLDivElement;
+    public goldInput = document.getElementById("goldInput") as HTMLInputElement;
+    public woodInput = document.getElementById("woodInput") as HTMLInputElement;
+    public stoneInput = document.getElementById("stoneInput") as HTMLInputElement;
     public addComputerDiv = document.getElementById("addComputerDiv") as HTMLDivElement;
     public addComputerButton = document.getElementById("addComputerButton") as HTMLButtonElement;
 
@@ -33,6 +38,13 @@ export class WaitingScreen {
     constructor(private socket : Socket<DefaultEventsMap, DefaultEventsMap>) {
       this.widthInput.value = "100";
       this.heightInput.value = "100";
+      this.goldInput.value = "50";
+      this.woodInput.value = "0";
+      this.stoneInput.value = "0";
+
+      this.goldInput.onchange = () => { this.resourceUpdate(); };
+      this.woodInput.onchange = () => { this.resourceUpdate(); };
+      this.stoneInput.onchange = () => { this.resourceUpdate(); };
 
       this.addComputerButton.onclick = () => {
         emitAddComputer(this.socket, {
@@ -53,6 +65,7 @@ export class WaitingScreen {
       if (!p.leader) {
         this.startButton.classList.add("hidden");
         this.widthInput.parentElement?.parentElement?.classList.add("hidden");
+        this.startingResourcesDiv.classList.add("hidden");
         this.addComputerDiv.classList.add("hidden");
       }
 
@@ -198,5 +211,18 @@ export class WaitingScreen {
         return;
       }
       emitBoardUpdate(this.socket, {width: width, height: height});
+    }
+
+    resourceUpdate() {
+      const gold = Math.max(0, parseInt(this.goldInput.value) || 0);
+      const wood = Math.max(0, parseInt(this.woodInput.value) || 0);
+      const stone = Math.max(0, parseInt(this.stoneInput.value) || 0);
+      emitResourceUpdate(this.socket, { gold, wood, stone });
+    }
+
+    updateResourceInputs(r: ResourceData) {
+      this.goldInput.value = String(r.gold);
+      this.woodInput.value = String(r.wood);
+      this.stoneInput.value = String(r.stone);
     }
 }

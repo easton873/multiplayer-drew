@@ -1,5 +1,6 @@
 import { Board } from "../board.js";
 import { Pos } from "../pos.js";
+import { ResourceData } from "../../../shared/types.js";
 import { GameUnit } from "../unit/game_unit.js";
 import { GorillaWarfareUnit } from "../unit/gorilla_warfare.js";
 import { GoblinUnit, QuickAttackerUnit, SabotagerUnit, SoldierUnit } from "../unit/melee_unit.js";
@@ -68,8 +69,8 @@ export class WaveComputer extends BaseComputerPlayer {
             SECOND * 35, 1
         ),
     ];
-    constructor(team: number, pos: Pos, board: Board, id: string, name: string, color: string) {
-        super(team, new Pos(board.width / 2, board.height / 2), board, id, name, color);
+    constructor(team: number, pos: Pos, board: Board, id: string, name: string, color: string, startingResources?: ResourceData) {
+        super(team, new Pos(board.width / 2, board.height / 2), board, id, name, color, startingResources);
     }
     firstEra() {
         this.wave(this.waves[this.currIdx]);

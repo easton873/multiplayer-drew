@@ -4,12 +4,12 @@ import { Resources } from "./resources.js";
 import { ObservableUnit, Unit, UnitObserver } from "./unit/unit.js";
 import { Pos } from "./pos.js";
 import { Era } from "./era.js";
-import { PlayerSpecificData } from "../../shared/types.js";
+import { PlayerSpecificData, ResourceData } from "../../shared/types.js";
 import { GameUnit } from "./unit/game_unit.js";
 import { UNIT_MAP } from "./unit/all_units.js";
 
 export class Player implements UnitObserver {
-    resources: Resources = new Resources(50, 0, 0);
+    resources: Resources;
     board: Board;
     era: Era = new Era();
     unitCount = 0;
@@ -17,7 +17,8 @@ export class Player implements UnitObserver {
     heart: Heart;
     hearts : Hearts = new Hearts();
 
-    constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string) {
+    constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string, startingResources: ResourceData = { gold: 50, wood: 0, stone: 0 }) {
+        this.resources = new Resources(startingResources.gold, startingResources.wood, startingResources.stone);
         this.board = board;
         this.heart = new Heart(this, pos, this.era.currEra.getHeart());
         this.addHeart(this.heart);
@@ -121,8 +122,8 @@ export class Player implements UnitObserver {
 }
 
 export class PlayerProxy extends Player {
-    constructor(team: number, pos: Pos, board: Board, id: string, name: string, color: string) {
-        super(team, pos, board, id, name, color);
+    constructor(team: number, pos: Pos, board: Board, id: string, name: string, color: string, startingResources?: ResourceData) {
+        super(team, pos, board, id, name, color, startingResources);
     }
 
     NewUnit(unitType: string, pos: Pos): boolean {

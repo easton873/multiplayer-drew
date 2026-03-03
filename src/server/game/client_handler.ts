@@ -1,4 +1,4 @@
-import { BoardData, GeneralGameData, PosData } from "../../shared/types.js";
+import { BoardData, GeneralGameData, PosData, ResourceData } from "../../shared/types.js";
 import { RouteReceiver } from "../../shared/routes.js";
 import { Game } from "./game.js";
 import { GameRoom } from "./game_room.js";
@@ -63,6 +63,17 @@ export class ClientHandler extends RouteReceiver {
         }
         this.room.boardX = board.width;
         this.room.boardY = board.height;
+        emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
+    }
+
+    handleResourceUpdate(resources: ResourceData) {
+        if (!this.isLeader()) {
+            return;
+        }
+        const gold = Math.max(0, Math.floor(resources.gold));
+        const wood = Math.max(0, Math.floor(resources.wood));
+        const stone = Math.max(0, Math.floor(resources.stone));
+        this.room.startingResources = { gold, wood, stone };
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 

@@ -1,4 +1,4 @@
-import { PosData } from "./types.js"
+import { PosData, ResourceData } from "./types.js"
 
 export interface LoadData {
     units : UnitLoadData[]
@@ -12,6 +12,7 @@ export interface GameWaitingData {
     players : PlayerWaitingData[]
     board : BoardData
     computerDifficulties : string[]
+    startingResources : ResourceData
 }
 
 export interface BoardData {

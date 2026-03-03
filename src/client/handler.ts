@@ -32,6 +32,7 @@ export class FrontendClientHandler extends ClientReceiver {
         this.manager.waitingScreen.fillComputerSelect(data.computerDifficulties);
         this.manager.waitingScreen.widthLabel.innerHTML = `Board Width: ${data.board.boardX}`;
         this.manager.waitingScreen.heightLabel.innerHTML = `Board Height: ${data.board.boardY}`;
+        this.manager.waitingScreen.updateResourceInputs(data.startingResources);
     }
     handleStartSuccess(data: GameSetupData) {
         this.manager.toGameScreen();

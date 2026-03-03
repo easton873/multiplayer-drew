@@ -7,12 +7,14 @@ import { DefaultEventsMap, Socket } from "socket.io";
 import { ClientHandler, GameClient } from "./client_handler.js";
 import { emitYourTurn } from "../../shared/client.js";
 import { ComputerDifficulties, CreateComputer } from "./computer/factory.js";
+import { ResourceData } from "../../shared/types.js";
 // import { ComputerNames } from "./computer/factory.js";
 
 export class GameRoom {
     public players : Map<string, SetupPlayer> = new Map<string, SetupPlayer>; // player id to player
     public boardX : number = 100;
     public boardY : number = 100;
+    public startingResources : ResourceData = { gold: 50, wood: 0, stone: 0 };
     private game : Game;
     constructor(){}
 
@@ -65,7 +67,7 @@ export class GameRoom {
     }
 
     joinRoomData() : GameWaitingData {
-        return {players: this.getPlayerJoinData(), board: {boardX: this.boardX, boardY: this.boardY}, computerDifficulties: ComputerDifficulties};
+        return {players: this.getPlayerJoinData(), board: {boardX: this.boardX, boardY: this.boardY}, computerDifficulties: ComputerDifficulties, startingResources: this.startingResources};
     }
 
     setupData(id : string) : GameSetupData {
@@ -135,7 +137,7 @@ export class GameRoom {
         let board : Board = new Board(this.boardX, this.boardY);
         let players : Player[] = [];
         this.players.forEach((player : SetupPlayer) => {
-            players.push(player.createPlayer(board));
+            players.push(player.createPlayer(board, this.startingResources));
         })
         this.game = new Game(players, board);
         return this.game;
@@ -204,11 +206,11 @@ export class SetupPlayer {
         emitYourTurn(this.client, data);
     }
 
-    createPlayer(board : Board) : Player {
+    createPlayer(board : Board, startingResources?: ResourceData) : Player {
         if (this.team == null) {
             this.team = SetupPlayer.DefaultTeam--;
         }
-        return new PlayerProxy(this.team, this.pos, board, this.id, this.name, this.color);
+        return new PlayerProxy(this.team, this.pos, board, this.id, this.name, this.color, startingResources);
     }
 }
 
@@ -240,11 +242,11 @@ class SetupComputerPlayer extends SetupPlayer {
         return {ready: this.ready, name: this.name, leader: this.getIsLeader(), color: this.color, team: this.team, id: this.id, isComputer: true, difficulty: this.difficulty};
     }
 
-    createPlayer(board : Board) : Player {
+    createPlayer(board : Board, startingResources?: ResourceData) : Player {
         if (this.team == null) {
             this.team = SetupPlayer.DefaultTeam--;
         }
-        return CreateComputer(this.difficulty, this.team, this.pos, board, this.id, this.name, this.color)
+        return CreateComputer(this.difficulty, this.team, this.pos, board, this.id, this.name, this.color, startingResources)
     }
 
     public findStartingPos(data: GameSetupData): void {
