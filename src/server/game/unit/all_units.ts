@@ -8,6 +8,7 @@ import { GoblinUnit, QuickAttackerUnit, RandomMoverUnit, SabotagerUnit, ScountUn
 import { BallisticMissileUnit, MissileUnit, UnitMissileUnit } from "./missile.js";
 import { ArcherUnit, FireballThrowerUnit, SniperUnit } from "./ranged_unit.js";
 import { CARPENTER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT, MASON_GAME_UNIT, SCAVENGER_GAME_UNIT, SCULPTOR_GAME_UNIT, ARCHITECT_GAME_UNIT, BANKER_GAME_UNIT, ALCHEMIST_GAME_UNIT, ENGINEER_GAME_UNIT, DRUID_GAME_UNIT } from "./resource_unit.js";
+import { ScarecrowUnit } from "./scarecrow.js";
 import { SummonerUnit } from "./summoner.js";
 import { TurretUnit } from "./turret.js";
 import { LoadData, UnitLoadData } from "../../../shared/bulider.js";
@@ -43,7 +44,7 @@ export const ALL_MILITARY_UNITS : GameUnit[] = [
     
     ScountUnit,
     SoldierUnit,
-    // new ScarecrowUnit(),
+    new ScarecrowUnit(),
     ArcherUnit,
     
     QuickAttackerUnit,
@@ -79,11 +80,13 @@ export const ALL_MILITARY_UNITS : GameUnit[] = [
     MissileUnit,
 
     // lure
+    // assassain
     // wizard (chain lightning)
     // heavey hitter: hit everything on target spot
     // area turret
     // longbowman
     // regen soldier
+    // missionary (converts unit)
 ];
 
 export const ALL_UNITS : GameUnit[] = ALL_RESOURCE_UNITS.concat(ALL_MILITARY_UNITS);

@@ -5,32 +5,6 @@ import { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io";
 import { removeOptions } from "../../client/main";
 
-const COMPUTER_NAMES = [
-  "Greg", "Fred", "Bob", "George", "Carol", "Alice", "Dave", "Eve", "Frank", "Helen", "Susan", "Jack",
-  "Sally", "Sam", "Jim", "Jimbo", "Dwight", "Dan", "Joe", "Simbad", "Silas", "Tom", "Clancy", "Ares",
-  "Will", "Wesley", "James", "Brent", "Carly", "Willy", "O'Reily", "Dummy", "Carl", "Bad", "Stupido"
-];
-
-function randomComputerName(): string {
-    return COMPUTER_NAMES[Math.floor(Math.random() * COMPUTER_NAMES.length)];
-}
-
-function hslToRgb(h: number, s: number, l: number): [number, number, number] {
-    const a = s * Math.min(l, 1 - l);
-    const f = (n: number) => {
-        const k = (n + h / 30) % 12;
-        return l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
-    };
-    return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)];
-}
-
-function randomColor(): string {
-    const h = Math.floor(Math.random() * 360);
-    const [r, g, b] = hslToRgb(h, 0.8, 0.5);
-    const toHex = (n: number) => n.toString(16).padStart(2, "0");
-    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-}
-
 export class WaitingScreen {
     public div = document.getElementById("waitingScreen") as HTMLDivElement;
     public playerList = document.getElementById("playerList") as HTMLUListElement;
@@ -74,9 +48,9 @@ export class WaitingScreen {
 
       this.addComputerButton.onclick = () => {
         emitAddComputer(this.socket, {
-          name: randomComputerName(),
+          name: "",
           team: null,
-          color: randomColor(),
+          color: "#000000",
           difficulty: this.difficulties[0] || "",
         });
       };

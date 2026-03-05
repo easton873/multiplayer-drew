@@ -2,7 +2,7 @@ import { FRAME_RATE } from "../client_handler.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
 import { GameUnit } from "../unit/game_unit.js";
-import { GameResourceUnit, LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, ResourceUnit } from "../unit/resource_unit.js";
+import { LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, ResourceUnit } from "../unit/resource_unit.js";
 import { Unit } from "../unit/unit.js";
 import { getRandomIndex } from "../utils.js";
 import { BaseComputerPlayer } from "./basics.js";
@@ -59,43 +59,12 @@ export class RandomComputer extends BaseComputerPlayer {
         if (this.nextUnit == MERCHANT_GAME_UNIT || this.nextUnit == LUMBER_JACK_GAME_UNIT) {
             return;
         }
-        let rateOfIncome = this.getAffordableRange();
-        if (rateOfIncome.canAfford(this.nextUnit.getUnitCreationInfo().getCost()) || 
-            this.resources.canAfford(this.nextUnit.getUnitCreationInfo().getCost())) {
-            return;
-        }
-        this.nextUnit = this.getMostNeededResourceUnit(this.getAffordableResourceUnits());
-    }
-
-    getMostNeededResourceUnit(affordable : GameUnit[]) : GameUnit {
-        let result : GameUnit = getRandomIndex(affordable);
-        // affordable.forEach((u : GameUnit) => {
-        //     let r : GameResourceUnit = u as GameResourceUnit;
-        //     if (r.resources) {
-
-        //     }
-        // });
-        return result;
-    }
-
-    getAffordableResourceUnits() : GameUnit[] {
-        let result : GameUnit[] = [
-            MERCHANT_GAME_UNIT
-        ];
-        let affordable : Resources = this.getAffordableRange();
-        this.era.availableUnits.forEach((gu : GameUnit) => {
-            if (gu instanceof GameResourceUnit && result.includes && affordable.canAfford(gu.getUnitCreationInfo().getCost())) {
-                result.push(gu);
-            }
-        });
-
-        return result
-    }
-
-    getAffordableRange() : Resources {
         let rateOfIncome : Resources = this.getRateOfIncome();
         rateOfIncome.multiply(3); // can we produce it in 3 seconds or less
-        return rateOfIncome;
+        if (rateOfIncome.canAfford(this.nextUnit.getUnitCreationInfo().getCost())) {
+            return;
+        }
+        this.nextUnit = null;
     }
 
     getRateOfIncome() : Resources { // returns production per second
