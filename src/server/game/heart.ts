@@ -54,6 +54,10 @@ export class Hearts implements UnitObserver {
         });
         return result;
     }
+
+    getNumHearts() : number {
+        return this.hearts.length;
+    }
 }
 
 export class Heart extends ResourceUnit {

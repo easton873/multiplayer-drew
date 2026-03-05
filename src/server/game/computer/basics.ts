@@ -10,11 +10,16 @@ import { getRandomIndex } from "../utils.js";
 
 export abstract class BaseComputerPlayer extends PlayerProxy {
     protected territory : Pos[] = [];
+    protected heartCount : number = 0;
     constructor(team: number, pos: Pos, board: Board, id: string, name: string, color: string, startingResources?: ResourceData) {
         super(team, pos, board, id, name, color, startingResources);
+        this.heartCount = this.hearts.getNumHearts();
         this.rebuildTerritory();
     }
     doTurn(): void {
+        if (this.territoryChangeDetected()) {
+            this.rebuildTerritory();
+        }
         switch(this.era.getEraData().eraName) {
             case STARTING_ERA_NAME:
                 this.firstEra();
@@ -108,6 +113,10 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
         if (this.resources.canAfford(cost)) {
             this.placeUnit(unit, this.heart.pos.clone(), num);
         }
+    }
+
+    territoryChangeDetected() : boolean {
+        return this.heartCount != this.hearts.getNumHearts();
     }
 
     rebuildTerritory() {
