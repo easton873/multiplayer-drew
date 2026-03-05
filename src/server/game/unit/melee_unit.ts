@@ -58,9 +58,6 @@ class goblinUnit extends MeleeUnit {
     construct(player: Player, pos: Pos): Unit {
         return new class extends Melee {
             findNewTarget(units: Unit[]): void {
-                if (this.hasTarget()) {
-                    return;
-                }
                 super.findNewTarget(this.getHearts(units));
             }
             getHearts(units : Unit[]) : Unit[] {
@@ -91,12 +88,14 @@ class sabotagerUnit extends MeleeUnit {
 
 class randomMoverUnit extends MeleeUnit {
     constructor() {
-        super("Random Mover", new Resources(5, 5, 0), 10, 10, 1, 3, "#ccccff", "Is just like a soldier but randomly teleports to different parts of the map");
+        super("Random Mover", new Resources(5, 5, 0), 10, 10, 1, 3, "#ccccff", "Is just like a soldier but randomly teleports to a part of the map");
     }
     construct(player: Player, pos: Pos): Unit {
         return new class extends Melee {
+            private hasTeleported : boolean = false;
             doMove(board: Board): void {
-                if (Random.fromRange(1, 10) == 1) {
+                if (!this.hasTeleported && Random.fromRange(1, 10) == 1) {
+                    this.hasTeleported = true;
                     this.pos = new Pos(
                         Random.fromRange(0, board.width),
                         Random.fromRange(0, board.height)
