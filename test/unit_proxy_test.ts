@@ -2,11 +2,11 @@ import * as assert from "assert";
 import { Board } from "../src/server/game/board.js";
 import { Player } from "../src/server/game/player.js";
 import { Pos } from "../src/server/game/pos.js";
-import { Unit } from "../src/server/game/unit/unit.js";
+import { ObservableUnit, Unit, UnitObserver } from "../src/server/game/unit/unit.js";
 import { SoldierUnit } from "../src/server/game/unit/melee_unit.js";
 import { UnitProxy, unwrapUnit } from "../src/server/game/unit/unit_proxy.js";
 import { Heart } from "../src/server/game/heart.js";
-import { ResourceUnit } from "../src/server/game/unit/resource_unit.js";
+import { MERCHANT_GAME_UNIT, ResourceUnit } from "../src/server/game/unit/resource_unit.js";
 import { CombatUnit } from "../src/server/game/unit/combat/combat.js";
 
 describe('UnitProxy', () => {
@@ -251,5 +251,90 @@ describe('UnitProxy', () => {
 
         let soldier = SoldierUnit.construct(player, new Pos(3, 3));
         assert.strictEqual(soldier.is(Heart), false);
+    });
+
+    it('subclass property access: proxy delegates moveCounter and resources for ResourceUnit', () => {
+        let merchant = MERCHANT_GAME_UNIT.construct(player, new Pos(3, 3));
+        board.addEntity(merchant);
+        player.addUnit(merchant);
+
+        let proxy = new UnitProxy(merchant);
+        proxy.wrap(board);
+
+        // Find the proxy on the board (simulating board iteration)
+        let found = board.entities.find(u => u.is(ResourceUnit) && u !== player.heart);
+        assert.ok(found, 'should find a ResourceUnit on the board');
+        assert.ok(found.is(ResourceUnit));
+        if (found.is(ResourceUnit)) {
+            assert.ok(found.moveCounter, 'moveCounter should not be undefined');
+            assert.strictEqual(found.moveCounter.total, (merchant as ResourceUnit).moveCounter.total);
+            assert.ok(found.resources, 'resources should not be undefined');
+            assert.deepStrictEqual(found.resources.copy(), (merchant as ResourceUnit).resources.copy());
+        }
+    });
+
+    it('observer fallthrough: unregisterObserver on proxy removes from child list', () => {
+        let child = SoldierUnit.construct(player, new Pos(3, 3));
+        board.addEntity(child);
+        player.addUnit(child);
+        // child observers: [Board, Player]
+        assert.strictEqual(child.TESTObservers.length, 2);
+
+        let proxy = new UnitProxy(child);
+        proxy.wrap(board);
+        // child observers: [Player, UnitProxy] (Board moved to proxy)
+        assert.strictEqual(child.TESTObservers.length, 2);
+
+        // Simulate missionary conversion: call unregisterObserver(player) on the proxy.
+        // Player is on the child's list, not the proxy's.
+        proxy.unregisterObserver(player);
+
+        // Player should be removed from child's observer list
+        assert.strictEqual(child.TESTObservers.includes(player), false);
+    });
+
+    it('splice fix: unregisterObserver with non-existent observer is a no-op', () => {
+        let child = SoldierUnit.construct(player, new Pos(3, 3));
+        board.addEntity(child);
+        player.addUnit(child);
+        // child observers: [Board, Player]
+        assert.strictEqual(child.TESTObservers.length, 2);
+
+        // Create a dummy observer that was never registered
+        let dummy: UnitObserver = { notifyDeath(_unit: ObservableUnit) {} };
+        child.unregisterObserver(dummy);
+
+        // List should be unchanged (previously splice(-1,1) would remove the last element)
+        assert.strictEqual(child.TESTObservers.length, 2);
+    });
+
+    it('missionary-style conversion: proxied unit changes owner correctly', () => {
+        let player2 = new Player(1, new Pos(9, 9), board, "1", "", "");
+
+        let soldier = SoldierUnit.construct(player2, new Pos(5, 5));
+        board.addEntity(soldier);
+        player2.addUnit(soldier);
+        assert.strictEqual(player2.unitCount, 1);
+
+        let proxy = new UnitProxy(soldier);
+        proxy.wrap(board);
+
+        // Simulate missionary conversion: old owner loses the unit
+        proxy.owner.notifyDeath(proxy);
+        assert.strictEqual(player2.unitCount, 0);
+
+        // New owner gains the unit
+        player.addUnit(proxy);
+        proxy.team = player.getTeam();
+        proxy.owner = player;
+        assert.strictEqual(player.unitCount, 1);
+
+        // Kill the converted unit — should decrement player's count
+        soldier.hp = 1;
+        soldier.takeDamage(1);
+        board.processDeaths();
+
+        assert.strictEqual(player.unitCount, 0);
+        assert.strictEqual(board.entities.indexOf(proxy), -1);
     });
 });

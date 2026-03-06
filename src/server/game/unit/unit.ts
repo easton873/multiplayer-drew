@@ -21,7 +21,7 @@ export abstract class ObservableUnit {
     unregisterObserver(o : UnitObserver) {
         let index = this.observers.findIndex((observer : UnitObserver) => observer === o);
         if (index == -1) {
-            console.log("issue removing observer");
+            return;
         }
         this.observers.splice(index, 1);
     }
@@ -33,7 +33,7 @@ export abstract class ObservableUnit {
     unregisterQueueDeathObserver(o : QueueDeathObserver) {
         let index = this.queueDeathObservers.findIndex((observer : QueueDeathObserver) => observer === o);
         if (index == -1) {
-            console.log("issue removing queue death observer");
+            return;
         }
         this.queueDeathObservers.splice(index, 1);
     }

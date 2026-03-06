@@ -12,14 +12,14 @@ export class UnitProxy extends Unit implements UnitObserver, QueueDeathObserver 
         super(child.owner, child.name, child.pos, child.hp, child.color);
         this.child = child;
 
-        // target: ESNext uses [[Define]] semantics for class fields, so the
-        // parent constructor creates own-properties that shadow any prototype
-        // getters. We must redefine them as getter/setter pairs that delegate
-        // to this.child.
-        const delegatedProps: (keyof Unit)[] = [
-            'name', 'pos', 'totalHP', 'hp', 'team', 'owner', 'color', 'freeze', 'attacking'
-        ];
-        for (const prop of delegatedProps) {
+        // Dynamically delegate ALL of the child's own properties so that
+        // subclass fields (moveCounter, resources, attackCounter, damage,
+        // range, radius, _target, invisible, etc.) are transparent through
+        // the proxy. We keep the proxy's own observer lists so Board
+        // lifecycle management works correctly.
+        const proxyOwnProps = new Set(['observers', 'queueDeathObservers', 'child', 'parentProxy']);
+        for (const prop of Object.getOwnPropertyNames(child)) {
+            if (proxyOwnProps.has(prop)) continue;
             Object.defineProperty(this, prop, {
                 get: () => (this.child as any)[prop],
                 set: (v: any) => { (this.child as any)[prop] = v; },
@@ -64,6 +64,20 @@ export class UnitProxy extends Unit implements UnitObserver, QueueDeathObserver 
     getRangedData(): UnitRangedAttackData { return this.child.getRangedData(); }
 
     TESTkill() { this.child.TESTkill(); }
+
+    // --- Fallthrough observer unregistration ---
+    // Observers registered on the child before wrapping (e.g. Player) live
+    // on the child's list, not the proxy's. Try both so unregister always works.
+
+    unregisterObserver(o: UnitObserver) {
+        super.unregisterObserver(o);
+        this.child.unregisterObserver(o);
+    }
+
+    unregisterQueueDeathObserver(o: QueueDeathObserver) {
+        super.unregisterQueueDeathObserver(o);
+        this.child.unregisterQueueDeathObserver(o);
+    }
 
     // --- wrap / unwrap ---
 
