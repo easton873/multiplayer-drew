@@ -199,7 +199,7 @@ export class SetupPlayer {
     }
 
     getSetupData() : PlayerSetupData {
-        return {name : this.name, pos : this.pos ? this.pos.getPosData() : null, color: this.color};
+        return {name : this.name, pos : this.pos ? this.pos.getPosData() : null, color: this.color, team: this.team};
     }
 
     public findStartingPos(data : GameSetupData) {
@@ -251,6 +251,15 @@ class SetupComputerPlayer extends SetupPlayer {
 
     public findStartingPos(data: GameSetupData): void {
         let pos = new Pos(1, 1);
+
+        if (this.team != null && this.team > 0) {
+            const teammatePos = data.players.find(p => p.team === this.team && p.pos != null);
+            if (teammatePos) {
+                this.handler.submitStartPosWithID(new Pos(teammatePos.pos.x, teammatePos.pos.y), this.id);
+                return;
+            }
+        }
+
         let poses : Pos[] = [];
         data.players.forEach((player : PlayerSetupData) => {
             if (player.pos != null) {

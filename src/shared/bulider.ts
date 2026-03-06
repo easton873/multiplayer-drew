@@ -59,4 +59,5 @@ export interface PlayerSetupData {
     name : string
     pos : PosData
     color : string
+    team?: number
 }

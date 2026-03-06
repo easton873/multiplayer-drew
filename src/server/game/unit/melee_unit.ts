@@ -47,7 +47,7 @@ class scoutUnit extends MeleeUnit {
 
 class quickAttackerUnit extends MeleeUnit {
     constructor() {
-        super("Quick Attacker", new Resources(30, 20, 0), 5, 5, 1, 15, "#99ccff", "A soldier that got a speed boost");
+        super("Quick Attacker", new Resources(75, 45, 0), 5, 5, 1, 15, "#99ccff", "A soldier that got a speed boost");
     }
 }
 

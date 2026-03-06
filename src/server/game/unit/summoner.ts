@@ -1,5 +1,6 @@
 import { Board } from "../board.js";
 import { Heart } from "../heart.js";
+import { Counter } from "../move/counter.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
@@ -12,8 +13,7 @@ import { ObservableUnit, Unit } from "./unit.js";
 
 export class Summoner extends TargetChasingUnit  {
     numSummons = 3;
-    summonTimerTime = 4;
-    summonTimer = this.summonTimerTime;
+    summonTimer = new Counter(60);
     range = 16;
     constructor(player: Player, pos: Pos) {
         super(player, SummonerUnit.NAME, pos, SummonerUnit.HP, SummonerUnit.COLOR, SummonerUnit.SPEED, SummonerUnit.SPEED);
@@ -23,15 +23,13 @@ export class Summoner extends TargetChasingUnit  {
         this.summon(board);
     }
     summon(board : Board) {
-        if (this.summonTimer <= 0 && this.numSummons > 0) {
-            this.summonTimer = this.summonTimerTime;
+        if (this.summonTimer.tick() && this.numSummons > 0) {
             let unit : Summonee = new Summonee(this.owner, this.pos.clone(), this);
             board.addEntity(unit);
             unit.registerObserver(this);
             this.numSummons--;
             return
         }
-        this.summonTimer--;
     }
     notifyDeath(unit: ObservableUnit): void {
         super.notifyDeath(unit);
