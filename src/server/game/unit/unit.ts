@@ -285,3 +285,9 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
         }
     }
 }
+
+export function clampHealth(unit : Unit) {
+    if (unit.hp > unit.totalHP) {
+        unit.hp = unit.totalHP;
+    }
+}

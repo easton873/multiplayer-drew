@@ -17,6 +17,7 @@ import { CatapultUnit } from "../src/server/game/unit/catapult.js";
 import { MissionaryUnit } from "../src/server/game/unit/combat/missionary.js";
 import { NinjaUnit, SpyUnit, AssassainUnit } from "../src/server/game/unit/combat/stealth.js";
 import { MERCHANT_GAME_UNIT } from "../src/server/game/unit/resource_unit.js";
+import { VampireUnit } from "../src/server/game/unit/combat/vampire.js";
 
 describe('Units Test', () => {
     it('archer test', () => {
@@ -513,6 +514,61 @@ describe('Units Test', () => {
         assert.strictEqual(soldier2.hp, SoldierUnit.hp - AssassainUnit.damage);  // normal damage, not insta-kill
         assert.strictEqual(board.entities.length, 4);   // soldier2 still alive
         assert.strictEqual(assassin.isInvisible(), false);
+    });
+
+    it('vampire heals by damage dealt to normal unit', () => {
+        let board: Board = new Board(10, 10);
+        let player: Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        let p2: Player = new Player(1, new Pos(0, 0), board, "1", "", "");
+        let vampire: TargetChasingUnit = VampireUnit.construct(player, new Pos(6, 5)) as TargetChasingUnit;
+        let soldier = SoldierUnit.construct(p2, new Pos(5, 5));
+        vampire.target = soldier;
+        board.addEntity(vampire);
+        board.addEntity(soldier);
+
+        vampire.hp = 5;
+        vampire.moveCounter = new Counter(0);
+        vampire.attackCounter = new Counter(0);
+        board.moveUnit(vampire);
+
+        assert.strictEqual(vampire.hp, 8);  // 5 + 3 damage dealt
+    });
+
+    it('vampire only heals by actual damage taken (tank absorbs only 1)', () => {
+        let board: Board = new Board(10, 10);
+        let player: Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        let p2: Player = new Player(1, new Pos(0, 0), board, "1", "", "");
+        let vampire: TargetChasingUnit = VampireUnit.construct(player, new Pos(6, 5)) as TargetChasingUnit;
+        let tank = TankUnit.construct(p2, new Pos(5, 5));
+        vampire.target = tank;
+        board.addEntity(vampire);
+        board.addEntity(tank);
+
+        vampire.hp = 5;
+        vampire.moveCounter = new Counter(0);
+        vampire.attackCounter = new Counter(0);
+        board.moveUnit(vampire);
+
+        assert.strictEqual(vampire.hp, 6);          // 5 + 1 (not 5 + 3)
+        assert.strictEqual(tank.hp, TankUnit.hp - 1);
+    });
+
+    it('vampire HP is clamped at totalHP (no overheal)', () => {
+        let board: Board = new Board(10, 10);
+        let player: Player = new Player(0, new Pos(0, 0), board, "0", "", "");
+        let p2: Player = new Player(1, new Pos(0, 0), board, "1", "", "");
+        let vampire: TargetChasingUnit = VampireUnit.construct(player, new Pos(6, 5)) as TargetChasingUnit;
+        let soldier = SoldierUnit.construct(p2, new Pos(5, 5));
+        vampire.target = soldier;
+        board.addEntity(vampire);
+        board.addEntity(soldier);
+
+        vampire.hp = 19;  // 1 below max; healing 3 would give 22
+        vampire.moveCounter = new Counter(0);
+        vampire.attackCounter = new Counter(0);
+        board.moveUnit(vampire);
+
+        assert.strictEqual(vampire.hp, VampireUnit.hp);  // clamped at totalHP=20
     });
 
     // it('missiles and what not test', () => {

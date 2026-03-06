@@ -6,7 +6,7 @@ import { Resources } from "../resources.js";
 import { Defense } from "./defense.js";
 import { Ranged, RangedUnit } from "./ranged_unit.js";
 import { ResourceUnit } from "./resource_unit.js";
-import { Unit } from "./unit.js";
+import { clampHealth, Unit } from "./unit.js";
 
 // This probably breaks because when a unit takes damage it could die and then the target
 // of a unit becomes null, this is a bug I just found, but I haven't looksed so I don't
@@ -17,12 +17,7 @@ export class Healer extends Ranged {
     }
     healTarget() {
         this.target.hp += this.damage;
-        this.clampHealth(this.target);
-    }
-    clampHealth(unit : Unit) {
-        if (unit.hp > unit.totalHP) {
-            unit.hp = unit.totalHP;
-        }
+        clampHealth(this.target);
     }
     findNewTarget(units: Unit[]): void {
         this.findTargetWithPredicate(units, (unit : Unit) => {
