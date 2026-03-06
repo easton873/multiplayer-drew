@@ -6,6 +6,8 @@ import { Unit } from "../src/server/game/unit/unit.js";
 import { SoldierUnit } from "../src/server/game/unit/melee_unit.js";
 import { UnitProxy, unwrapUnit } from "../src/server/game/unit/unit_proxy.js";
 import { Heart } from "../src/server/game/heart.js";
+import { ResourceUnit } from "../src/server/game/unit/resource_unit.js";
+import { CombatUnit } from "../src/server/game/unit/combat/combat.js";
 
 describe('UnitProxy', () => {
     let board: Board;
@@ -212,5 +214,42 @@ describe('UnitProxy', () => {
         let heart = player.heart;
         let proxy = new UnitProxy(heart);
         assert.strictEqual(unwrapUnit(proxy) instanceof Heart, true);
+    });
+
+    it('is: proxy.is(Heart) returns true for wrapped Heart', () => {
+        let heart = player.heart;
+        let proxy = new UnitProxy(heart);
+        assert.strictEqual(proxy.is(Heart), true);
+    });
+
+    it('is: proxy.is(ResourceUnit) returns true (inheritance)', () => {
+        let heart = player.heart;
+        let proxy = new UnitProxy(heart);
+        assert.strictEqual(proxy.is(ResourceUnit), true);
+    });
+
+    it('is: proxy.is(CombatUnit) returns false for wrapped Heart', () => {
+        let heart = player.heart;
+        let proxy = new UnitProxy(heart);
+        assert.strictEqual(proxy.is(CombatUnit), false);
+    });
+
+    it('is: stacked proxies delegate through chain', () => {
+        let heart = player.heart;
+        let proxyB = new UnitProxy(heart);
+        let proxyA = new UnitProxy(proxyB);
+        assert.strictEqual(proxyA.is(Heart), true);
+        assert.strictEqual(proxyA.is(ResourceUnit), true);
+        assert.strictEqual(proxyA.is(CombatUnit), false);
+    });
+
+    it('is: non-proxied unit works like instanceof', () => {
+        let heart = player.heart;
+        assert.strictEqual(heart.is(Heart), true);
+        assert.strictEqual(heart.is(ResourceUnit), true);
+        assert.strictEqual(heart.is(CombatUnit), false);
+
+        let soldier = SoldierUnit.construct(player, new Pos(3, 3));
+        assert.strictEqual(soldier.is(Heart), false);
     });
 });

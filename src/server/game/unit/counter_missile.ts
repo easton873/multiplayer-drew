@@ -23,7 +23,7 @@ class CounterMissile extends TargetChasingUnit {
     }
 
     isValidTarget(unit: Unit): boolean {
-        return super.isValidTarget(unit) && unit instanceof Missile;
+        return super.isValidTarget(unit) && unit.is(Missile);
     }
 
     hasNoTargetMove(): void {
@@ -50,7 +50,7 @@ export const CounterMissileUnit : counterMissileUnit = new counterMissileUnit("C
 
 class CounterCounterMissile extends CounterMissile {
     willTarget(unit : Unit) : boolean {
-        return unit instanceof CounterMissile;
+        return unit.is(CounterMissile);
     }
 }
 

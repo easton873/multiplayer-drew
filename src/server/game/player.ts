@@ -46,7 +46,7 @@ export class Player implements UnitObserver {
     DeleteUnits(pos : Pos) {
         for (let i = 0; i < this.board.entities.length; ++i) {
             let entity = this.board.entities[i];
-            if (!(entity instanceof Heart) && entity.owner == this && entity.pos.equals(pos)) {
+            if (!entity.is(Heart) && entity.owner == this && entity.pos.equals(pos)) {
                 entity.notifyObserversDeath();
                 --i;
             }

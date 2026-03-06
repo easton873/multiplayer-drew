@@ -35,7 +35,7 @@ export class Summoner extends TargetChasingUnit  {
     }
     notifyDeath(unit: ObservableUnit): void {
         super.notifyDeath(unit);
-        if (unit instanceof Summonee && unit.master == this) {
+        if (unit instanceof Unit && unit.is(Summonee) && unit.master == this) {
             unit.unregisterObserver(this);
             this.numSummons++;
         }
@@ -55,10 +55,10 @@ export class Summoner extends TargetChasingUnit  {
 
     isValidTarget(unit: Unit): boolean {
         return unit.team == this.team && unit != this &&
-              !(unit instanceof Heart) &&
-              !(unit instanceof ResourceUnit) &&
-              !(unit instanceof Defense) &&
-              !(unit instanceof Summoner);
+              !unit.is(Heart) &&
+              !unit.is(ResourceUnit) &&
+              !unit.is(Defense) &&
+              !unit.is(Summoner);
     }
 }
 

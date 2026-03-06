@@ -64,9 +64,9 @@ class Teleporter extends UnitWithCounter {
     }
 
     isValidUnit(unit : Unit) : boolean {
-        return !(unit instanceof Heart) && 
-        !(unit instanceof ResourceUnit) &&
-        !(unit instanceof Defense)
+        return !unit.is(Heart) &&
+        !unit.is(ResourceUnit) &&
+        !unit.is(Defense)
     }
 }
 

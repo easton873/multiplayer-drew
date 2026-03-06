@@ -70,7 +70,7 @@ export class RandomComputer extends BaseComputerPlayer {
     getRateOfIncome() : Resources { // returns production per second
         let result : Resources = new Resources(0, 0, 0);
         this.board.entities.forEach((unit : Unit) => {
-            if (unit.owner == this && unit instanceof ResourceUnit) {
+            if (unit.owner == this && unit.is(ResourceUnit)) {
                 let productionRate : number = FRAME_RATE / unit.moveCounter.total;
                 let production : Resources = unit.resources.copy();
                 production.multiply(productionRate);

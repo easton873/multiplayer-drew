@@ -36,7 +36,7 @@ export class BasicComputer extends PlayerProxy {
     countUnit(unitType : new (...args: any[]) => Unit) : number {
         let count = 0;
         this.board.entities.forEach((unit : Unit) => {
-            if (unit instanceof unitType) {
+            if (unit.is(unitType)) {
                 count++
             }
         });

@@ -18,7 +18,7 @@ export class Missile extends Kamakaze {
     }
 
     willTarget(unit : Unit) : boolean {
-        return unit instanceof Defense || unit instanceof ResourceUnit || unit instanceof Flare
+        return unit.is(Defense) || unit.is(ResourceUnit) || unit.is(Flare)
     }
 }
 

@@ -45,7 +45,7 @@ class Missionary extends TargetChasingUnit {
 
     isValidTarget(unit: Unit): boolean {
         return unit.team != this.team &&
-            !(unit instanceof Heart);
+            !unit.is(Heart);
     }
 }
 

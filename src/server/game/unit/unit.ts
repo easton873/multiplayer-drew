@@ -142,6 +142,10 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
         return this.hp <= 0;
     }
 
+    is<T extends Unit>(type: abstract new (...args: any[]) => T): this is T {
+        return this instanceof type;
+    }
+
     inRangeForDistance(other : Unit, range : number) : boolean {
         return this.inRangeFromPoint(other, range, this.pos);
     }

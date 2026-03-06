@@ -64,7 +64,7 @@ class goblinUnit extends MeleeUnit {
                 super.findNewTarget(this.getHearts(units));
             }
             getHearts(units : Unit[]) : Unit[] {
-                return units.filter((unit : Unit) => unit instanceof Heart);
+                return units.filter((unit : Unit) => unit.is(Heart));
             }
         }(player, this.name, pos, this.hp, this.moveSpeed, this.attackSpeed, this.color, this.damage);
     }
@@ -83,7 +83,7 @@ class sabotagerUnit extends MeleeUnit {
                 super.findNewTarget(this.getResources(units));
             }
             getResources(units : Unit[]) : Unit[] {
-                return units.filter((unit : Unit) => unit instanceof ResourceUnit && !(unit instanceof Heart));
+                return units.filter((unit : Unit) => unit.is(ResourceUnit) && !unit.is(Heart));
             }
         }(player, this.name, pos, this.hp, this.moveSpeed, this.attackSpeed, this.color, this.damage);
     }

@@ -56,6 +56,10 @@ export class UnitProxy extends Unit implements UnitObserver, QueueDeathObserver 
     goInvisible() { this.child.goInvisible(); }
     goVisibile() { this.child.goVisibile(); }
 
+    is<T extends Unit>(type: abstract new (...args: any[]) => T): this is T {
+        return this.child.is(type);
+    }
+
     getUnitData(): UnitData { return this.child.getUnitData(); }
     getRangedData(): UnitRangedAttackData { return this.child.getRangedData(); }
 

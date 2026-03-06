@@ -19,7 +19,7 @@ export class Flare extends TargetChasingUnit {
     }
 
     isValidTarget(unit: Unit): boolean {
-        return super.isValidTarget(unit) && unit instanceof ResourceUnit;
+        return super.isValidTarget(unit) && unit.is(ResourceUnit);
     }
 }
 

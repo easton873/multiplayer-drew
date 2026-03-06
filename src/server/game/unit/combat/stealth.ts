@@ -34,9 +34,9 @@ class Spy extends Ninja {
     }
 
     isValidTarget(unit: Unit): boolean {
-        return super.isValidTarget(unit) && 
-        unit instanceof ResourceUnit &&
-        !(unit instanceof Heart);
+        return super.isValidTarget(unit) &&
+        unit.is(ResourceUnit) &&
+        !unit.is(Heart);
     }
 
     goInvisible(): void {
@@ -87,7 +87,7 @@ class Assassain extends Melee {
             return super.isValidTarget(unit);
         }
         return super.isValidTarget(unit) &&
-        unit instanceof CombatUnit;
+        unit.is(CombatUnit);
     }
 }
 
