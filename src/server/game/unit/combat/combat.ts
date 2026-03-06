@@ -14,8 +14,10 @@ export abstract class CombatUnit extends UnitWithTarget {
     }
 
     doAcutalMove(board: Board) {
-        this.findNewTarget(board.entities); // guarentee a target sort of
         if (this.hasNoTarget()) {
+            this.findNewTarget(board.entities); // guarentee a target sort of
+        }
+        if (this.hasNoTarget()) { // still didn't find a valid target
             this.hasNoTargetMove();
             return;
         }
@@ -23,11 +25,13 @@ export abstract class CombatUnit extends UnitWithTarget {
             this.attacking = true;
             if (this.attackCounter.tick()) {
                 this.inRangeMove(board);
+                this.findNewTarget(board.entities); // gives the unit the chance to retarget
             }
             return;
         } else {
             this.attacking = false;
             if (this.tickMoveCounter()) {
+                this.findNewTarget(board.entities); // gives the unit the chance to retarget
                 this.doMove(board);
             }
             return;

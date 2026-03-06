@@ -46,6 +46,7 @@ export class WaitingScreen {
     public stoneInput = document.getElementById("stoneInput") as HTMLInputElement;
     public addComputerDiv = document.getElementById("addComputerDiv") as HTMLDivElement;
     public addComputerButton = document.getElementById("addComputerButton") as HTMLButtonElement;
+    private addDifficulty = document.getElementById("addComputerDifficulty") as HTMLSelectElement;
 
     public waitingPlayerControls = document.getElementById("playerControlsDiv") as HTMLDivElement;
 
@@ -77,7 +78,7 @@ export class WaitingScreen {
           name: randomComputerName(),
           team: null,
           color: randomColor(),
-          difficulty: this.difficulties[0] || "",
+          difficulty: this.addDifficulty.value || this.difficulties[0] || "",
         });
       };
 
@@ -149,13 +150,20 @@ export class WaitingScreen {
 
     fillComputerSelect(difficulties : string[]) {
       this.difficulties = difficulties;
+      const prevAdd = this.addDifficulty.value;
       removeOptions(this.editDifficulty);
+      removeOptions(this.addDifficulty);
       difficulties.forEach((difficulty : string) => {
         const editOption = document.createElement('option');
         editOption.value = difficulty;
         editOption.text = difficulty;
         this.editDifficulty.add(editOption);
+        const addOption = document.createElement('option');
+        addOption.value = difficulty;
+        addOption.text = difficulty;
+        this.addDifficulty.add(addOption);
       });
+      if (prevAdd) this.addDifficulty.value = prevAdd;
     }
 
     drawPlayerList(data : PlayerWaitingData[]) {
