@@ -13,6 +13,8 @@ export interface GameWaitingData {
     board : BoardData
     computerDifficulties : string[]
     startingResources : ResourceData
+    backgrounds: string[]
+    background: string
 }
 
 export interface BoardData {
@@ -53,6 +55,7 @@ export interface GameSetupData {
     currPlayer : PlayerSetupData
     placingPlayerName : string
     placingPlayerColor : string
+    background: string
 }
 
 export interface PlayerSetupData {

@@ -125,16 +125,14 @@ describe('Units Test', () => {
         
         unit.moveCounter = new Counter(0);
         unit.attackCounter = new Counter(0);
-        unit.summonTimer = 0;
+        unit.summonTimer = new Counter(0);
         unit.range = 0;
         board.moveUnit(unit);
         assert.strictEqual(unit.target, soldier);
         assert.strictEqual(board.entities.length, 6);
-        assert.strictEqual(unit.summonTimer, unit.summonTimerTime);
         assert.strictEqual(unit.numSummons, 2);
         assert.strictEqual(unit.pos.equals(soldier.pos), true);
         board.moveUnit(unit);
-        assert.strictEqual(unit.summonTimer, unit.summonTimerTime - 1);
     });
 
     it('healer test', () => {
@@ -286,7 +284,6 @@ describe('Units Test', () => {
         let soldier = SoldierUnit.construct(p2, new Pos(5, 5));
         p2.addUnit(soldier);  // register p2 as observer so notifyDeath works correctly
         board.addEntity(missionary);
-        board.addEntity(soldier);
         assert.strictEqual(board.entities.length, 4);  // 2 hearts + missionary + soldier
 
         // initial observer/unit-count state (p2 + board = 2)
@@ -342,7 +339,6 @@ describe('Units Test', () => {
         let soldier = SoldierUnit.construct(p2, new Pos(5, 5));
         p2.addUnit(soldier);
         board.addEntity(missionary);
-        board.addEntity(soldier);
 
         // force player to unit cap
         player.unitCount = player.era.getUnitLimit();

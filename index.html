@@ -127,7 +127,32 @@
         <div class="pixel-panel" id="addComputerDiv">
           <h3 class="pixel-panel__title">Add Computer</h3>
           <select id="addComputerDifficulty" class="pixel-select"></select>
+          <div class="form-group">
+            <label for="addComputerTeam" class="pixel-label">Team</label>
+            <input type="number" id="addComputerTeam" class="pixel-input" placeholder="None" min="1" autocomplete="off">
+          </div>
+          <div class="form-group" style="flex-direction: row; align-items: center; gap: 8px;">
+            <label class="pixel-label" style="display:flex; align-items:center; gap:4px;">
+              <input type="checkbox" id="addComputerCustomColor"> Custom color
+            </label>
+            <input type="color" id="addComputerColor" class="pixel-input hidden">
+          </div>
           <button id="addComputerButton" class="pixel-btn pixel-btn--secondary">Add Computer</button>
+        </div>
+
+        <!-- Background -->
+        <div class="pixel-panel" id="backgroundDiv">
+          <h3 class="pixel-panel__title">Background</h3>
+          <select id="backgroundSelect" class="pixel-select"></select>
+          <img id="backgroundPreview" style="width:100%; margin-top:8px; display:none;" alt="Background preview">
+        </div>
+
+        <!-- Game Info (non-leaders only) -->
+        <div class="pixel-panel" id="gameInfoDiv">
+          <h3 class="pixel-panel__title">Game Info</h3>
+          <span id="gameInfoBoard" class="pixel-label"></span>
+          <span id="gameInfoResources" class="pixel-label" style="white-space: pre-line;"></span>
+          <img id="gameInfoBgPreview" style="width:100%; margin-top:8px;" alt="Background">
         </div>
       </div>
 

@@ -16,6 +16,7 @@ export const UPDATE_RESOURCES_KEY = "resources update";
 export const START_GAME_KEY = "start";
 const SUBMIT_START_POS_KEY = "submit start pos";
 
+export const UPDATE_BACKGROUND_KEY = "background update";
 export const UNIT_SPAWN_KEY = "spawn";
 export const DELETE_UNITS_KEY = "delete";
 export const UPGRADE_ERA_KEY = "era";
@@ -36,6 +37,7 @@ export abstract class RouteReceiver {
         client.on(UNIT_SPAWN_KEY, (pos : PosData, unitType : string) => this.handleSpawnUnit(pos, unitType));
         client.on(DELETE_UNITS_KEY, (pos : PosData) => this.handleDeleteUnits(pos));
         client.on(UPGRADE_ERA_KEY, () => this.handleEraUpgrade());
+        client.on(UPDATE_BACKGROUND_KEY, (filename: string) => this.handleBackgroundUpdate(filename));
         client.on(DISCONNECT_KEY, () => this.handleDisconnect());
     }
     abstract handleJoinRoom(playerName : string, color : string);
@@ -50,6 +52,7 @@ export abstract class RouteReceiver {
     abstract handleSpawnUnit(pos : PosData, unitType : string);
     abstract handleDeleteUnits(pos : PosData);
     abstract handleEraUpgrade();
+    abstract handleBackgroundUpdate(filename: string);
     abstract handleDisconnect();
 }
 
@@ -99,4 +102,8 @@ export function emitDeleteUnits(socket : any, pos : PosData) {
 
 export function emitEraUpgrade(socket : any) {
     socket.emit(UPGRADE_ERA_KEY);
+}
+
+export function emitBackgroundUpdate(socket : any, filename: string) {
+    socket.emit(UPDATE_BACKGROUND_KEY, filename);
 }

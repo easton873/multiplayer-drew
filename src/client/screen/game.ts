@@ -1,5 +1,5 @@
 import { GameSetupData, LoadData, PlayerSetupData, UnitLoadData } from "../../shared/bulider";
-import { EraData, GameData, GeneralGameData, GeneralHeartData, PlayerHeartData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
+import { DEFAULT_BG_IMAGE_FILE, EraData, GameData, GeneralGameData, GeneralHeartData, PlayerHeartData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
 import { emitDeleteUnits, emitSpawnUnit } from "../../shared/routes";
 import { removeOptions } from "../../client/main";
 
@@ -108,7 +108,7 @@ export class GameScreen {
         }
       });
 
-      this.bg.src = '/bg.png';
+      this.bg.src = `/backgrounds/${DEFAULT_BG_IMAGE_FILE}`; 
 
       this.canvas.addEventListener('click', (event) => {this.clickFn(event)});
       this.fullscreenButton.addEventListener('click', () => this.toggleFullscreen());
@@ -196,6 +196,10 @@ export class GameScreen {
         this.resizeCanvasToContainer();
       });
       resizeObserver.observe(this.canvasContainer);
+    }
+
+    setBackground(filename: string) {
+      this.bg.src = '/backgrounds/' + filename;
     }
 
     resizeCanvasToContainer() {

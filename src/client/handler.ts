@@ -33,10 +33,15 @@ export class FrontendClientHandler extends ClientReceiver {
         this.manager.waitingScreen.widthLabel.innerHTML = `Board Width: ${data.board.boardX}`;
         this.manager.waitingScreen.heightLabel.innerHTML = `Board Height: ${data.board.boardY}`;
         this.manager.waitingScreen.updateResourceInputs(data.startingResources);
+        this.manager.waitingScreen.updateGameInfo(data);
+        if (data.backgrounds) {
+            this.manager.waitingScreen.fillBackgroundSelect(data.backgrounds, data.background);
+        }
     }
     handleStartSuccess(data: GameSetupData) {
         this.manager.toGameScreen();
         this.latestData = data;
+        if (data.background) this.manager.gameScreen.setBackground(data.background);
         this.manager.gameScreen.setCanvasSize(data.boardX, data.boardY);
         this.manager.gameScreen.startSetupRenderLoop(data);
         this.manager.gameScreen.requestFullscreen();

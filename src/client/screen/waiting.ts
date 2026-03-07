@@ -1,5 +1,5 @@
-import { emitAddComputer, emitBoardUpdate, emitEditComputer, emitRemoveComputer, emitResourceUpdate, emitUpdateSetupPlayer } from "../../shared/routes";
-import { PlayerWaitingData } from "../../shared/bulider";
+import { emitAddComputer, emitBackgroundUpdate, emitBoardUpdate, emitEditComputer, emitRemoveComputer, emitResourceUpdate, emitUpdateSetupPlayer } from "../../shared/routes";
+import { GameWaitingData, PlayerWaitingData } from "../../shared/bulider";
 import { ResourceData } from "../../shared/types";
 import { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io";
@@ -47,6 +47,16 @@ export class WaitingScreen {
     public addComputerDiv = document.getElementById("addComputerDiv") as HTMLDivElement;
     public addComputerButton = document.getElementById("addComputerButton") as HTMLButtonElement;
     private addDifficulty = document.getElementById("addComputerDifficulty") as HTMLSelectElement;
+    private addTeam = document.getElementById("addComputerTeam") as HTMLInputElement;
+    private addColor = document.getElementById("addComputerColor") as HTMLInputElement;
+    private addCustomColor = document.getElementById("addComputerCustomColor") as HTMLInputElement;
+    public backgroundDiv = document.getElementById("backgroundDiv") as HTMLDivElement;
+    private backgroundSelect = document.getElementById("backgroundSelect") as HTMLSelectElement;
+    private backgroundPreview = document.getElementById("backgroundPreview") as HTMLImageElement;
+    private gameInfoDiv = document.getElementById("gameInfoDiv") as HTMLDivElement;
+    private gameInfoBoard = document.getElementById("gameInfoBoard") as HTMLSpanElement;
+    private gameInfoResources = document.getElementById("gameInfoResources") as HTMLSpanElement;
+    private gameInfoBgPreview = document.getElementById("gameInfoBgPreview") as HTMLImageElement;
 
     public waitingPlayerControls = document.getElementById("playerControlsDiv") as HTMLDivElement;
 
@@ -73,11 +83,17 @@ export class WaitingScreen {
       this.woodInput.onchange = () => { this.resourceUpdate(); };
       this.stoneInput.onchange = () => { this.resourceUpdate(); };
 
+      this.addColor.value = randomColor();
+      this.addCustomColor.onchange = () => {
+        this.addColor.classList.toggle("hidden", !this.addCustomColor.checked);
+      };
+
       this.addComputerButton.onclick = () => {
+        const teamRaw = parseInt(this.addTeam.value);
         emitAddComputer(this.socket, {
           name: randomComputerName(),
-          team: null,
-          color: randomColor(),
+          team: Number.isNaN(teamRaw) ? null : teamRaw,
+          color: this.addCustomColor.checked ? this.addColor.value : randomColor(),
           difficulty: this.addDifficulty.value || this.difficulties[0] || "",
         });
       };
@@ -89,11 +105,14 @@ export class WaitingScreen {
 
     drawPlayerControls(p : PlayerWaitingData) {
       this.isLeader = p.leader;
-      if (!p.leader) {
+      if (p.leader) {
+        this.gameInfoDiv.classList.add("hidden");
+      } else {
         this.startButton.classList.add("hidden");
         this.widthInput.parentElement?.parentElement?.classList.add("hidden");
         this.startingResourcesDiv.classList.add("hidden");
         this.addComputerDiv.classList.add("hidden");
+        this.backgroundDiv.classList.add("hidden");
       }
 
       this.waitingPlayerControls.innerHTML = '';
@@ -164,6 +183,24 @@ export class WaitingScreen {
         this.addDifficulty.add(addOption);
       });
       if (prevAdd) this.addDifficulty.value = prevAdd;
+    }
+
+    fillBackgroundSelect(backgrounds: string[], current: string) {
+      this.backgroundSelect.innerHTML = '';
+      backgrounds.forEach((filename: string) => {
+        const option = document.createElement('option');
+        option.value = filename;
+        option.text = filename.replace(/\.[^.]+$/, '').replace(/([a-z])(\d)/g, '$1 $2').replace(/\b\w/g, c => c.toUpperCase());
+        this.backgroundSelect.add(option);
+      });
+      this.backgroundSelect.value = current;
+      this.backgroundPreview.src = '/backgrounds/' + current;
+      this.backgroundPreview.style.display = 'block';
+      this.backgroundSelect.onchange = () => {
+        const filename = this.backgroundSelect.value;
+        this.backgroundPreview.src = '/backgrounds/' + filename;
+        emitBackgroundUpdate(this.socket, filename);
+      };
     }
 
     drawPlayerList(data : PlayerWaitingData[]) {
@@ -258,5 +295,14 @@ export class WaitingScreen {
       this.goldInput.value = String(r.gold);
       this.woodInput.value = String(r.wood);
       this.stoneInput.value = String(r.stone);
+    }
+
+    updateGameInfo(data: GameWaitingData) {
+      this.gameInfoBoard.textContent = `Board: ${data.board.boardX} × ${data.board.boardY}`;
+      const r = data.startingResources;
+      this.gameInfoResources.textContent = `💰 Gold: ${r.gold}\n🪵 Wood: ${r.wood}\n🪨 Stone: ${r.stone}`;
+      if (data.background) {
+        this.gameInfoBgPreview.src = '/backgrounds/' + data.background;
+      }
     }
 }

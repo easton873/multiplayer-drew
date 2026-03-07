@@ -19,6 +19,7 @@ import { CatapultUnit } from "./catapult.js";
 import { MissionaryUnit } from "./combat/missionary.js";
 import { AssassainUnit, NinjaUnit, SpyUnit } from "./combat/stealth.js";
 import { VampireUnit } from "./combat/vampire.js";
+import { EXTRA_UNITS } from "../data/units.js";
 
 export const ALL_RESOURCE_UNITS : GameUnit[] = [
     MERCHANT_GAME_UNIT,
@@ -101,13 +102,9 @@ function buildUnitMap() : Map<string, GameUnit> {
 export const UNIT_MAP : Map<string, GameUnit> = buildUnitMap();
 
 export function loadData() : LoadData {
-    let units : UnitLoadData[] = [];
-    ALL_UNITS.forEach((unit : GameUnit) => {
-        units.push(
-            {name: unit.getName()}
-        );
-    });
+    let units : UnitLoadData[] = ALL_UNITS.map((unit : GameUnit) => {return {name: unit.getName()}});
+    let extra_units : UnitLoadData[] = EXTRA_UNITS.map((unitName : string) => {return {name: unitName}});
     return {
-        units: units
+        units: units.concat(extra_units)
     };
 }

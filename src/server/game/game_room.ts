@@ -7,14 +7,15 @@ import { DefaultEventsMap, Socket } from "socket.io";
 import { ClientHandler, GameClient } from "./client_handler.js";
 import { emitYourTurn } from "../../shared/client.js";
 import { ComputerDifficulties, CreateComputer } from "./computer/factory.js";
-import { ResourceData } from "../../shared/types.js";
-// import { ComputerNames } from "./computer/factory.js";
+import { DEFAULT_BG_IMAGE_FILE, ResourceData } from "../../shared/types.js";
+import { backgrounds } from "./data/backgrounds.js";
 
 export class GameRoom {
     public players : Map<string, SetupPlayer> = new Map<string, SetupPlayer>; // player id to player
     public boardX : number = 100;
     public boardY : number = 100;
     public startingResources : ResourceData = { gold: 50, wood: 0, stone: 0 };
+    public background : string = DEFAULT_BG_IMAGE_FILE;
     private game : Game;
     constructor(){}
 
@@ -66,16 +67,22 @@ export class GameRoom {
         return this.players.get(id).getJoinData();
     }
 
+    updateBackground(filename: string) {
+        if (backgrounds.includes(filename)) {
+            this.background = filename;
+        }
+    }
+
     joinRoomData() : GameWaitingData {
-        return {players: this.getPlayerJoinData(), board: {boardX: this.boardX, boardY: this.boardY}, computerDifficulties: ComputerDifficulties, startingResources: this.startingResources};
+        return {players: this.getPlayerJoinData(), board: {boardX: this.boardX, boardY: this.boardY}, computerDifficulties: ComputerDifficulties, startingResources: this.startingResources, backgrounds: backgrounds, background: this.background};
     }
 
     setupData(id : string) : GameSetupData {
         let player = this.players.get(id);
         if (!player) {
-            return {boardX: this.boardX, boardY: this.boardY, players: this.getPlayerSetupData(), currPlayer: null, placingPlayerName: "", placingPlayerColor: ""};
+            return {boardX: this.boardX, boardY: this.boardY, players: this.getPlayerSetupData(), currPlayer: null, placingPlayerName: "", placingPlayerColor: "", background: this.background};
         }
-        return {boardX: this.boardX, boardY: this.boardY, players: this.getPlayerSetupData(), currPlayer: player.getSetupData(), placingPlayerName: "", placingPlayerColor: ""};
+        return {boardX: this.boardX, boardY: this.boardY, players: this.getPlayerSetupData(), currPlayer: player.getSetupData(), placingPlayerName: "", placingPlayerColor: "", background: this.background};
     }
 
     setBoardXY(width : number, height : number) {

@@ -14,7 +14,7 @@ export abstract class CombatUnit extends UnitWithTarget {
     }
 
     doAcutalMove(board: Board) {
-        if (this.hasNoTarget()) {
+        if (this.hasNoTarget() || !this.isValidTarget(this.target)) {
             this.findNewTarget(board.entities); // guarentee a target sort of
         }
         if (this.hasNoTarget()) { // still didn't find a valid target

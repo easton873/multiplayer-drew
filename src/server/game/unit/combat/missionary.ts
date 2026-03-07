@@ -20,7 +20,10 @@ class Missionary extends TargetChasingUnit {
         if (this.owner.atUnitCap()) {
             return;
         }
-        this.target.owner.notifyDeath(this.target);
+        let convert : Unit = this.target;
+        this.target.notifyObserversDeath();
+        this.target = convert;
+
         this.owner.addUnit(this.target);
 
         this.target.team = this.team

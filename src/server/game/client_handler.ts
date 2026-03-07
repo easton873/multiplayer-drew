@@ -231,6 +231,12 @@ export class ClientHandler extends RouteReceiver {
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 
+    handleBackgroundUpdate(filename: string) {
+        if (!this.isLeader()) return;
+        this.room.updateBackground(filename);
+        emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
+    }
+
     isLeader() : boolean {
         return this.room.isLeader(this.client.id);
     }

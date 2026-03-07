@@ -79,3 +79,5 @@ export interface PosData {
   x : number
   y : number
 }
+
+export const DEFAULT_BG_IMAGE_FILE = "rocks.png";
