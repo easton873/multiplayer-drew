@@ -6,6 +6,28 @@ import { Player } from "../player.js";
 import { Pos, PositionDifference } from "../pos.js";
 import { DamageTaker } from "./damage.js";
 
+export interface Unit extends ObservableUnit, DamageTaker {
+    name : string;
+    pos : Pos;
+    totalHP : number;
+    hp : number;
+    team : number;
+    owner : Player;
+    color : string;
+    freeze : boolean;
+    invisible : boolean;
+    attacking : boolean;
+
+    move(board : Board)
+    kill()
+    takeDamage(damage : number);
+    doDamage(unit : Unit, damage : number);
+    isInvisible() : boolean;
+    getUnitData() : UnitData
+
+    TESTkill();
+}
+
 export abstract class ObservableUnit {
     private observers : UnitObserver[] = [];
     private queueDeathObservers : QueueDeathObserver[] = [];
@@ -65,7 +87,7 @@ export interface QueueDeathObserver {
     queueDeath(unit : Unit);
 }
 
-export abstract class Unit extends ObservableUnit implements DamageTaker {
+export abstract class BaseUnit extends ObservableUnit implements Unit, DamageTaker {
     name : string;
     pos : Pos;
     totalHP : number;
@@ -74,7 +96,7 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
     owner : Player;
     color : string;
     freeze : boolean = false;
-    private invisible : boolean = false;
+    invisible : boolean = false;
     attacking : boolean = false;
 
     constructor(player : Player, name : string, pos : Pos, hp : number, color : string) {
@@ -130,7 +152,7 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
         this.takeDamage(this.hp);
     }
 
-    public TESTkill() {
+    TESTkill() {
         this.notifyObserversDeath();
     }
     
@@ -208,7 +230,7 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
     }
 }
 
-export abstract class UnitWithCounter extends Unit {
+export abstract class UnitWithCounter extends BaseUnit {
     moveCounter : Counter;
     constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string){
         super(player, name, pos, hp, color);
@@ -226,7 +248,7 @@ export abstract class UnitWithCounter extends Unit {
     }
 }
 
-export abstract class UnitWithTarget extends Unit implements UnitObserver {
+export abstract class UnitWithTarget extends BaseUnit implements UnitObserver {
     private _target : Unit = null;
     notifyDeath(unit: ObservableUnit) {
         if (unit == this._target) {
