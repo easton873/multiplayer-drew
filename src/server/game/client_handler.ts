@@ -2,7 +2,8 @@ import { BoardData, GeneralGameData, PosData, ResourceData } from "../../shared/
 import { RouteReceiver } from "../../shared/routes.js";
 import { Game } from "./game.js";
 import { GameRoom } from "./game_room.js";
-import { emitGameBuilt, emitGameOver, emitGameState, emitJoinSuccess, emitLoadData, emitPlayerWaitingInfo, emitSetPosSuccess, emitSpectatorGameState, emitStartSuccess, emitUpgradeEraSuccess, emitWaitingRoomUpdate } from "../../shared/client.js";
+import { emitGameBuilt, emitGameOver, emitGameState, emitJoinSuccess, emitLoadData, emitPlayerWaitingInfo, emitReconnectSuccess, emitSetPosSuccess, emitSpectatorGameState, emitStartSuccess, emitUpgradeEraSuccess, emitWaitingRoomUpdate } from "../../shared/client.js";
+import { ReconnectData } from "../../shared/types.js";
 import { Pos } from "./pos.js";
 import { DefaultEventsMap, Server, Socket } from "socket.io";
 import { Player } from "./player.js";
@@ -19,7 +20,9 @@ export interface GameClient {
 }
 
 export class ClientHandler extends RouteReceiver {
-    constructor(client: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, 
+    private playerId : string | null = null;
+
+    constructor(client: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
         io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
         private room : GameRoom,
         private playerClients : Map<string, Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>>){
@@ -29,24 +32,29 @@ export class ClientHandler extends RouteReceiver {
         emitLoadData(this.client, loadData());``
     }
 
+    private getPlayerId() : string {
+        return this.playerId ?? this.client.id;
+    }
+
     handleJoinRoom(name : string, color : string){
         let currGame : GameRoom = this.room;
         this.client.join(ROOM_CODE);
-        currGame.addPlayer(this.client.id, name, this.client, color);
-        emitJoinSuccess(this.client); // switch screen
-        emitPlayerWaitingInfo(this.client, currGame.getPlayerJoinDataById(this.client.id)); // draw info specific to you
+        this.playerId = this.client.id;
+        const token = currGame.addPlayer(this.client.id, name, this.client, color);
+        emitJoinSuccess(this.client, token); // switch screen
+        emitPlayerWaitingInfo(this.client, currGame.getPlayerJoinDataById(this.getPlayerId())); // draw info specific to you
         emitWaitingRoomUpdate(this.io, currGame.joinRoomData()); // draw everybody else
         console.log("Client " + this.client.id + " joined");
     }
 
     handleUpdateSetupPlayer(player: PlayerWaitingData) {
-        this.room.updatePlayer(this.client.id, player);
+        this.room.updatePlayer(this.getPlayerId(), player);
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
         // emitPlayerWaitingInfo(this.client, gameRoom.getPlayerJoinDataById(this.client.id));
     }
 
     handleAddComputerPlayer(data : ComputerWaitingData) {
-        let player = this.room.players.get(this.client.id); // only the leader can add computers
+        let player = this.room.players.get(this.getPlayerId()); // only the leader can add computers
         if (!player.getIsLeader()) {
             return;
         }
@@ -81,8 +89,10 @@ export class ClientHandler extends RouteReceiver {
         if (!this.room || !this.isLeader()) {
             return;
         }
+        this.room.phase = "setup";
         let player = this.room.getPoslessPlayer();
-        let data = this.room.setupData(this.client.id);
+        this.room.currentlyPlacingId = player.getId();
+        let data = this.room.setupData(this.getPlayerId());
         data.placingPlayerName = player.getSetupData().name;
         data.placingPlayerColor = player.getSetupData().color;
         emitStartSuccess(this.io, data);
@@ -94,7 +104,7 @@ export class ClientHandler extends RouteReceiver {
         if (!gameRoom) {
             return;
         }
-        this.submitStartPosWithID(pos, this.client.id);
+        this.submitStartPosWithID(pos, this.getPlayerId());
     }
 
     submitStartPosWithID(pos : PosData, id : string) {
@@ -105,6 +115,7 @@ export class ClientHandler extends RouteReceiver {
         gameRoom.addPlayerPos(id, Pos.FromPosData(pos));
         emitSetPosSuccess(this.client);
         if (gameRoom.allPlayersHavePos()) {
+            this.room.currentlyPlacingId = null;
             emitStartSuccess(this.io, gameRoom.setupData(id));
             let game : Game = gameRoom.buildGame();
             game.players.forEach((player : Player) => {
@@ -115,6 +126,7 @@ export class ClientHandler extends RouteReceiver {
                 console.log('emit build success to', player.getID());
                 emitGameBuilt(tempClient, player.era.getEraData());
             });
+            this.room.phase = "playing";
             console.log('starting game loop');
             const intervalId = setInterval(() => {
                 game.mainLoop();
@@ -164,6 +176,7 @@ export class ClientHandler extends RouteReceiver {
             return;
         }
         let nextPlayer = gameRoom.getPoslessPlayer();
+        this.room.currentlyPlacingId = nextPlayer.getId();
         let data = gameRoom.setupData(id);
         data.placingPlayerName = nextPlayer.getSetupData().name;
         data.placingPlayerColor = nextPlayer.getSetupData().color;
@@ -172,7 +185,92 @@ export class ClientHandler extends RouteReceiver {
     }
 
     handleDisconnect(){
-        console.log('client disconnected');
+        const player = this.room.players.get(this.getPlayerId());
+        if (player) {
+            console.log('player disconnected:', player.getId());
+        } else {
+            console.log('unjoined client disconnected');
+        }
+    }
+
+    handleReconnect(token : string) {
+        const playerId = this.room.getPlayerIdByToken(token);
+        if (!playerId) {
+            console.log('reconnect failed: invalid token');
+            return;
+        }
+
+        const setupPlayer = this.room.players.get(playerId);
+        if (!setupPlayer) {
+            console.log('reconnect failed: player not found');
+            return;
+        }
+
+        // Rebind socket: update playerClients under the original player ID key
+        this.playerId = playerId;
+        this.playerClients.set(playerId, this.client);
+        setupPlayer.setClient(this.client);
+        this.client.join(ROOM_CODE);
+
+        console.log('client reconnected as', playerId);
+
+        const data = this.buildReconnectData(playerId);
+        if (data) {
+            emitReconnectSuccess(this.client, data);
+        }
+    }
+
+    private buildReconnectData(playerId : string) : ReconnectData | null {
+        const phase = this.room.phase;
+        switch (phase) {
+            case "waiting":
+                return {
+                    phase: "waiting",
+                    waitingData: this.room.joinRoomData(),
+                    playerData: this.room.getPlayerJoinDataById(playerId),
+                };
+            case "setup": {
+                const setupData = this.room.setupData(playerId);
+                const placingId = this.room.currentlyPlacingId;
+                if (placingId) {
+                    const placingPlayer = this.room.players.get(placingId);
+                    if (placingPlayer) {
+                        setupData.placingPlayerName = placingPlayer.getSetupData().name;
+                        setupData.placingPlayerColor = placingPlayer.getSetupData().color;
+                    }
+                }
+                return {
+                    phase: "setup",
+                    setupData,
+                    isYourTurn: placingId === playerId,
+                };
+            }
+            case "playing": {
+                const game = this.room.getGame();
+                if (!game) return null;
+                // Check if this player is a spectator (dead)
+                if (game.spectators.includes(playerId)) {
+                    return {
+                        phase: "spectating",
+                        spectatorData: game.generalGameData(),
+                    };
+                }
+                const player = game.getPlayer(playerId);
+                if (!player) return null;
+                return {
+                    phase: "playing",
+                    eraData: player.era.getEraData(),
+                    gameData: game.gameData(playerId),
+                };
+            }
+            case "gameover":
+                return {
+                    phase: "gameover",
+                    winner: "",
+                };
+            default:
+                return null;
+        }
     }
 
     handleSpawnUnit(pos : PosData, unitType : string) {
@@ -182,7 +280,7 @@ export class ClientHandler extends RouteReceiver {
             return;
         }
         let game = room.getGame();
-        let player = game.getPlayer(this.client.id);
+        let player = game.getPlayer(this.getPlayerId());
         if (!player) {
             return;
         }
@@ -196,7 +294,7 @@ export class ClientHandler extends RouteReceiver {
             return;
         }
         let game = room.getGame();
-        let player = game.getPlayer(this.client.id);
+        let player = game.getPlayer(this.getPlayerId());
         if (!player) {
             return;
         }
@@ -210,7 +308,7 @@ export class ClientHandler extends RouteReceiver {
             return;
         }
         let game = room.getGame();
-        let player = game.getPlayer(this.client.id);
+        let player = game.getPlayer(this.getPlayerId());
         if (!player) {
             return;
         }
@@ -238,6 +336,6 @@ export class ClientHandler extends RouteReceiver {
     }
 
     isLeader() : boolean {
-        return this.room.isLeader(this.client.id);
+        return this.room.isLeader(this.getPlayerId());
     }
 }

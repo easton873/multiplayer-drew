@@ -1,3 +1,5 @@
+import type { GameWaitingData, PlayerWaitingData, GameSetupData } from "./bulider.js";
+
 export interface GameData {
   playerData : PlayerSpecificData
   resources : ResourceData
@@ -81,3 +83,12 @@ export interface PosData {
 }
 
 export const DEFAULT_BG_IMAGE_FILE = "rocks.png";
+
+export type RoomPhase = "waiting" | "setup" | "playing" | "gameover";
+
+export type ReconnectData =
+  | { phase: "waiting"; waitingData: GameWaitingData; playerData: PlayerWaitingData }
+  | { phase: "setup"; setupData: GameSetupData; isYourTurn: boolean }
+  | { phase: "playing"; eraData: EraData; gameData: GameData }
+  | { phase: "spectating"; spectatorData: GeneralGameData }
+  | { phase: "gameover"; winner: string };

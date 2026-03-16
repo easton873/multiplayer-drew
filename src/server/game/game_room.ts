@@ -1,4 +1,6 @@
 import { EditComputerData, GameWaitingData, PlayerWaitingData, PlayerSetupData, GameSetupData } from "../../shared/bulider.js";
+import { RoomPhase } from "../../shared/types.js";
+import { randomUUID } from "crypto";
 import { Game } from "./game.js";
 import { Pos } from "./pos.js";
 import { Board } from "./board.js";
@@ -16,18 +18,25 @@ export class GameRoom {
     public boardY : number = 100;
     public startingResources : ResourceData = { gold: 50, wood: 0, stone: 0 };
     public background : string = DEFAULT_BG_IMAGE_FILE;
+    public phase : RoomPhase = "waiting";
+    public tokenToPlayerId : Map<string, string> = new Map();
+    public currentlyPlacingId : string | null = null;
     private game : Game;
     constructor(){}
 
     reset() {
+        this.phase = "waiting";
         this.players.forEach((player : SetupPlayer) => {
             player.reset();
         });
     }
 
-    addPlayer(id : string, name : string, client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, color : string) {
+    addPlayer(id : string, name : string, client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, color : string) : string {
         let isLeader : boolean = this.players.size == 0; // first to join is leader
         this.players.set(id, new SetupPlayer(id, name, client, color, isLeader));
+        const token = randomUUID();
+        this.tokenToPlayerId.set(token, id);
+        return token;
     }
     
     addComputerPlayer(handler : ClientHandler, name : string, color : string, team : number, difficulty : string) {
@@ -100,6 +109,10 @@ export class GameRoom {
             throw new Error("no posless players");
         }
         return this.getRandomPlayer(players);
+    }
+
+    getPlayerIdByToken(token : string) : string | undefined {
+        return this.tokenToPlayerId.get(token);
     }
 
     isLeader(id : string) : boolean {
@@ -183,6 +196,10 @@ export class SetupPlayer {
 
     getClient() : GameClient {
         return this.client;
+    }
+
+    setClient(client : GameClient) {
+        this.client = client;
     }
 
     getId() : string {

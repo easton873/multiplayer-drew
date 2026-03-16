@@ -4,7 +4,7 @@ import { ClientReceiver } from "../shared/client";
 import { ScreenManager } from "./screen/manager";
 import { DefaultEventsMap } from "socket.io";
 import { emitDeleteUnits, emitSpawnUnit, emitSubmitStartPos } from "../shared/routes";
-import { EraData, GameData, GeneralGameData, PosData } from "../shared/types";
+import { EraData, GameData, GeneralGameData, PosData, ReconnectData } from "../shared/types";
 
 function hexRelativeLuminance(hex: string): number {
     const r = parseInt(hex.slice(1, 3), 16) / 255;
@@ -21,7 +21,8 @@ export class FrontendClientHandler extends ClientReceiver {
     constructor(socket : Socket<DefaultEventsMap, DefaultEventsMap>, private manager : ScreenManager)  {
         super(socket);
     }
-    handleJoinSuccess() {
+    handleJoinSuccess(token : string) {
+        sessionStorage.setItem("reconnectToken", token);
         this.manager.toWaitingScreen();
     }
     handlePlayerWaitingInfo(data: PlayerWaitingData) {
@@ -102,5 +103,35 @@ export class FrontendClientHandler extends ClientReceiver {
     }
     handleLoadData(data: LoadData) {
         this.manager.gameScreen.loadImages(data);
+    }
+    handleReconnectSuccess(data: ReconnectData) {
+        switch (data.phase) {
+            case "waiting":
+                this.manager.toWaitingScreen();
+                this.handlePlayerWaitingInfo(data.playerData);
+                this.handleWaitingRoomUpdate(data.waitingData);
+                break;
+            case "setup":
+                this.handleStartSuccess(data.setupData);
+                if (data.isYourTurn) {
+                    this.handleYourTurn(data.setupData);
+                }
+                break;
+            case "playing":
+                this.manager.toGameScreen();
+                this.manager.gameScreen.upgradeEra(data.eraData);
+                this.manager.gameScreen.controls.style.display = "flex";
+                this.manager.gameScreen.drawGame(data.gameData);
+                break;
+            case "spectating":
+                this.manager.toGameScreen();
+                this.manager.gameScreen.controls.style.display = "none";
+                this.manager.gameScreen.drawGeneralGameData(data.spectatorData);
+                break;
+            case "gameover":
+                this.manager.toGameOverScreen();
+                this.manager.gameOverScreen.displayWinner(data.winner);
+                break;
+        }
     }
 }
