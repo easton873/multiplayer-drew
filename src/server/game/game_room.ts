@@ -1,7 +1,8 @@
 import { EditComputerData, GameWaitingData, PlayerWaitingData, PlayerSetupData, GameSetupData } from "../../shared/bulider.js";
-import { RoomPhase } from "../../shared/types.js";
+import type { RoomPhase } from "../../shared/types.js";
+import type { RoomState } from "./room_state.js";
+import { WaitingState } from "./state/waiting.js";
 import { randomUUID } from "crypto";
-import { Game } from "./game.js";
 import { Pos } from "./pos.js";
 import { Board } from "./board.js";
 import { Player, PlayerProxy } from "./player.js";
@@ -18,17 +19,20 @@ export class GameRoom {
     public boardY : number = 100;
     public startingResources : ResourceData = { gold: 50, wood: 0, stone: 0 };
     public background : string = DEFAULT_BG_IMAGE_FILE;
-    public phase : RoomPhase = "waiting";
+    public state : RoomState = new WaitingState();
     public tokenToPlayerId : Map<string, string> = new Map();
-    public currentlyPlacingId : string | null = null;
-    private game : Game;
     constructor(){}
 
+    get phase() : RoomPhase {
+        return this.state.phase;
+    }
+
+    setState(state : RoomState) {
+        this.state = state;
+    }
+
     reset() {
-        this.phase = "waiting";
-        this.players.forEach((player : SetupPlayer) => {
-            player.reset();
-        });
+        this.state = new WaitingState(this, true);
     }
 
     addPlayer(id : string, name : string, client : Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, color : string) : string {
@@ -47,10 +51,6 @@ export class GameRoom {
         this.players.set(id, computer);
     }
 
-    removeComputerPlayer(id : string) {
-        this.players.delete(id);
-    }
-
     editComputerPlayer(id : string, data : EditComputerData) {
         let player = this.players.get(id);
         if (!player || !player.getJoinData().isComputer) {
@@ -59,27 +59,8 @@ export class GameRoom {
         (player as SetupComputerPlayer).updateComputerData(data.name, data.color, data.team, data.difficulty);
     }
 
-    updatePlayer(id : string, data : PlayerWaitingData) {
-        let player = this.players.get(id);
-        if (!player) {
-            return;
-        }
-        player.update(data);
-    }
-
-    addPlayerPos(id : string, pos : Pos) {
-        this.players.get(id).setPos(pos);
-        
-    }
-
     getPlayerJoinDataById(id : string) : PlayerWaitingData {
         return this.players.get(id).getJoinData();
-    }
-
-    updateBackground(filename: string) {
-        if (backgrounds.includes(filename)) {
-            this.background = filename;
-        }
     }
 
     joinRoomData() : GameWaitingData {
@@ -94,23 +75,6 @@ export class GameRoom {
         return {boardX: this.boardX, boardY: this.boardY, players: this.getPlayerSetupData(), currPlayer: player.getSetupData(), placingPlayerName: "", placingPlayerColor: "", background: this.background};
     }
 
-    setBoardXY(width : number, height : number) {
-        this.boardX = width;
-        this.boardY = height;
-    }
-
-    allPlayersHavePos() : boolean {
-        return this.getPoslessPlayers().length == 0;
-    }
-
-    getPoslessPlayer() : SetupPlayer {
-        let players = this.getPoslessPlayers();
-        if (players.length == 0) {
-            throw new Error("no posless players");
-        }
-        return this.getRandomPlayer(players);
-    }
-
     getPlayerIdByToken(token : string) : string | undefined {
         return this.tokenToPlayerId.get(token);
     }
@@ -121,20 +85,6 @@ export class GameRoom {
             return false;
         }
         return player.getIsLeader();
-    }
-
-    private getPoslessPlayers() : SetupPlayer[] {
-        let players : SetupPlayer[] = [];
-        this.players.forEach((player : SetupPlayer) => {
-            if (player.getPos() == null) {
-                players.push(player);
-            }
-        });
-        return players;
-    }
-
-    private getRandomPlayer(players : SetupPlayer[]) : SetupPlayer {
-        return players[Math.floor(Math.random() * players.length)];
     }
 
     private getPlayerJoinData() : PlayerWaitingData[] {
@@ -153,19 +103,6 @@ export class GameRoom {
         return players;
     }
 
-    buildGame() : Game {
-        let board : Board = new Board(this.boardX, this.boardY);
-        let players : Player[] = [];
-        this.players.forEach((player : SetupPlayer) => {
-            players.push(player.createPlayer(board, this.startingResources));
-        })
-        this.game = new Game(players, board);
-        return this.game;
-    }
-
-    getGame() : Game {
-        return this.game;
-    }
 }
 
 export class SetupPlayer {
@@ -322,12 +259,4 @@ export function findFurthest(boardX : number, boardY : number, players : Pos[]) 
         }
     }
     return bestSpot;
-}
-
-function getRandomInt(min: number, max: number): number {
-  // Ensure min and max are treated as integers for the calculation
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  // The formula ensures both min and max are included in the possible results
-  return Math.floor(Math.random() * (max - min + 1)) + min;
 }

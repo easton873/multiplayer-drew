@@ -1,12 +1,11 @@
-import { BoardData, GeneralGameData, PosData, ResourceData } from "../../shared/types.js";
+import { BoardData, PosData, ResourceData, ReconnectData } from "../../shared/types.js";
 import { RouteReceiver } from "../../shared/routes.js";
-import { Game } from "./game.js";
 import { GameRoom } from "./game_room.js";
-import { emitGameBuilt, emitGameOver, emitGameState, emitJoinSuccess, emitLoadData, emitPlayerWaitingInfo, emitReconnectSuccess, emitSetPosSuccess, emitSpectatorGameState, emitStartSuccess, emitUpgradeEraSuccess, emitWaitingRoomUpdate } from "../../shared/client.js";
-import { ReconnectData } from "../../shared/types.js";
-import { Pos } from "./pos.js";
+import { emitJoinSuccess, emitLoadData, emitPlayerWaitingInfo, emitReconnectSuccess, emitWaitingRoomUpdate } from "../../shared/client.js";
+import { WaitingState } from "./state/waiting.js";
+import { PlacingState } from "./state/placing.js";
+import { PlayingState } from "./state/playing.js";
 import { DefaultEventsMap, Server, Socket } from "socket.io";
-import { Player } from "./player.js";
 import { ComputerWaitingData, EditComputerData, PlayerWaitingData } from "../../shared/bulider.js";
 import { loadData } from "./unit/all_units.js";
 
@@ -48,40 +47,29 @@ export class ClientHandler extends RouteReceiver {
     }
 
     handleUpdateSetupPlayer(player: PlayerWaitingData) {
-        this.room.updatePlayer(this.getPlayerId(), player);
+        if (!(this.room.state instanceof WaitingState)) return;
+        this.room.state.updatePlayer(this.room, this.getPlayerId(), player);
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
-        // emitPlayerWaitingInfo(this.client, gameRoom.getPlayerJoinDataById(this.client.id));
     }
 
     handleAddComputerPlayer(data : ComputerWaitingData) {
-        let player = this.room.players.get(this.getPlayerId()); // only the leader can add computers
-        if (!player.getIsLeader()) {
-            return;
-        }
-        this.room.addComputerPlayer(this, data.name, data.color, data.team, data.difficulty);
+        if (!(this.room.state instanceof WaitingState)) return;
+        if (!this.isLeader()) return;
+        this.room.state.addComputerPlayer(this.room, this, data.name, data.color, data.team, data.difficulty);
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 
     handleBoardUpdate(board: BoardData) {
-        if (!this.isLeader()) {
-            return;
-        }
-         if (board.width < 10 || board.height < 10) {
-            return;
-        }
-        this.room.boardX = board.width;
-        this.room.boardY = board.height;
+        if (!(this.room.state instanceof WaitingState)) return;
+        if (!this.isLeader()) return;
+        this.room.state.updateBoard(this.room, board.width, board.height);
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 
     handleResourceUpdate(resources: ResourceData) {
-        if (!this.isLeader()) {
-            return;
-        }
-        const gold = Math.max(0, Math.floor(resources.gold));
-        const wood = Math.max(0, Math.floor(resources.wood));
-        const stone = Math.max(0, Math.floor(resources.stone));
-        this.room.startingResources = { gold, wood, stone };
+        if (!(this.room.state instanceof WaitingState)) return;
+        if (!this.isLeader()) return;
+        this.room.state.updateResources(this.room, resources);
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 
@@ -89,99 +77,20 @@ export class ClientHandler extends RouteReceiver {
         if (!this.room || !this.isLeader()) {
             return;
         }
-        this.room.phase = "setup";
-        let player = this.room.getPoslessPlayer();
-        this.room.currentlyPlacingId = player.getId();
-        let data = this.room.setupData(this.getPlayerId());
-        data.placingPlayerName = player.getSetupData().name;
-        data.placingPlayerColor = player.getSetupData().color;
-        emitStartSuccess(this.io, data);
-        player.findStartingPos(this.room.setupData(player.getClient().id));
+        if (!(this.room.state instanceof WaitingState)) return;
+        const placingState = new PlacingState(this.room, this.io, this.playerClients, this.getPlayerId());
+        this.room.setState(placingState);
+        placingState.init();
     }
 
     handleSubmitStartPos(pos: PosData) {
-        let gameRoom = this.room;
-        if (!gameRoom) {
-            return;
-        }
+        if (!(this.room.state instanceof PlacingState)) return;
         this.submitStartPosWithID(pos, this.getPlayerId());
     }
 
     submitStartPosWithID(pos : PosData, id : string) {
-        let gameRoom = this.room;
-        if (!gameRoom) {
-            return;
-        }
-        gameRoom.addPlayerPos(id, Pos.FromPosData(pos));
-        emitSetPosSuccess(this.client);
-        if (gameRoom.allPlayersHavePos()) {
-            this.room.currentlyPlacingId = null;
-            emitStartSuccess(this.io, gameRoom.setupData(id));
-            let game : Game = gameRoom.buildGame();
-            game.players.forEach((player : Player) => {
-                let tempClient = this.playerClients.get(player.getID());
-                if (!tempClient) {
-                    return;
-                }
-                console.log('emit build success to', player.getID());
-                emitGameBuilt(tempClient, player.era.getEraData());
-            });
-            this.room.phase = "playing";
-            console.log('starting game loop');
-            const intervalId = setInterval(() => {
-                game.mainLoop();
-                game.players.forEach((player : Player) => {
-                    let tempClient = this.playerClients.get(player.getID());
-                    if (!tempClient) {
-                        return;
-                    }
-                    let data = game.gameData(player.getID());
-                    if (!data) {
-                        return;
-                    }
-                    emitGameState(tempClient, data);
-                });
-                game.spectators.forEach((id : string) => {
-                    let tempClient = this.playerClients.get(id);
-                    if (!tempClient) {
-                        return;
-                    }
-                    let data : GeneralGameData = game.generalGameData();
-                    if (!data) {
-                        return;
-                    }
-                    emitSpectatorGameState(tempClient, data);
-                })
-                if (!game.checkGameStillGoing()) {
-                    console.log('game over');
-                    clearInterval(intervalId);
-                    let winner = "No Winner";
-                    if (game.players.length == 1) {
-                        let id = game.players[0].getID();
-                        if (id) {
-                            let p = this.room.players.get(id);
-                            winner = p.getJoinData().name;
-                        }
-                    } else if (game.players.length > 1) {
-                        let player = game.players[0];
-                        if (id) {
-                            winner = "Team " + player.getTeam();
-                        }
-                    }
-                    this.room.reset();
-                    emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
-                    emitGameOver(this.io, winner);
-                } 
-            }, 1000 / FRAME_RATE);
-            return;
-        }
-        let nextPlayer = gameRoom.getPoslessPlayer();
-        this.room.currentlyPlacingId = nextPlayer.getId();
-        let data = gameRoom.setupData(id);
-        data.placingPlayerName = nextPlayer.getSetupData().name;
-        data.placingPlayerColor = nextPlayer.getSetupData().color;
-        emitStartSuccess(this.io, data);
-        nextPlayer.findStartingPos(gameRoom.setupData(nextPlayer.getClient().id));
+        if (!(this.room.state instanceof PlacingState)) return;
+        this.room.state.submitPos(pos, id, this.client);
     }
 
     handleDisconnect(){
@@ -221,117 +130,42 @@ export class ClientHandler extends RouteReceiver {
     }
 
     private buildReconnectData(playerId : string) : ReconnectData | null {
-        const phase = this.room.phase;
-        switch (phase) {
-            case "waiting":
-                return {
-                    phase: "waiting",
-                    waitingData: this.room.joinRoomData(),
-                    playerData: this.room.getPlayerJoinDataById(playerId),
-                };
-            case "setup": {
-                const setupData = this.room.setupData(playerId);
-                const placingId = this.room.currentlyPlacingId;
-                if (placingId) {
-                    const placingPlayer = this.room.players.get(placingId);
-                    if (placingPlayer) {
-                        setupData.placingPlayerName = placingPlayer.getSetupData().name;
-                        setupData.placingPlayerColor = placingPlayer.getSetupData().color;
-                    }
-                }
-                return {
-                    phase: "setup",
-                    setupData,
-                    isYourTurn: placingId === playerId,
-                };
-            }
-            case "playing": {
-                const game = this.room.getGame();
-                if (!game) return null;
-                // Check if this player is a spectator (dead)
-                if (game.spectators.includes(playerId)) {
-                    return {
-                        phase: "spectating",
-                        spectatorData: game.generalGameData(),
-                    };
-                }
-                const player = game.getPlayer(playerId);
-                if (!player) return null;
-                return {
-                    phase: "playing",
-                    eraData: player.era.getEraData(),
-                    gameData: game.gameData(playerId),
-                };
-            }
-            case "gameover":
-                return {
-                    phase: "gameover",
-                    winner: "",
-                };
-            default:
-                return null;
-        }
+        return this.room.state.reconnectData(this.room, playerId);
     }
 
     handleSpawnUnit(pos : PosData, unitType : string) {
-        let room = this.room;
-        if (!room || !room.getGame()) {
-            console.log('game is null');
-            return;
-        }
-        let game = room.getGame();
-        let player = game.getPlayer(this.getPlayerId());
-        if (!player) {
-            return;
-        }
-        player.NewUnit(unitType, new Pos(pos.x, pos.y));
+        if (!(this.room.state instanceof PlayingState)) return;
+        this.room.state.spawnUnit(this.getPlayerId(), pos, unitType);
     }
 
     handleDeleteUnits(pos: PosData) {
-        let room = this.room;
-        if (!room || !room.getGame()) {
-            console.log('game is null');
-            return;
-        }
-        let game = room.getGame();
-        let player = game.getPlayer(this.getPlayerId());
-        if (!player) {
-            return;
-        }
-        player.DeleteUnits(new Pos(pos.x, pos.y));
+        if (!(this.room.state instanceof PlayingState)) return;
+        this.room.state.deleteUnits(this.getPlayerId(), pos);
     }
 
     handleEraUpgrade() {
-        let room = this.room;
-        if (!room || !room.getGame()) {
-            console.log('game is null');
-            return;
-        }
-        let game = room.getGame();
-        let player = game.getPlayer(this.getPlayerId());
-        if (!player) {
-            return;
-        }
-        if (player.attemptUpgradeEra()) {
-            emitUpgradeEraSuccess(this.client, player.era.getEraData());
-        }
+        if (!(this.room.state instanceof PlayingState)) return;
+        this.room.state.upgradeEra(this.getPlayerId(), this.client);
     }
 
     handleEditComputerPlayer(data : EditComputerData) {
+        if (!(this.room.state instanceof WaitingState)) return;
         if (!this.isLeader()) return;
-        this.room.editComputerPlayer(data.id, data);
+        this.room.state.editComputerPlayer(this.room, data.id, data);
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 
     handleRemoveComputerPlayer(id : string) {
+        if (!(this.room.state instanceof WaitingState)) return;
         if (!this.isLeader()) return;
-        this.room.removeComputerPlayer(id);
+        this.room.state.removeComputerPlayer(this.room, id);
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 
     handleBackgroundUpdate(filename: string) {
+        if (!(this.room.state instanceof WaitingState)) return;
         if (!this.isLeader()) return;
-        this.room.updateBackground(filename);
+        this.room.state.updateBackground(this.room, filename);
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 
