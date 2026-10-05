@@ -17,8 +17,8 @@ export class Game {
 
     mainLoop() {
         this.move();
-        this.playerTurns();
         this.arePlayersStillAlive();
+        this.playerTurns();
     }
 
     move() {
@@ -70,7 +70,6 @@ export class Game {
         }
         let heart : PlayerSpecificData = player.getPlayerSpecificData();
         let resources : ResourceData = player.resources.getResourceData();
-        let era : EraData = player.era.getEraData();
         const friendlyInvisibleUnits : UnitData[] = [];
         this.board.entities.forEach((unit : Unit) => {
             if (unit.isInvisible() && unit.team === player.getTeam()) {
@@ -80,7 +79,7 @@ export class Game {
         const gameData : GameData = {
             playerData: heart,
             resources: resources,
-            era: era,
+            era: player.getEraData(),
             generalData: this.generalGameData(),
             friendlyInvisibleUnits,
         };

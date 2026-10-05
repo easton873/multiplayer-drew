@@ -42,7 +42,7 @@ export class PlacingState implements RoomState {
                 let tempClient = this.playerClients.get(player.getID());
                 if (!tempClient) return;
                 console.log('emit build success to', player.getID());
-                emitGameBuilt(tempClient, player.era.getEraData());
+                emitGameBuilt(tempClient, player.getEraData());
             });
             const playingState = new PlayingState(this.room, game, this.io, this.playerClients);
             this.room.setState(playingState);

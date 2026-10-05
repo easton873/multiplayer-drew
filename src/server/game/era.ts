@@ -2,7 +2,7 @@ import { EraHeartInfo } from "./heart.js";
 import { Resources } from "./resources.js";
 import { EraData, UnitCreationData } from "../../shared/types.js";
 import { GameUnit } from "./unit/game_unit.js";
-import { ALL_MILITARY_UNITS, ALL_RESOURCE_UNITS, ALL_UNITS } from "./unit/all_units.js";
+import { ALL_MILITARY_UNITS, ALL_RESOURCE_UNITS } from "./unit/all_units.js";
 import { LUMBER_JACK_GAME_UNIT, MASON_GAME_UNIT, MINER_GAME_UNIT, SCULPTOR_GAME_UNIT, ALCHEMIST_GAME_UNIT } from "./unit/resource_unit.js";
 import { QuickAttackerUnit } from "./unit/melee_unit.js";
 import { MissileUnit } from "./unit/missile.js";
@@ -62,20 +62,10 @@ const SIXTH_RADIUS : number = 900;
 export class Era {
     nextEraCost : Resources;
     currEra : EraState = new StartingEra();
-    availableUnits : GameUnit[];
+    eraNumber : number = 0;
 
     constructor() {
         this.prepareNewEra(this.currEra)
-    }
-
-    isValidUnitForEra(name : string) : boolean {
-        let found = false;
-        this.availableUnits.forEach((unit : GameUnit) => {
-            if (unit.getName() == name) {
-                found = true;
-            }
-        });
-        return found;
     }
 
     advanceToNextEra(resources : Resources) : boolean{
@@ -86,6 +76,7 @@ export class Era {
             resources.spend(this.nextEraCost);
             this.currEra = this.currEra.nextState();
             this.prepareNewEra(this.currEra);
+            this.eraNumber++;
             return true;
         }
         return false;
@@ -100,26 +91,14 @@ export class Era {
 
     prepareNewEra(newEra : EraState) {
         this.nextEraCost = newEra.nextEraCost();
-        this.availableUnits = newEra.getAvailableUnits();
     }
 
     getEraData() : EraData {
-        const resourceSet = new Set<GameUnit>(ALL_RESOURCE_UNITS);
-        const resourceCreationData: UnitCreationData[] = [];
-        const militaryCreationData: UnitCreationData[] = [];
-        this.currEra.getAvailableUnits().forEach((unit: GameUnit) => {
-            const data = unit.getUnitCreationInfo().getUnitCreationData();
-            if (resourceSet.has(unit)) {
-                resourceCreationData.push(data);
-            } else {
-                militaryCreationData.push(data);
-            }
-        });
         return {
             eraName: this.currEra.getName(),
             nextEraCost: this.currEra.nextEraCost().getResourceData(),
-            resourceUnits: resourceCreationData,
-            militaryUnits: militaryCreationData,
+            resourceUnits: [],
+            militaryUnits: [],
         }
     }
 
@@ -133,7 +112,6 @@ export interface EraState {
     nextEraCost() : Resources;
     getName() : string;
     getHeart() : EraHeartInfo;
-    getAvailableUnits() : GameUnit[];
     getUnitLimmit() : number;
 }
 
@@ -151,16 +129,6 @@ abstract class BaseEra {
     getUnitLimmit(): number {
         return this.numUnits;
     }
-
-    getUnits(resourceUnit: GameUnit = null, militaryUnit : GameUnit = null): GameUnit[] {
-        let resourceUnits : GameUnit[] = resourceUnit == null ? ALL_RESOURCE_UNITS : ALL_RESOURCE_UNITS.slice(0, ALL_RESOURCE_UNITS.findIndex((unit : GameUnit) => {
-            return unit == resourceUnit;
-        }));
-        let militaryUnits : GameUnit[] = militaryUnit == null ? ALL_MILITARY_UNITS : ALL_MILITARY_UNITS.slice(0, ALL_MILITARY_UNITS.findIndex((unit : GameUnit) => {
-            return unit == militaryUnit;
-        }));
-        return resourceUnits.concat(militaryUnits)
-    }
 }
 
 export class StartingEra extends BaseEra implements EraState {
@@ -172,9 +140,6 @@ export class StartingEra extends BaseEra implements EraState {
     }
     getName(): string {
         return STARTING_ERA_NAME;
-    }
-    getAvailableUnits(): GameUnit[] {
-        return this.getUnits(LUMBER_JACK_GAME_UNIT, QuickAttackerUnit);
     }
 }
 
@@ -188,9 +153,6 @@ class SecondEra extends BaseEra implements EraState {
     getName(): string {
         return SECOND_ERA_NAME;
     }
-    getAvailableUnits(): GameUnit[] {
-        return this.getUnits(MINER_GAME_UNIT, TankUnit);
-    }
 }
 
 class ThirdEra extends BaseEra implements EraState {
@@ -202,9 +164,6 @@ class ThirdEra extends BaseEra implements EraState {
     }
     getName(): string {
         return THIRD_ERA_NAME;
-    }
-    getAvailableUnits(): GameUnit[] {
-        return this.getUnits(MASON_GAME_UNIT, BarracksUnit);
     }
 }
 
@@ -218,9 +177,6 @@ class FourthEra extends BaseEra implements EraState {
     getName(): string {
         return FOURTH_ERA_NAME;
     }
-    getAvailableUnits(): GameUnit[] {
-        return this.getUnits(SCULPTOR_GAME_UNIT, FlareUnit);
-    }
 }
 
 class FifthEra extends BaseEra implements EraState {
@@ -233,9 +189,6 @@ class FifthEra extends BaseEra implements EraState {
     getName(): string {
         return FIFTH_ERA_NAME;
     }
-    getAvailableUnits(): GameUnit[] {
-        return this.getUnits(ALCHEMIST_GAME_UNIT, MissileUnit);
-    }
 }
 
 class SixthEra extends BaseEra implements EraState {
@@ -247,8 +200,5 @@ class SixthEra extends BaseEra implements EraState {
     }
     getName(): string {
         return SIXTH_ERA_NAME;
-    }
-    getAvailableUnits(): GameUnit[] {
-        return this.getUnits();
     }
 }

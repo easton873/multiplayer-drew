@@ -1,5 +1,4 @@
 import { FRAME_RATE } from "../client_handler.js";
-import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
 import { GameUnit } from "../unit/game_unit.js";
 import { GameResourceUnit, LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, ResourceUnit } from "../unit/resource_unit.js";
@@ -55,7 +54,7 @@ export class RandomComputer extends BaseComputerPlayer {
     }
 
     setNextUnit() {
-        this.nextUnit = getRandomIndex(this.era.availableUnits);
+        this.nextUnit = getRandomIndex(this.getAvailableUnits());
         if (this.nextUnit == MERCHANT_GAME_UNIT || this.nextUnit == LUMBER_JACK_GAME_UNIT) {
             return;
         }
@@ -83,7 +82,7 @@ export class RandomComputer extends BaseComputerPlayer {
             MERCHANT_GAME_UNIT
         ];
         let affordable : Resources = this.getAffordableRange();
-        this.era.availableUnits.forEach((gu : GameUnit) => {
+        this.getAvailableUnits().forEach((gu : GameUnit) => {
             if (gu instanceof GameResourceUnit && result.includes && affordable.canAfford(gu.getUnitCreationInfo().getCost())) {
                 result.push(gu);
             }

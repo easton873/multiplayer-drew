@@ -4,7 +4,6 @@ import type { GameRoom } from "../game_room.js";
 import { Game } from "../game.js";
 import { Player } from "../player.js";
 import { Pos } from "../pos.js";
-import { WaitingState } from "./waiting.js";
 import { DefaultEventsMap, Server, Socket } from "socket.io";
 import { emitGameOver, emitGameState, emitSpectatorGameState, emitUpgradeEraSuccess, emitWaitingRoomUpdate } from "../../../shared/client.js";
 
@@ -81,7 +80,7 @@ export class PlayingState implements RoomState {
         let player = this.game.getPlayer(playerId);
         if (!player) return false;
         if (player.attemptUpgradeEra()) {
-            emitUpgradeEraSuccess(client, player.era.getEraData());
+            emitUpgradeEraSuccess(client, player.getEraData());
             return true;
         }
         return false;
@@ -102,7 +101,7 @@ export class PlayingState implements RoomState {
         if (!player) return null;
         return {
             phase: "playing",
-            eraData: player.era.getEraData(),
+            eraData: player.getEraData(),
             gameData: this.game.gameData(playerId),
         };
     }

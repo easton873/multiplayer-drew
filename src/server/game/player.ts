@@ -4,9 +4,10 @@ import { Resources } from "./resources.js";
 import { ObservableUnit, Unit, UnitObserver } from "./unit/unit.js";
 import { Pos } from "./pos.js";
 import { Era } from "./era.js";
-import { PlayerSpecificData, ResourceData } from "../../shared/types.js";
+import { EraData, PlayerSpecificData, ResourceData } from "../../shared/types.js";
 import { GameUnit } from "./unit/game_unit.js";
 import { UNIT_MAP } from "./unit/all_units.js";
+import { Faction, Humans } from "./faction.js";
 
 export class Player implements UnitObserver {
     resources: Resources;
@@ -16,6 +17,7 @@ export class Player implements UnitObserver {
 
     heart: Heart;
     hearts : Hearts = new Hearts();
+    faction : Faction = new Humans();
 
     constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string, startingResources: ResourceData = { gold: 50, wood: 0, stone: 0 }) {
         this.resources = new Resources(startingResources.gold, startingResources.wood, startingResources.stone);
@@ -118,6 +120,17 @@ export class Player implements UnitObserver {
             numUnits: this.unitCount,
             maxUnits: this.era.getUnitLimit()
         }
+    }
+
+    getEraData() : EraData {
+        let data = this.era.getEraData();
+        data.militaryUnits = this.faction.getMilitaryUnitCreationData(this.era.eraNumber);
+        data.resourceUnits = this.faction.getResourceUnitCreationData(this.era.eraNumber);
+        return data;
+    }
+
+    getAvailableUnits() : GameUnit[] {
+        return this.faction.getAllGameUnits(this.era.eraNumber);
     }
 }
 
