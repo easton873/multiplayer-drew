@@ -53,7 +53,7 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
 
     placeUnit(unit : GameUnit, pos : Pos, num : number = 1) : boolean {
         for (let i = 0; i < num; i++) {
-            if (!this.NewUnit(unit.getName(), pos.clone())) {
+            if (!this.NewUnit(unit.getName(), pos.clone())) { // this crashed when a missile took out their entire base at once, specifically the pos.clone()
                 return false;
             }
         }
