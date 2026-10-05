@@ -7,7 +7,8 @@ import { Era } from "./era.js";
 import { EraData, PlayerSpecificData, ResourceData } from "../../shared/types.js";
 import { GameUnit } from "./unit/game_unit.js";
 import { UNIT_MAP } from "./unit/all_units.js";
-import { Faction, Humans } from "./faction.js";
+import { Faction } from "./factions/faction.js";
+import { Humans } from "./factions/humans.js";
 
 export class Player implements UnitObserver {
     resources: Resources;
