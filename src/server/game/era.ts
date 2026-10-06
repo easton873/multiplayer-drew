@@ -1,14 +1,6 @@
 import { EraHeartInfo } from "./heart.js";
 import { Resources } from "./resources.js";
-import { EraData, UnitCreationData } from "../../shared/types.js";
-import { GameUnit } from "./unit/game_unit.js";
-import { ALL_MILITARY_UNITS, ALL_RESOURCE_UNITS } from "./unit/all_units.js";
-import { LUMBER_JACK_GAME_UNIT, MASON_GAME_UNIT, MINER_GAME_UNIT, SCULPTOR_GAME_UNIT, ALCHEMIST_GAME_UNIT } from "./unit/resource_unit.js";
-import { QuickAttackerUnit } from "./unit/melee_unit.js";
-import { MissileUnit } from "./unit/missile.js";
-import { TankUnit } from "./unit/tank.js";
-import { FlareUnit } from "./unit/flare.js";
-import { BarracksUnit } from "./unit/barracks.js";
+import { EraData } from "../../shared/types.js";
 
 export const STARTING_ERA_NAME = "The Starting Era";
 export const SECOND_ERA_NAME = "The Second Era";
@@ -61,10 +53,9 @@ const SIXTH_RADIUS : number = 900;
 
 export class Era {
     nextEraCost : Resources;
-    currEra : EraState = new StartingEra();
-    eraNumber : number = 0;
+    level : number = 0;
 
-    constructor() {
+    constructor(public currEra : EraState = new StartingEra()) {
         this.prepareNewEra(this.currEra)
     }
 
@@ -76,7 +67,7 @@ export class Era {
             resources.spend(this.nextEraCost);
             this.currEra = this.currEra.nextState();
             this.prepareNewEra(this.currEra);
-            this.eraNumber++;
+            this.level++;
             return true;
         }
         return false;

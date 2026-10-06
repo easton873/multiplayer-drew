@@ -13,18 +13,21 @@ import { Humans } from "./factions/humans.js";
 export class Player implements UnitObserver {
     resources: Resources;
     board: Board;
-    era: Era = new Era();
     unitCount = 0;
 
     heart: Heart;
     hearts : Hearts = new Hearts();
-    faction : Faction = new Humans();
+    faction : Faction = new Humans(new Era());
 
     constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string, startingResources: ResourceData = { gold: 50, wood: 0, stone: 0 }) {
         this.resources = new Resources(startingResources.gold, startingResources.wood, startingResources.stone);
         this.board = board;
         this.heart = new Heart(this, pos, this.era.currEra.getHeart());
         this.addHeart(this.heart);
+    }
+
+    get era() : Era {
+        return this.faction.era;
     }
 
     doTurn() {}
@@ -125,13 +128,13 @@ export class Player implements UnitObserver {
 
     getEraData() : EraData {
         let data = this.era.getEraData();
-        data.militaryUnits = this.faction.getMilitaryUnitCreationData(this.era.eraNumber);
-        data.resourceUnits = this.faction.getResourceUnitCreationData(this.era.eraNumber);
+        data.militaryUnits = this.faction.getMilitaryUnitCreationData();
+        data.resourceUnits = this.faction.getResourceUnitCreationData();
         return data;
     }
 
     getAvailableUnits() : GameUnit[] {
-        return this.faction.getAllGameUnits(this.era.eraNumber);
+        return this.faction.getAllGameUnits();
     }
 }
 
