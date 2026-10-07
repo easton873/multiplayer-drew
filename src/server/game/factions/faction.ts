@@ -1,5 +1,6 @@
 import { UnitCreationData } from '../../../shared/types.js';
 import { Era, EraInfo } from '../era.js';
+import { Resources } from '../resources.js';
 import { GameUnit } from "../unit/game_unit.js";
 
 export class EraUnit {
@@ -20,6 +21,10 @@ export abstract class Faction {
 
     get era() : Era {
         return this._era;
+    }
+
+    attemptUpgradeEra(resources : Resources) : boolean {
+        return this.era.advanceToNextEra(resources);
     }
 
     abstract getEraInfo() : EraInfo[];

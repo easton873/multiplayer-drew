@@ -103,7 +103,7 @@ export class Player implements UnitObserver {
     }
 
     attemptUpgradeEra(): boolean {
-        if (this.era.advanceToNextEra(this.resources) && this.hearts != null) {
+        if (this.faction.attemptUpgradeEra(this.resources) && this.hearts != null) {
             this.heart.updateHeart(this.era.getHeart());
             return true;
         }

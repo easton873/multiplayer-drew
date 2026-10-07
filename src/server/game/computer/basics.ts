@@ -100,7 +100,7 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
 
     advanceEra() {
         if (this.era.canAffordNextEra(this.resources)) {
-            this.era.advanceToNextEra(this.resources);
+            this.attemptUpgradeEra();
             this.rebuildTerritory();
         }
     }

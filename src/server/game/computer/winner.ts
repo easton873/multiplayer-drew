@@ -22,7 +22,7 @@ export class WinnerComputerPlayer extends BaseComputerPlayer {
         this.maintainCountOfUnits(MERCHANT_GAME_UNIT, 25);
         this.maintainCountOfUnits(LUMBER_JACK_GAME_UNIT, 15);
         this.maintainCountOfUnits(RandomMoverUnit, 10);
-        this.era.advanceToNextEra(this.resources);
+        this.attemptUpgradeEra();
     }
     thirdEra() {
         this.maintainCountOfUnits(CARPENTER_GAME_UNIT, 20);
@@ -32,7 +32,7 @@ export class WinnerComputerPlayer extends BaseComputerPlayer {
         this.maintainCountOfUnits(GorillaWarfareUnit, 2);
         this.maintainCountOfUnits(new SummonerUnit(), 3);
         this.maintainCountOfUnits(FireballThrowerUnit, 1);
-        this.era.advanceToNextEra(this.resources);
+        this.attemptUpgradeEra();
     }
     fourthEra() {
         this.maintainCountOfUnits(SCAVENGER_GAME_UNIT, 30);
@@ -52,12 +52,4 @@ export class WinnerComputerPlayer extends BaseComputerPlayer {
     maintainResourceUnit(unit: GameUnit, targetCount: number) {
 
     }
-
-    // advanceToNextEra(savings : Resources, newSavings : Resources) {
-    //     savings.add(this.era.nextEraCost);
-    //     if (this.resources.canAfford(savings)) {
-    //         this.era.advanceToNextEra(this.resources);
-    //         this.savings = newSavings;
-    //     }
-    // }
 }

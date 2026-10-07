@@ -29,7 +29,7 @@ export class BasicComputer extends PlayerProxy {
         }
 
         if (this.era.canAffordNextEra(this.resources)) {
-            this.era.advanceToNextEra(this.resources);
+            this.attemptUpgradeEra();
         }
     }
 
