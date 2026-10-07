@@ -5,13 +5,20 @@ import { Unit, UnitWithCounter } from "../src/server/game/unit/unit.js";
 import { Pos } from "../src/server/game/pos.js";
 import { MINER_GAME_UNIT, MINER_SPEED } from "../src/server/game/unit/resource_unit.js";
 import { Resources } from "../src/server/game/resources.js";
-import { StartingEra } from "../src/server/game/era.js";
+import { EraInfo } from "../src/server/game/era.js";
+import { Humans } from "../src/server/game/factions/humans.js";
 import { ALL_UNITS } from "../src/server/game/unit/all_units.js";
 import { GameUnit } from "../src/server/game/unit/game_unit.js";
 import { SoldierUnit } from "../src/server/game/unit/melee_unit.js";
 import { Counter } from "../src/server/game/move/counter.js";
-import { EraHeartInfo } from "../src/server/game/heart.js";
 import { TargetChasingUnit } from "../src/server/game/unit/combat/combat.js";
+
+// Humans units with a single era whose limits are set by the test
+class TestFaction extends Humans {
+    getEraInfo(): EraInfo[] {
+        return [new EraInfo("test", new Resources(), new Resources(), 10, 10, 1, 0)];
+    }
+}
 
 describe('Unit Test', () => {
     it ('spawn all units', () => {
@@ -106,30 +113,23 @@ describe('Unit Test', () => {
     });
 
     it('unit placement restriction test', () => {
-        let unitLimit = 1;
-        let radius = 0;
-        class testEra extends StartingEra {
-            getUnitLimmit(): number {
-                return unitLimit;
-            }
-        }
         let board : Board = new Board(10, 10);
         let player : Player = new PlayerProxy(0, new Pos(0, 0), board, "0", "", "");
-        player.era.currEra = new testEra();
-
-        let heartInfo : EraHeartInfo = player.era.currEra.getHeart();
-        heartInfo.radius = 0;
-        player.heart.updateHeart(heartInfo);
+        player.faction = new TestFaction();
+        let testEra : EraInfo = player.era.getCurrEra();
+        testEra.unitLimit = 1;
+        testEra.radius = 0;
+        player.heart.updateHeart(player.era.getHeart());
 
         // range test
         player.resources.add(SoldierUnit.getUnitCreationInfo().getCost());
         assert.strictEqual(board.entities.length, 1);
         player.NewUnit(SoldierUnit.name, new Pos(1, 0));
         assert.strictEqual(board.entities.length, 1);
-        
-        heartInfo.radius = 1;
-        player.heart.updateHeart(heartInfo);
-        
+
+        testEra.radius = 1;
+        player.heart.updateHeart(player.era.getHeart());
+
         player.NewUnit(SoldierUnit.name, new Pos(1, 0));
         assert.strictEqual(board.entities.length, 2);
 
@@ -138,27 +138,21 @@ describe('Unit Test', () => {
         assert.strictEqual(board.entities.length, 2);
         player.NewUnit(SoldierUnit.name, new Pos(0, 0));
         assert.strictEqual(board.entities.length, 2);
-        unitLimit++;
+        testEra.unitLimit++;
         player.NewUnit(SoldierUnit.name, new Pos(0, 0));
         assert.strictEqual(board.entities.length, 3);
     });
 
     it('no observers on death/unit count', () => {
-        let unitLimit = 5;
-        let radius = 25;
-        class testEra extends StartingEra {
-            getRadius() : number {
-                return radius;
-            }
-            getUnitLimmit(): number {
-                return unitLimit;
-            }
-        }
         let board : Board = new Board(10, 10);
         let player : Player = new PlayerProxy(0, new Pos(0, 0), board, "0", "", "");
         let p2 : Player = new PlayerProxy(0, new Pos(0, 0), board, "1", "", "");
-        player.era.currEra = new testEra();
-        p2.era.currEra = new testEra();
+        [player, p2].forEach((p : Player) => {
+            p.faction = new TestFaction();
+            p.era.getCurrEra().unitLimit = 5;
+            p.era.getCurrEra().radius = 25;
+            p.heart.updateHeart(p.era.getHeart());
+        });
         player.resources.add(SoldierUnit.getUnitCreationInfo().getCost());
         assert.strictEqual(board.entities.length, 2);
         player.NewUnit(SoldierUnit.name, new Pos(1, 0));

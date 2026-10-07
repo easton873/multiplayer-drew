@@ -17,12 +17,12 @@ export class Player implements UnitObserver {
 
     heart: Heart;
     hearts : Hearts = new Hearts();
-    faction : Faction = new Humans(new Era());
+    faction : Faction = new Humans();
 
     constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string, startingResources: ResourceData = { gold: 50, wood: 0, stone: 0 }) {
         this.resources = new Resources(startingResources.gold, startingResources.wood, startingResources.stone);
         this.board = board;
-        this.heart = new Heart(this, pos, this.era.currEra.getHeart());
+        this.heart = new Heart(this, pos, this.era.getHeart());
         this.addHeart(this.heart);
     }
 
@@ -104,7 +104,7 @@ export class Player implements UnitObserver {
 
     attemptUpgradeEra(): boolean {
         if (this.era.advanceToNextEra(this.resources) && this.hearts != null) {
-            this.heart.updateHeart(this.era.currEra.getHeart());
+            this.heart.updateHeart(this.era.getHeart());
             return true;
         }
         return false

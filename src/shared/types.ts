@@ -35,6 +35,7 @@ export interface PlayerHeartData {
 
 export interface EraData {
   eraName : string
+  hasNextEra : boolean
   nextEraCost : ResourceData
   resourceUnits : UnitCreationData[]
   militaryUnits : UnitCreationData[]

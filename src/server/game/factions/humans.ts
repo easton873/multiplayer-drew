@@ -31,8 +31,29 @@ import { FlareUnit } from "../unit/flare.js";
 import { CounterMissileUnit, CounterCounterMissileUnit } from "../unit/counter_missile.js";
 import { UnitMissileUnit, BallisticMissileUnit, MissileUnit } from "../unit/missile.js";
 import { EraUnit, Faction } from "./faction.js";
+import { EraInfo } from "../era.js";
+import { Resources } from "../resources.js";
+
+export const STARTING_ERA_NAME = "The Starting Era";
+export const SECOND_ERA_NAME = "The Second Era";
+export const THIRD_ERA_NAME = "Third Era";
+export const FOURTH_ERA_NAME = "Fourth Era";
+export const FIFTH_ERA_NAME = "Fifth Era";
+export const SIXTH_ERA_NAME = "Sixth Era";
 
 export class Humans extends Faction {
+    getEraInfo(): EraInfo[] {
+        // cost is what it takes to advance *into* that era
+        //            name                  cost                              resources                   speed hp   units radius
+        return [
+            new EraInfo(STARTING_ERA_NAME, new Resources(),                  new Resources(1, 0, 0),     10,   10,  25,   25),
+            new EraInfo(SECOND_ERA_NAME,   new Resources(400, 0, 0),         new Resources(2, 0, 0),     10,   20,  50,   49),
+            new EraInfo(THIRD_ERA_NAME,        new Resources(1000, 300, 0),      new Resources(3, 1, 0),     10,   30,  100,  100),
+            new EraInfo(FOURTH_ERA_NAME,       new Resources(3000, 1000, 300),   new Resources(3, 1, 1),     10,   45,  200,  225),
+            new EraInfo(FIFTH_ERA_NAME,        new Resources(5000, 3000, 1500),  new Resources(5, 3, 2),     10,   70,  400,  400),
+            new EraInfo(SIXTH_ERA_NAME,        new Resources(8000, 5000, 4000),  new Resources(10, 10, 10),  10,   100, 800,  900),
+        ];
+    }
     getResourceUnits(): EraUnit[] {
         return [
             new EraUnit(MERCHANT_GAME_UNIT, 0),

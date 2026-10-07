@@ -125,6 +125,15 @@ html, body {
     inset 2px 2px 0 rgba(255, 255, 255, 0.15);
 }
 
+.pixel-btn:disabled {
+  background: var(--bg-medium);
+  color: var(--text-primary);
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+}
+
 .pixel-btn--secondary {
   background: var(--bg-medium);
   border: 2px solid var(--border-purple);

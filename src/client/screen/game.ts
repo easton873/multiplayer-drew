@@ -637,7 +637,9 @@ export class GameScreen {
       if (ogVal) this.unitSelect.value = ogVal;
       this.unitSelect.dispatchEvent(new Event('change', { bubbles: true }));
       this.eraNameLabel.innerText = 'Era: ' + era.eraName;
-      this.nextEraLabel.innerText = 'Next Era Cost:\n' + this.formatResources(era.nextEraCost);
+      this.nextEraLabel.innerText = era.hasNextEra ? 'Next Era Cost:\n' + this.formatResources(era.nextEraCost) : '';
+      this.upgradeButton.disabled = !era.hasNextEra;
+      this.upgradeButton.innerText = era.hasNextEra ? 'Upgrade Era' : 'Max Era';
       this.restoreHotkeys();
       this.updateHotkeyLabels();
       this.updateUnitPickerButton();

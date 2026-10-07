@@ -1,7 +1,7 @@
 import { ResourceData } from "../../shared/types.js";
 
 export class Resources {
-    constructor(private gold : number, private wood : number, private stone : number) {}
+    constructor(private gold : number = 0, private wood : number = 0, private stone : number = 0) {}
 
     add(other : Resources) {
         this.gold += other.gold;

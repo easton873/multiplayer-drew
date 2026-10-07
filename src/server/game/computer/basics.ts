@@ -1,5 +1,4 @@
 import { Board } from "../board.js";
-import { FIFTH_ERA_NAME, FOURTH_ERA_NAME, SECOND_ERA_NAME, SIXTH_ERA_NAME, STARTING_ERA_NAME, THIRD_ERA_NAME } from "../era.js";
 import { PlayerProxy } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
@@ -7,6 +6,7 @@ import { ResourceData } from "../../../shared/types.js";
 import { GameUnit } from "../unit/game_unit.js";
 import { Unit } from "../unit/unit.js";
 import { getRandomIndex } from "../utils.js";
+import { FIFTH_ERA_NAME, FOURTH_ERA_NAME, SECOND_ERA_NAME, SIXTH_ERA_NAME, STARTING_ERA_NAME, THIRD_ERA_NAME } from "../factions/humans.js";
 
 export abstract class BaseComputerPlayer extends PlayerProxy {
     protected territory : Pos[] = [];

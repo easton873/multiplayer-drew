@@ -1,5 +1,5 @@
 import { UnitCreationData } from '../../../shared/types.js';
-import { Era } from '../era.js';
+import { Era, EraInfo } from '../era.js';
 import { GameUnit } from "../unit/game_unit.js";
 
 export class EraUnit {
@@ -13,12 +13,16 @@ export class EraUnit {
 }
 
 export abstract class Faction {
-    constructor(private _era : Era){}
+    private _era : Era
+    constructor(){
+        this._era = new Era(this.getEraInfo());
+    }
 
     get era() : Era {
         return this._era;
     }
 
+    abstract getEraInfo() : EraInfo[];
     abstract getMilitaryUnits() : EraUnit[];
     abstract getResourceUnits() : EraUnit[];
     getMilitaryUnitCreationData() : UnitCreationData[] {
