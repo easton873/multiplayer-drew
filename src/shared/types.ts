@@ -38,6 +38,7 @@ export interface EraData {
   eraName : string
   hasNextEra : boolean
   nextEraCost : ResourceData
+  availableResources : ResourceType[]
   resourceUnits : UnitCreationData[]
   militaryUnits : UnitCreationData[]
 }

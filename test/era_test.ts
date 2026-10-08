@@ -6,14 +6,15 @@ import { Player, PlayerProxy } from "../src/server/game/player.js";
 import { Pos } from "../src/server/game/pos.js";
 import { Counter } from "../src/server/game/move/counter.js";
 import { EraUnit, Faction } from "../src/server/game/factions/faction.js";
+import { GOLD_RESOURCE, STONE_RESOURCE, WOOD_RESOURCE } from "../src/shared/resource_types.js";
 
 const FIRST_COST = new Resources({ gold: 100 });
 const SECOND_COST = new Resources({ wood: 50 });
 
 const TEST_ERAS = [
-    new EraInfo("first", new Resources(), new Resources({ wood: 1 }), 10, 1, 5, 1),
-    new EraInfo("second", FIRST_COST, new Resources({ stone: 1 }), 10, 2, 10, 2),
-    new EraInfo("third", SECOND_COST, new Resources({ gold: 1, wood: 1, stone: 1 }), 10, 3, 15, 3),
+    new EraInfo("first", new Resources(), new Resources({ wood: 1 }), 10, 1, 5, 1, [WOOD_RESOURCE]),
+    new EraInfo("second", FIRST_COST, new Resources({ stone: 1 }), 10, 2, 10, 2, [WOOD_RESOURCE, STONE_RESOURCE]),
+    new EraInfo("third", SECOND_COST, new Resources({ gold: 1, wood: 1, stone: 1 }), 10, 3, 15, 3, [GOLD_RESOURCE, WOOD_RESOURCE, STONE_RESOURCE]),
 ];
 
 class TestFaction extends Faction {

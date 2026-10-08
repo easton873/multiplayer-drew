@@ -6,6 +6,7 @@ import { Pos } from "../src/server/game/pos.js";
 import { MINER_GAME_UNIT, MINER_SPEED } from "../src/server/game/unit/resource_unit.js";
 import { Resources } from "../src/server/game/resources.js";
 import { EraInfo } from "../src/server/game/era.js";
+import { GOLD_RESOURCE } from "../src/shared/resource_types.js";
 import { Humans } from "../src/server/game/factions/humans.js";
 import { ALL_UNITS } from "../src/server/game/unit/all_units.js";
 import { GameUnit } from "../src/server/game/unit/game_unit.js";
@@ -16,7 +17,7 @@ import { TargetChasingUnit } from "../src/server/game/unit/combat/combat.js";
 // Humans units with a single era whose limits are set by the test
 class TestFaction extends Humans {
     getEraInfo(): EraInfo[] {
-        return [new EraInfo("test", new Resources(), new Resources(), 10, 10, 1, 0)];
+        return [new EraInfo("test", new Resources(), new Resources(), 10, 10, 1, 0, [GOLD_RESOURCE])];
     }
 }
 

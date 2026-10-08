@@ -1,7 +1,7 @@
 import { GameSetupData, LoadData, PlayerSetupData, UnitLoadData } from "../../shared/bulider";
 import { DEFAULT_BG_IMAGE_FILE, EraData, GameData, GeneralGameData, GeneralHeartData, PlayerHeartData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
 import { emitDeleteUnits, emitSpawnUnit } from "../../shared/routes";
-import { RESOURCE_TYPES } from "../../shared/resource_types";
+import { RESOURCE_TYPES, ResourceType } from "../../shared/resource_types";
 import { RESOURCE_EMOJI } from "../resources";
 import { removeOptions } from "../../client/main";
 
@@ -70,6 +70,7 @@ export class GameScreen {
     private hotKeys : Map<string, UnitCreationData> = new Map<string, UnitCreationData>();
     private resourceUnitsList: UnitCreationData[] = [];
     private militaryUnitsList: UnitCreationData[] = [];
+    private availableResources: ResourceType[] = [...RESOURCE_TYPES];
     private activePickerButton: HTMLButtonElement | null = null;
     private activePickerUnits: UnitCreationData[] = [];
 
@@ -84,7 +85,7 @@ export class GameScreen {
     constructor(private socket : any) {
       this.unitSelect.onchange = () => {
         let cost = this.getUnitSelect().cost
-        this.unitCostLabel.innerText = this.formatResources(cost);
+        this.unitCostLabel.innerText = this.formatCost(cost);
         this.unitInfoTooltip.textContent = this.getUnitSelect().blurb;
       }
 
@@ -369,7 +370,7 @@ export class GameScreen {
     }
 
     drawGame(data : GameData) {
-      this.resourceLabel.innerText = this.formatResources(data.resources);
+      this.resourceLabel.innerText = this.formatResources(data.resources, this.availableResources);
       this.setHp(data);
       this.setUnitCount(data);
       this.drawGeneralGameData(data.generalData, data.friendlyInvisibleUnits);
@@ -634,12 +635,13 @@ export class GameScreen {
     upgradeEra(era : EraData) {
       this.resourceUnitsList = era.resourceUnits;
       this.militaryUnitsList = era.militaryUnits;
+      this.availableResources = era.availableResources;
       const ogVal = this.unitSelect.value;
       this.fillSelect(this.unitSelect, [...era.resourceUnits, ...era.militaryUnits]);
       if (ogVal) this.unitSelect.value = ogVal;
       this.unitSelect.dispatchEvent(new Event('change', { bubbles: true }));
       this.eraNameLabel.innerText = 'Era: ' + era.eraName;
-      this.nextEraLabel.innerText = era.hasNextEra ? 'Next Era Cost:\n' + this.formatResources(era.nextEraCost) : '';
+      this.nextEraLabel.innerText = era.hasNextEra ? 'Next Era Cost:\n' + this.formatCost(era.nextEraCost) : '';
       this.upgradeButton.disabled = !era.hasNextEra;
       this.upgradeButton.innerText = era.hasNextEra ? 'Upgrade Era' : 'Max Era';
       this.restoreHotkeys();
@@ -651,8 +653,12 @@ export class GameScreen {
       return JSON.parse(this.unitSelect.value);
     }
 
-    formatResources(resources : ResourceData) : string {
-      return RESOURCE_TYPES.map(type => `${RESOURCE_EMOJI[type]}${resources[type]}`).join("\n");
+    formatResources(resources : ResourceData, types : readonly ResourceType[] = RESOURCE_TYPES) : string {
+      return RESOURCE_TYPES.filter(type => types.includes(type)).map(type => `${RESOURCE_EMOJI[type]}${resources[type]}`).join("\n");
+    }
+
+    formatCost(cost : ResourceData) : string {
+      return RESOURCE_TYPES.filter(type => cost[type] > 0).map(type => `${RESOURCE_EMOJI[type]}${cost[type]}`).join("\n");
     }
 
     handleKeydown(event: KeyboardEvent): void {

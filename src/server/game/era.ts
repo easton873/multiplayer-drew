@@ -1,6 +1,7 @@
 import { EraHeartInfo } from "./heart.js";
 import { Resources } from "./resources.js";
 import { EraData } from "../../shared/types.js";
+import { ResourceType } from "../../shared/resource_types.js";
 
 export class EraInfo {
     constructor(
@@ -11,10 +12,11 @@ export class EraInfo {
         public hp : number,
         public unitLimit : number,
         public radius : number,
+        public availableResources : ResourceType[]
     ){}
 }
 
-export const NO_MORE_ERAS = new EraInfo("", new Resources(), new Resources(), 0, 0, 0, 0);
+export const NO_MORE_ERAS = new EraInfo("", new Resources(), new Resources(), 0, 0, 0, 0, []);
 
 export class Era {
     level : number = 0;
@@ -64,6 +66,7 @@ export class Era {
             eraName: currEra.name,
             hasNextEra: nextEra != NO_MORE_ERAS,
             nextEraCost: nextEra.cost.getResourceData(),
+            availableResources: currEra.availableResources,
             resourceUnits: [],
             militaryUnits: [],
         }

@@ -33,6 +33,7 @@ import { UnitMissileUnit, BallisticMissileUnit, MissileUnit } from "../unit/miss
 import { EraUnit, Faction } from "./faction.js";
 import { EraInfo } from "../era.js";
 import { Resources } from "../resources.js";
+import { GOLD_RESOURCE, STONE_RESOURCE, WOOD_RESOURCE } from "../../../shared/resource_types.js";
 
 export const STARTING_ERA_NAME = "The Starting Era";
 export const SECOND_ERA_NAME = "The Second Era";
@@ -46,12 +47,12 @@ export class Humans extends Faction {
         // cost is what it takes to advance *into* that era
         //            name                  cost                              resources                   speed hp   units radius
         return [
-            new EraInfo(STARTING_ERA_NAME, new Resources(),                  new Resources({ gold: 1 }),     10,   10,  25,   25),
-            new EraInfo(SECOND_ERA_NAME,   new Resources({ gold: 400 }),         new Resources({ gold: 2 }),     10,   20,  50,   49),
-            new EraInfo(THIRD_ERA_NAME,        new Resources({ gold: 1000, wood: 300 }),      new Resources({ gold: 3, wood: 1 }),     10,   30,  100,  100),
-            new EraInfo(FOURTH_ERA_NAME,       new Resources({ gold: 3000, wood: 1000, stone: 300 }),   new Resources({ gold: 3, wood: 1, stone: 1 }),     10,   45,  200,  225),
-            new EraInfo(FIFTH_ERA_NAME,        new Resources({ gold: 5000, wood: 3000, stone: 1500 }),  new Resources({ gold: 5, wood: 3, stone: 2 }),     10,   70,  400,  400),
-            new EraInfo(SIXTH_ERA_NAME,        new Resources({ gold: 8000, wood: 5000, stone: 4000 }),  new Resources({ gold: 10, wood: 10, stone: 10 }),  10,   100, 800,  900),
+            new EraInfo(STARTING_ERA_NAME, new Resources(),                  new Resources({ gold: 1 }),     10,   10,  25,   25, [GOLD_RESOURCE]),
+            new EraInfo(SECOND_ERA_NAME,   new Resources({ gold: 400 }),         new Resources({ gold: 2 }),     10,   20,  50,   49, [GOLD_RESOURCE, WOOD_RESOURCE]),
+            new EraInfo(THIRD_ERA_NAME,        new Resources({ gold: 1000, wood: 300 }),      new Resources({ gold: 3, wood: 1 }),     10,   30,  100,  100, [GOLD_RESOURCE, WOOD_RESOURCE, STONE_RESOURCE]),
+            new EraInfo(FOURTH_ERA_NAME,       new Resources({ gold: 3000, wood: 1000, stone: 300 }),   new Resources({ gold: 3, wood: 1, stone: 1 }),     10,   45,  200,  225, [GOLD_RESOURCE, WOOD_RESOURCE, STONE_RESOURCE]),
+            new EraInfo(FIFTH_ERA_NAME,        new Resources({ gold: 5000, wood: 3000, stone: 1500 }),  new Resources({ gold: 5, wood: 3, stone: 2 }),     10,   70,  400,  400, [GOLD_RESOURCE, WOOD_RESOURCE, STONE_RESOURCE]),
+            new EraInfo(SIXTH_ERA_NAME,        new Resources({ gold: 8000, wood: 5000, stone: 4000 }),  new Resources({ gold: 10, wood: 10, stone: 10 }),  10,   100, 800,  900, [GOLD_RESOURCE, WOOD_RESOURCE, STONE_RESOURCE]),
         ];
     }
     getResourceUnits(): EraUnit[] {
