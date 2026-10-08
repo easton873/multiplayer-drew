@@ -20,7 +20,7 @@ export class Player implements UnitObserver {
     faction : Faction = new Humans();
 
     constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string, startingResources: ResourceData = { gold: 50, wood: 0, stone: 0 }) {
-        this.resources = new Resources(startingResources.gold, startingResources.wood, startingResources.stone);
+        this.resources = new Resources({ gold: startingResources.gold, wood: startingResources.wood, stone: startingResources.stone });
         this.board = board;
         this.heart = new Heart(this, pos, this.era.getHeart());
         this.addHeart(this.heart);

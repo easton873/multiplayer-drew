@@ -13,7 +13,7 @@ export class Turret extends Defense {
 
 export class TurretUnit extends GameUnit {
     static NAME = "Turret";
-    static COST = new Resources(200, 50, 0);
+    static COST = new Resources({ gold: 200, wood: 50 });
     static SPEED = 8;
     static DAMAGE = 1;
     static HP = 5;

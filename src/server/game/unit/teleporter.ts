@@ -79,4 +79,4 @@ class teleporterUnit extends GameUnit {
     }
 }
 
-export const TeleporterUnit = new teleporterUnit("Teleporter", new Resources(800, 300, 1000), 17, 0, "#ee70f5", "Teleports everybody by him to another place")
+export const TeleporterUnit = new teleporterUnit("Teleporter", new Resources({ gold: 800, wood: 300, stone: 1000 }), 17, 0, "#ee70f5", "Teleports everybody by him to another place")

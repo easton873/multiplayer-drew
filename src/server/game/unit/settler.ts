@@ -57,13 +57,13 @@ class settlerUnit extends GameUnit {
 }
 
 export const SettlerUnit : settlerUnit = new settlerUnit(
-    "Settler", new Resources(500, 125, 0), 10, 10,  "#7d560d", 
+    "Settler", new Resources({ gold: 500, wood: 125 }), 10, 10,  "#7d560d", 
     "Moves up to 50 blocks away from your heart and spawns a new heart", 
-    50, 10, 30, new Resources(1, 0, 0), 25
+    50, 10, 30, new Resources({ gold: 1 }), 25
 );
 
 export const CityBuilderUnit : settlerUnit = new settlerUnit(
-    "City Builder", new Resources(1500, 900, 500), 40, 5,  "#171511", 
+    "City Builder", new Resources({ gold: 1500, wood: 900, stone: 500 }), 40, 5,  "#171511", 
     "Moves up to 100 blocks away from your heart and spawns a new heart", 
-    100, 100, 30, new Resources(10, 10, 10), 100
+    100, 100, 30, new Resources({ gold: 10, wood: 10, stone: 10 }), 100
 );

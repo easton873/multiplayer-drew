@@ -32,7 +32,7 @@ export class Barracks extends Spawner {
 
 export class barracksUnit extends GameUnit {
     static NAME = "Barracks";
-    static COST = new Resources(500, 250, 50);
+    static COST = new Resources({ gold: 500, wood: 250, stone: 50 });
     static SPEED = 100;
     static HP = 20;
     static COLOR = "#504337";

@@ -24,4 +24,4 @@ class vampireUnit extends MeleeUnit {
     }
 }
 
-export const VampireUnit : vampireUnit = new vampireUnit("Vampire", new Resources(400, 0, 25), 3, 6, 3, 20, "#111111", "Sucks life from its victims to heal itself as it fights");
+export const VampireUnit : vampireUnit = new vampireUnit("Vampire", new Resources({ gold: 400, stone: 25 }), 3, 6, 3, 20, "#111111", "Sucks life from its victims to heal itself as it fights");

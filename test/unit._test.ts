@@ -107,7 +107,7 @@ describe('Unit Test', () => {
         let startingResrouces = player.resources;
         assert.strictEqual(unit.moveCounter.remaining, MINER_SPEED);
         board.moveUnit(unit);
-        startingResrouces.add(new Resources(0, 0, 1));
+        startingResrouces.add(new Resources({ stone: 1 }));
         assert.strictEqual(startingResrouces.equals(player.resources), true);
         assert.strictEqual(unit.moveCounter.remaining, MINER_SPEED - 1);
     });

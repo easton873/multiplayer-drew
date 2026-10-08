@@ -38,4 +38,4 @@ class kamakazeUnit extends GameUnit {
     }
 }
 
-export const KamakazeUnit : kamakazeUnit = new kamakazeUnit("Kamakaze", new Resources(50, 30, 0), 9, 10, 3, "#DD0000", "Explodes once adjacent to its target, hurting all units around it for 4 blocks with 10 points of damage", 16);
+export const KamakazeUnit : kamakazeUnit = new kamakazeUnit("Kamakaze", new Resources({ gold: 50, wood: 30 }), 9, 10, 3, "#DD0000", "Explodes once adjacent to its target, hurting all units around it for 4 blocks with 10 points of damage", 16);

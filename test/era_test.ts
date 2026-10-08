@@ -7,13 +7,13 @@ import { Pos } from "../src/server/game/pos.js";
 import { Counter } from "../src/server/game/move/counter.js";
 import { EraUnit, Faction } from "../src/server/game/factions/faction.js";
 
-const FIRST_COST = new Resources(100, 0, 0);
-const SECOND_COST = new Resources(0, 50, 0);
+const FIRST_COST = new Resources({ gold: 100 });
+const SECOND_COST = new Resources({ wood: 50 });
 
 const TEST_ERAS = [
-    new EraInfo("first", new Resources(), new Resources(0, 1, 0), 10, 1, 5, 1),
-    new EraInfo("second", FIRST_COST, new Resources(0, 0, 1), 10, 2, 10, 2),
-    new EraInfo("third", SECOND_COST, new Resources(1, 1, 1), 10, 3, 15, 3),
+    new EraInfo("first", new Resources(), new Resources({ wood: 1 }), 10, 1, 5, 1),
+    new EraInfo("second", FIRST_COST, new Resources({ stone: 1 }), 10, 2, 10, 2),
+    new EraInfo("third", SECOND_COST, new Resources({ gold: 1, wood: 1, stone: 1 }), 10, 3, 15, 3),
 ];
 
 class TestFaction extends Faction {
@@ -39,29 +39,29 @@ describe('Era Test', () => {
 
     it('cannot advance without enough resources', () => {
         let era = new Era(TEST_ERAS);
-        let resources = new Resources(99, 0, 0);
+        let resources = new Resources({ gold: 99 });
         assert.strictEqual(era.canAffordNextEra(resources), false);
         assert.strictEqual(era.advanceToNextEra(resources), false);
         assert.strictEqual(era.level, 0);
-        assert.strictEqual(resources.equals(new Resources(99, 0, 0)), true);
+        assert.strictEqual(resources.equals(new Resources({ gold: 99 })), true);
     });
 
     it('advancing spends the cost of the next era', () => {
         let era = new Era(TEST_ERAS);
-        let resources = new Resources(105, 0, 0);
+        let resources = new Resources({ gold: 105 });
         assert.strictEqual(era.canAffordNextEra(resources), true);
         assert.strictEqual(era.advanceToNextEra(resources), true);
         assert.strictEqual(era.level, 1);
         assert.strictEqual(era.getCurrEra().name, "second");
         assert.strictEqual(era.getUnitLimit(), 10);
-        assert.strictEqual(resources.equals(new Resources(5, 0, 0)), true);
+        assert.strictEqual(resources.equals(new Resources({ gold: 5 })), true);
         // the next advance costs the third era's price, not the second's
         assert.strictEqual(era.canAffordNextEra(resources), false);
     });
 
     it('cannot advance past the last era', () => {
         let era = new Era(TEST_ERAS);
-        let resources = new Resources(1000, 1000, 1000);
+        let resources = new Resources({ gold: 1000, wood: 1000, stone: 1000 });
         assert.strictEqual(era.advanceToNextEra(resources), true);
         assert.strictEqual(era.advanceToNextEra(resources), true);
         let before = resources.copy();

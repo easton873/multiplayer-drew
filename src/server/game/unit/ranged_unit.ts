@@ -47,7 +47,7 @@ export class RangedUnit extends GameUnit {
 
 class fireballThrowerUnit extends RangedUnit {
     constructor() {
-        super("Fireball Thrower", new Resources(75, 5, 35), 10, 10, 3, 3, "#cc7a00", "Throws fireballs dealing 3 damage to anything adjacent to its target", 16);
+        super("Fireball Thrower", new Resources({ gold: 75, wood: 5, stone: 35 }), 10, 10, 3, 3, "#cc7a00", "Throws fireballs dealing 3 damage to anything adjacent to its target", 16);
     }
     construct(player: Player, pos: Pos): Unit {
         return new class extends Ranged {
@@ -58,6 +58,6 @@ class fireballThrowerUnit extends RangedUnit {
     }
 }
 
-export const ArcherUnit : RangedUnit = new RangedUnit("Archer", new Resources(40, 0, 0), 10, 10, 3, 1, "#66ffff", "With 1 HP, shoots its target from 4 blocks away for 1 damage", 16);
-export const SniperUnit : RangedUnit = new RangedUnit("Sniper", new Resources(30, 250, 60), 60, 30, 20, 3, "#1b6026", "Shoots really far and slow", 400);
+export const ArcherUnit : RangedUnit = new RangedUnit("Archer", new Resources({ gold: 40 }), 10, 10, 3, 1, "#66ffff", "With 1 HP, shoots its target from 4 blocks away for 1 damage", 16);
+export const SniperUnit : RangedUnit = new RangedUnit("Sniper", new Resources({ gold: 30, wood: 250, stone: 60 }), 60, 30, 20, 3, "#1b6026", "Shoots really far and slow", 400);
 export const FireballThrowerUnit : fireballThrowerUnit = new fireballThrowerUnit();

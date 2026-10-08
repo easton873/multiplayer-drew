@@ -12,9 +12,9 @@ describe('Resource Unit Tests', () => {
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let unit : UnitWithCounter = MERCHANT_GAME_UNIT.construct(player, new Pos(0, 0)) as UnitWithCounter;
 
-        player.resources = new Resources(0, 0, 0);
+        player.resources = new Resources();
         let r = player.resources.copy();
-        r.add(new Resources(1, 0, 0));
+        r.add(new Resources({ gold: 1 }));
         
         unit.doMove(board);
         assert.strictEqual(player.resources.equals(r), true);
@@ -25,9 +25,9 @@ describe('Resource Unit Tests', () => {
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let unit : UnitWithCounter = LUMBER_JACK_GAME_UNIT.construct(player, new Pos(0, 0)) as UnitWithCounter;
 
-        player.resources = new Resources(0, 0, 0);
+        player.resources = new Resources();
         let r = player.resources.copy();
-        r.add(new Resources(0, 1, 0));
+        r.add(new Resources({ wood: 1 }));
         
         unit.doMove(board);
         assert.strictEqual(player.resources.equals(r), true);
@@ -38,9 +38,9 @@ describe('Resource Unit Tests', () => {
         let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let unit : UnitWithCounter = MINER_GAME_UNIT.construct(player, new Pos(0, 0)) as UnitWithCounter;
 
-        player.resources = new Resources(0, 0, 0);
+        player.resources = new Resources();
         let r = player.resources.copy();
-        r.add(new Resources(0, 0, 1));
+        r.add(new Resources({ stone: 1 }));
         
         unit.doMove(board);
         assert.strictEqual(player.resources.equals(r), true);

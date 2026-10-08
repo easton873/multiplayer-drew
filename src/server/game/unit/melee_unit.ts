@@ -35,25 +35,25 @@ export class MeleeUnit extends GameUnit {
 
 class soldierUnit extends MeleeUnit {
     constructor() {
-        super("Soldier", new Resources(20, 0, 0), 10, 10, 1, 10, "#000000", "A slightly durable melee unit who moves at a moderate speed doing minimal damage");
+        super("Soldier", new Resources({ gold: 20 }), 10, 10, 1, 10, "#000000", "A slightly durable melee unit who moves at a moderate speed doing minimal damage");
     }
 }
 
 class scoutUnit extends MeleeUnit {
     constructor() {
-        super("Scout", new Resources(10, 0, 0), 5, 5, 1, 1, "#525050", "A weak and fast melee unit");
+        super("Scout", new Resources({ gold: 10 }), 5, 5, 1, 1, "#525050", "A weak and fast melee unit");
     }
 }
 
 class quickAttackerUnit extends MeleeUnit {
     constructor() {
-        super("Quick Attacker", new Resources(75, 45, 0), 5, 5, 1, 15, "#99ccff", "A soldier that got a speed boost");
+        super("Quick Attacker", new Resources({ gold: 75, wood: 45 }), 5, 5, 1, 15, "#99ccff", "A soldier that got a speed boost");
     }
 }
 
 class goblinUnit extends MeleeUnit {
     constructor() {
-        super("Goblin", new Resources(20, 10, 0), 7, 10, 1, 1, "#008800", "Goes straight for the closest enemy heart, ignoring all other units");
+        super("Goblin", new Resources({ gold: 20, wood: 10 }), 7, 10, 1, 1, "#008800", "Goes straight for the closest enemy heart, ignoring all other units");
     }
     construct(player: Player, pos: Pos): Unit {
         return new class extends Melee {
@@ -69,7 +69,7 @@ class goblinUnit extends MeleeUnit {
 
 class sabotagerUnit extends MeleeUnit {
     constructor() {
-        super("Sabotager", new Resources(20, 10, 0), 5, 5, 2, 5, "#00AA00", "Goes straight for the closest enemy resources, ignoring all other units");
+        super("Sabotager", new Resources({ gold: 20, wood: 10 }), 5, 5, 2, 5, "#00AA00", "Goes straight for the closest enemy resources, ignoring all other units");
     }
     construct(player: Player, pos: Pos): Unit {
         return new class extends Melee {
@@ -88,7 +88,7 @@ class sabotagerUnit extends MeleeUnit {
 
 class randomMoverUnit extends MeleeUnit {
     constructor() {
-        super("Random Mover", new Resources(5, 5, 0), 10, 10, 1, 3, "#ccccff", "Is just like a soldier but randomly teleports to a part of the map");
+        super("Random Mover", new Resources({ gold: 5, wood: 5 }), 10, 10, 1, 3, "#ccccff", "Is just like a soldier but randomly teleports to a part of the map");
     }
     construct(player: Player, pos: Pos): Unit {
         return new class extends Melee {

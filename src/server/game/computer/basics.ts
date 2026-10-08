@@ -70,7 +70,7 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
         return count;
     }
 
-    maintainCountOfUnits(unit : GameUnit, targetCount : number, savings : Resources = new Resources(0, 0, 0)) {
+    maintainCountOfUnits(unit : GameUnit, targetCount : number, savings : Resources = new Resources()) {
         if (this.countUnit(unit) < targetCount) {
             savings.add(unit.getUnitCreationInfo().getCost())
             if (this.resources.canAfford(savings)) {
@@ -106,7 +106,7 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
     }
 
     spamUnits(unit : GameUnit, num : number) {
-        let cost : Resources = new Resources(0, 0, 0);
+        let cost : Resources = new Resources();
         for (let i = 0; i < num; i++) {
             cost.add(unit.getUnitCreationInfo().getCost());
         }

@@ -77,7 +77,7 @@ export class Summonee extends Melee {
 
 export class SummonerUnit extends GameUnit {
     static NAME = "Summoner";
-    static COST = new Resources(125, 75, 30);
+    static COST = new Resources({ gold: 125, wood: 75, stone: 30 });
     static HP = 3;
     static SPEED = 10;
     static COLOR = "#880088";

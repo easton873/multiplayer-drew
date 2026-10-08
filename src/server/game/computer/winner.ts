@@ -8,10 +8,10 @@ import { SummonerUnit } from "../unit/summoner.js";
 import { BaseComputerPlayer } from "./basics.js";
 
 export class WinnerComputerPlayer extends BaseComputerPlayer {
-    private savings = new Resources(25, 0, 0);
+    private savings = new Resources({ gold: 25 });
     firstEra() {
         this.protectBase(SoldierUnit);
-        if (!this.resources.canAfford(new Resources(35, 0, 0))) {
+        if (!this.resources.canAfford(new Resources({ gold: 35 }))) {
             return;
         }
         this.maintainCountOfUnits(MERCHANT_GAME_UNIT, 15);

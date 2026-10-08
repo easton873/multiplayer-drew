@@ -46,7 +46,7 @@ class counterMissileUnit extends GameUnit {
     }
 }
 
-export const CounterMissileUnit : counterMissileUnit = new counterMissileUnit("Counter Missile", new Resources(500, 500, 500), 0, 10, "#ff4343ff", "Takes out missiles");
+export const CounterMissileUnit : counterMissileUnit = new counterMissileUnit("Counter Missile", new Resources({ gold: 500, wood: 500, stone: 500 }), 0, 10, "#ff4343ff", "Takes out missiles");
 
 class CounterCounterMissile extends CounterMissile {
     willTarget(unit : Unit) : boolean {
@@ -66,4 +66,4 @@ class counterCounterMissileUnit extends GameUnit {
     }
 }
 
-export const CounterCounterMissileUnit : counterCounterMissileUnit = new counterCounterMissileUnit("Counter Counter Missile", new Resources(400, 400, 400), 0, 5, "#ff9a9aff", "Takes out counter missiles");
+export const CounterCounterMissileUnit : counterCounterMissileUnit = new counterCounterMissileUnit("Counter Counter Missile", new Resources({ gold: 400, wood: 400, stone: 400 }), 0, 5, "#ff9a9aff", "Takes out counter missiles");

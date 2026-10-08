@@ -1,6 +1,8 @@
 import { emitAddComputer, emitBackgroundUpdate, emitBoardUpdate, emitEditComputer, emitRemoveComputer, emitResourceUpdate, emitUpdateSetupPlayer } from "../../shared/routes";
 import { GameWaitingData, PlayerWaitingData } from "../../shared/bulider";
 import { ResourceData } from "../../shared/types";
+import { GOLD_RESOURCE, RESOURCE_TYPES, ResourceType } from "../../shared/resource_types";
+import { RESOURCE_EMOJI, resourceLabel } from "../resources";
 import { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io";
 import { removeOptions } from "../../client/main";
@@ -41,9 +43,8 @@ export class WaitingScreen {
     public widthLabel = document.getElementById("widthLabel") as HTMLLabelElement;
     public heightLabel = document.getElementById("heightLabel") as HTMLLabelElement;
     public startingResourcesDiv = document.getElementById("startingResourcesDiv") as HTMLDivElement;
-    public goldInput = document.getElementById("goldInput") as HTMLInputElement;
-    public woodInput = document.getElementById("woodInput") as HTMLInputElement;
-    public stoneInput = document.getElementById("stoneInput") as HTMLInputElement;
+    private startingResourcesInputs = document.getElementById("startingResourcesInputs") as HTMLDivElement;
+    private resourceInputs = {} as Record<ResourceType, HTMLInputElement>;
     public addComputerDiv = document.getElementById("addComputerDiv") as HTMLDivElement;
     public addComputerButton = document.getElementById("addComputerButton") as HTMLButtonElement;
     private addDifficulty = document.getElementById("addComputerDifficulty") as HTMLSelectElement;
@@ -75,13 +76,29 @@ export class WaitingScreen {
     constructor(private socket : Socket<DefaultEventsMap, DefaultEventsMap>) {
       this.widthInput.value = "100";
       this.heightInput.value = "100";
-      this.goldInput.value = "50";
-      this.woodInput.value = "0";
-      this.stoneInput.value = "0";
 
-      this.goldInput.onchange = () => { this.resourceUpdate(); };
-      this.woodInput.onchange = () => { this.resourceUpdate(); };
-      this.stoneInput.onchange = () => { this.resourceUpdate(); };
+      for (const type of RESOURCE_TYPES) {
+        const group = document.createElement("div");
+        group.className = "form-group";
+
+        const label = document.createElement("label");
+        label.htmlFor = `${type}Input`;
+        label.className = "pixel-label";
+        label.textContent = `${RESOURCE_EMOJI[type]} ${resourceLabel(type)}`;
+
+        const input = document.createElement("input");
+        input.type = "number";
+        input.id = `${type}Input`;
+        input.className = "pixel-input";
+        input.min = "0";
+        input.autocomplete = "off";
+        input.value = type === GOLD_RESOURCE ? "50" : "0";
+        input.onchange = () => { this.resourceUpdate(); };
+
+        group.append(label, input);
+        this.startingResourcesInputs.appendChild(group);
+        this.resourceInputs[type] = input;
+      }
 
       this.addColor.value = randomColor();
       this.addCustomColor.onchange = () => {
@@ -285,22 +302,25 @@ export class WaitingScreen {
     }
 
     resourceUpdate() {
-      const gold = Math.max(0, parseInt(this.goldInput.value) || 0);
-      const wood = Math.max(0, parseInt(this.woodInput.value) || 0);
-      const stone = Math.max(0, parseInt(this.stoneInput.value) || 0);
-      emitResourceUpdate(this.socket, { gold, wood, stone });
+      const resources = {} as ResourceData;
+      for (const type of RESOURCE_TYPES) {
+        resources[type] = Math.max(0, parseInt(this.resourceInputs[type].value) || 0);
+      }
+      emitResourceUpdate(this.socket, resources);
     }
 
     updateResourceInputs(r: ResourceData) {
-      this.goldInput.value = String(r.gold);
-      this.woodInput.value = String(r.wood);
-      this.stoneInput.value = String(r.stone);
+      for (const type of RESOURCE_TYPES) {
+        this.resourceInputs[type].value = String(r[type]);
+      }
     }
 
     updateGameInfo(data: GameWaitingData) {
       this.gameInfoBoard.textContent = `Board: ${data.board.boardX} × ${data.board.boardY}`;
       const r = data.startingResources;
-      this.gameInfoResources.textContent = `💰 Gold: ${r.gold}\n🪵 Wood: ${r.wood}\n🪨 Stone: ${r.stone}`;
+      this.gameInfoResources.textContent = RESOURCE_TYPES
+        .map(type => `${RESOURCE_EMOJI[type]} ${resourceLabel(type)}: ${r[type]}`)
+        .join("\n");
       if (data.background) {
         this.gameInfoBgPreview.src = '/backgrounds/' + data.background;
       }

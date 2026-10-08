@@ -1,6 +1,8 @@
 import { GameSetupData, LoadData, PlayerSetupData, UnitLoadData } from "../../shared/bulider";
 import { DEFAULT_BG_IMAGE_FILE, EraData, GameData, GeneralGameData, GeneralHeartData, PlayerHeartData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
 import { emitDeleteUnits, emitSpawnUnit } from "../../shared/routes";
+import { RESOURCE_TYPES } from "../../shared/resource_types";
+import { RESOURCE_EMOJI } from "../resources";
 import { removeOptions } from "../../client/main";
 
 const ZOOM_FACTOR = 1.1;
@@ -650,9 +652,7 @@ export class GameScreen {
     }
 
     formatResources(resources : ResourceData) : string {
-      return `\u{1F4B0}${resources.gold}
-      \u{1FAB5}${resources.wood}
-      \u{1FAA8}${resources.stone}`
+      return RESOURCE_TYPES.map(type => `${RESOURCE_EMOJI[type]}${resources[type]}`).join("\n");
     }
 
     handleKeydown(event: KeyboardEvent): void {

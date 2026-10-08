@@ -1,47 +1,53 @@
 import { ResourceData } from "../../shared/types.js";
+import { RESOURCE_TYPES, ResourceType, ResourceInit } from "../../shared/resource_types.js";
 
 export class Resources {
-    constructor(private gold : number = 0, private wood : number = 0, private stone : number = 0) {}
+    private amounts = new Map<ResourceType, number>();
+    constructor(init : ResourceInit = {}) {
+        for (const t of RESOURCE_TYPES) {
+            this.amounts.set(t, init[t] ?? 0);
+        }
+    }
+
+    private get(type: ResourceType): number {
+      return this.amounts.get(type) ?? 0;
+    }
 
     add(other : Resources) {
-        this.gold += other.gold;
-        this.wood += other.wood;
-        this.stone += other.stone;
+        for(const t of RESOURCE_TYPES) {
+            this.amounts.set(t, this.get(t) + other.get(t));
+        }
     }
 
     multiply(scalar : number) {
-        this.gold *= scalar;
-        this.wood *= scalar;
-        this.stone *= scalar;
+        for(const t of RESOURCE_TYPES) {
+            this.amounts.set(t, this.get(t) * scalar);
+        }
     }
 
     spend(other : Resources) {
-        this.gold -= other.gold;
-        this.wood -= other.wood;
-        this.stone -= other.stone;
+        for(const t of RESOURCE_TYPES) {
+            this.amounts.set(t, this.get(t) - other.get(t));
+        }
     }
 
     canAfford(other : Resources) : boolean {
-        return this.gold >= other.gold &&
-        this.wood >= other.wood &&
-        this.stone >= other.stone;
+        return RESOURCE_TYPES.every(t => this.get(t) >= other.get(t));
     }
 
     copy() : Resources {
-        return new Resources(this.gold, this.wood, this.stone);
+        return new Resources(this.getResourceData());
     }
 
     equals(other : Resources) : boolean {
-        return this.gold == other.gold &&
-        this.wood == other.wood &&
-        this.stone == other.stone;
+        return RESOURCE_TYPES.every(t => this.get(t) === other.get(t));
     }
 
-    getResourceData() : ResourceData {
-        return {
-            gold: this.gold,
-            wood: this.wood,
-            stone: this.stone,
+    getResourceData(): ResourceData {
+        const data = {} as ResourceData;
+        for (const t of RESOURCE_TYPES) {
+            data[t] = this.get(t);
         }
+        return data;
     }
 }

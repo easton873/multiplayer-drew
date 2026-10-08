@@ -12,7 +12,7 @@ export class Tank extends Melee {
 
 class tankUnit extends MeleeUnit {
     constructor() {
-        super("Tank", new Resources(50, 50, 50), 30, 10, 1, 50, "#AAAAAA", "50 HP, moves once every 3 seconds and does 1 damage to its target when adjacent to it");
+        super("Tank", new Resources({ gold: 50, wood: 50, stone: 50 }), 30, 10, 1, 50, "#AAAAAA", "50 HP, moves once every 3 seconds and does 1 damage to its target when adjacent to it");
     }
 
     construct(player: Player, pos: Pos): Unit {

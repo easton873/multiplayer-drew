@@ -44,4 +44,4 @@ class healerUnit extends RangedUnit {
     }
 }
 
-export const HealerUnit : healerUnit = new healerUnit("Healer", new Resources(20, 100, 20), 8, 8, 2, 5, "#DDDDDD", "Targets friendly non-building units and heals them 2 hp every second or so", 25);
+export const HealerUnit : healerUnit = new healerUnit("Healer", new Resources({ gold: 20, wood: 100, stone: 20 }), 8, 8, 2, 5, "#DDDDDD", "Targets friendly non-building units and heals them 2 hp every second or so", 25);

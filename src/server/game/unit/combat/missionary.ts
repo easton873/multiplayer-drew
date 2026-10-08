@@ -63,4 +63,4 @@ class missionaryUnit extends GameUnit {
     }
 }
 
-export const MissionaryUnit : missionaryUnit = new missionaryUnit("Missionary", new Resources(0, 300, 250), 10, 100, 15, "#000000", "Converts units to your side", 5);
+export const MissionaryUnit : missionaryUnit = new missionaryUnit("Missionary", new Resources({ wood: 300, stone: 250 }), 10, 100, 15, "#000000", "Converts units to your side", 5);

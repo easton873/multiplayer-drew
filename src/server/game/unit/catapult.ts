@@ -24,4 +24,4 @@ class catapultUnit extends RangedUnit {
     }
 }
 
-export const CatapultUnit : catapultUnit = new catapultUnit("Catapult", new Resources(35, 200, 20), 60, 60, 3, 10, "#000000", "Specializes at killing buildings", 100);
+export const CatapultUnit : catapultUnit = new catapultUnit("Catapult", new Resources({ gold: 35, wood: 200, stone: 20 }), 60, 60, 3, 10, "#000000", "Specializes at killing buildings", 100);

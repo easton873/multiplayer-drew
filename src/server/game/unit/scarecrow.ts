@@ -13,7 +13,7 @@ export class Scarecrow extends Defense {
 
 export class ScarecrowUnit extends GameUnit {
     static NAME = "Scarecrow";
-    static COST = new Resources(3, 0, 0);
+    static COST = new Resources({ gold: 3 });
     static SPEED = 10;
     static DAMAGE = 1;
     static HP = 2;

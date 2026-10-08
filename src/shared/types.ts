@@ -1,4 +1,5 @@
 import type { GameWaitingData, PlayerWaitingData, GameSetupData } from "./bulider.js";
+import type { ResourceType } from "./resource_types.js";
 
 export interface GameData {
   playerData : PlayerSpecificData
@@ -47,11 +48,7 @@ export interface UnitCreationData {
   blurb : string
 }
 
-export interface ResourceData {
-  gold : number
-  wood : number
-  stone : number
-}
+export type ResourceData = Record<ResourceType, number>
 
 export interface UnitData {
   name : string

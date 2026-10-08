@@ -49,7 +49,7 @@ export class GorillaWarfarer extends Ranged {
 
 class gorillaWarfareUnit extends RangedUnit {
     constructor() {
-        super("Gorilla Warfarer", new Resources(100, 100, 250), 5, 5, 3, 5, "#ff66ff", "A unit that attacks and then retreats, then repeats", 25)
+        super("Gorilla Warfarer", new Resources({ gold: 100, wood: 100, stone: 250 }), 5, 5, 3, 5, "#ff66ff", "A unit that attacks and then retreats, then repeats", 25)
     }
     construct(player: Player, pos: Pos): Unit {
         return new GorillaWarfarer(player, this.name, pos, this.hp, this.moveSpeed, this.color, this.damage, this.range);
