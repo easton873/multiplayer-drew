@@ -1,5 +1,5 @@
 import { GameSetupData, LoadData, PlayerSetupData, UnitLoadData } from "../../shared/bulider";
-import { DEFAULT_BG_IMAGE_FILE, EraData, GameData, GeneralGameData, GeneralHeartData, PlayerHeartData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
+import { DEFAULT_BG_IMAGE_FILE, FactionData, GameData, GeneralGameData, GeneralHeartData, PlayerHeartData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
 import { emitDeleteUnits, emitSpawnUnit } from "../../shared/routes";
 import { RESOURCE_TYPES, ResourceType } from "../../shared/resource_types";
 import { RESOURCE_EMOJI } from "../resources";
@@ -65,6 +65,8 @@ export class GameScreen {
     private isDelete : boolean = false
     private bg : HTMLImageElement = new Image();
     private images : Map<string, HTMLImageElement> = new Map<string, HTMLImageElement>();
+    private loadData : LoadData | null = null;
+    private factionName : string = '';
 
     private pressedKeys : Set<string> = new Set<string>();
     private hotKeys : Map<string, UnitCreationData> = new Map<string, UnitCreationData>();
@@ -632,12 +634,17 @@ export class GameScreen {
       });
     }
 
-    upgradeEra(era : EraData) {
-      this.resourceUnitsList = era.resourceUnits;
-      this.militaryUnitsList = era.militaryUnits;
+    upgradeEra(faction : FactionData) {
+      const era = faction.eraData;
+      if (faction.factionName !== this.factionName) {
+        this.factionName = faction.factionName;
+        this.reloadImages();
+      }
+      this.resourceUnitsList = faction.resourceUnits;
+      this.militaryUnitsList = faction.militaryUnits;
       this.availableResources = era.availableResources;
       const ogVal = this.unitSelect.value;
-      this.fillSelect(this.unitSelect, [...era.resourceUnits, ...era.militaryUnits]);
+      this.fillSelect(this.unitSelect, [...faction.resourceUnits, ...faction.militaryUnits]);
       if (ogVal) this.unitSelect.value = ogVal;
       this.unitSelect.dispatchEvent(new Event('change', { bubbles: true }));
       this.eraNameLabel.innerText = 'Era: ' + era.eraName;
@@ -700,13 +707,29 @@ export class GameScreen {
     }
 
     loadImages(data: LoadData) {
-      data.units.forEach((unit) => {
+      this.loadData = data;
+      this.reloadImages();
+    }
+
+    // Looks in the player's own faction folder first, then falls back to the other factions' folders.
+    private reloadImages() {
+      if (!this.loadData) return;
+      const own = this.factionName.toLowerCase();
+      const folders = [own, ...this.loadData.factions.map(f => f.toLowerCase()).filter(f => f !== own)]
+        .filter(f => f !== '');
+      this.images.clear();
+      this.loadData.units.forEach((unit) => {
         const normalized = unit.name.replace(/[^\x20-\x7E]/g, '').toLowerCase().replace(/\s/g, '');
-        const img = new Image();
-        img.src = `/units/${normalized}.png`;
-        img.onload = () => {
-          this.images.set(unit.name, img);
+        const tryFolder = (i : number) => {
+          if (i >= folders.length) return;
+          const img = new Image();
+          img.onload = () => {
+            this.images.set(unit.name, img);
+          };
+          img.onerror = () => tryFolder(i + 1);
+          img.src = `/units/${folders[i]}/${normalized}.png`;
         };
+        tryFolder(0);
       });
     }
 

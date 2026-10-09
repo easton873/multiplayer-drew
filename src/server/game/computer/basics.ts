@@ -20,7 +20,7 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
         if (this.territoryChangeDetected()) {
             this.rebuildTerritory();
         }
-        switch(this.getEraData().eraName) {
+        switch(this.era.getCurrEra().name) {
             case STARTING_ERA_NAME:
                 this.firstEra();
                 return;

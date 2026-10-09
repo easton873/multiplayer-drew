@@ -4,7 +4,7 @@ import type { ResourceType } from "./resource_types.js";
 export interface GameData {
   playerData : PlayerSpecificData
   resources : ResourceData
-  era : EraData
+  faction : FactionData
   generalData : GeneralGameData
   friendlyInvisibleUnits : UnitData[]
 }
@@ -34,13 +34,18 @@ export interface PlayerHeartData {
   totalHealth : number
 }
 
+export interface FactionData {
+  factionName : string
+  resourceUnits : UnitCreationData[]
+  militaryUnits : UnitCreationData[]
+  eraData : EraData
+}
+
 export interface EraData {
   eraName : string
   hasNextEra : boolean
   nextEraCost : ResourceData
   availableResources : ResourceType[]
-  resourceUnits : UnitCreationData[]
-  militaryUnits : UnitCreationData[]
 }
 
 export interface UnitCreationData {
@@ -88,6 +93,6 @@ export type RoomPhase = "waiting" | "setup" | "playing" | "gameover";
 export type ReconnectData =
   | { phase: "waiting"; waitingData: GameWaitingData; playerData: PlayerWaitingData }
   | { phase: "setup"; setupData: GameSetupData; isYourTurn: boolean }
-  | { phase: "playing"; eraData: EraData; gameData: GameData }
+  | { phase: "playing"; factionData: FactionData; gameData: GameData }
   | { phase: "spectating"; spectatorData: GeneralGameData }
   | { phase: "gameover"; winner: string };

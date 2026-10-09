@@ -20,6 +20,7 @@ import { MissionaryUnit } from "./combat/missionary.js";
 import { AssassainUnit, NinjaUnit, SpyUnit } from "./combat/stealth.js";
 import { VampireUnit } from "./combat/vampire.js";
 import { EXTRA_UNITS } from "../data/units.js";
+import { FACTION_NAMES } from "../factions/all_factions.js";
 
 export const ALL_RESOURCE_UNITS : GameUnit[] = [
     MERCHANT_GAME_UNIT,
@@ -105,6 +106,7 @@ export function loadData() : LoadData {
     let units : UnitLoadData[] = ALL_UNITS.map((unit : GameUnit) => {return {name: unit.getName()}});
     let extra_units : UnitLoadData[] = EXTRA_UNITS.map((unitName : string) => {return {name: unitName}});
     return {
-        units: units.concat(extra_units)
+        units: units.concat(extra_units),
+        factions: FACTION_NAMES,
     };
 }

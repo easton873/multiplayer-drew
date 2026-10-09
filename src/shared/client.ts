@@ -1,7 +1,7 @@
 import { DefaultEventsMap } from "socket.io";
 import { Socket } from "socket.io-client";
 import { GameSetupData, GameWaitingData, LoadData, PlayerWaitingData } from "./bulider";
-import type { EraData, GameData, GeneralGameData, ReconnectData } from "./types";
+import type { FactionData, GameData, GeneralGameData, ReconnectData } from "./types";
 
 const LOAD_DATA_KEY = "load";
 const WAITING_PLAYER_KEY = "waiting player";
@@ -28,10 +28,10 @@ export abstract class ClientReceiver {
         socket.on(START_SUCCESS_KEY, (data : GameSetupData) => this.handleStartSuccess(data));
         socket.on(YOUR_TURN_KEY, (data : GameSetupData) => this.handleYourTurn(data));
         socket.on(SET_POS_SUCCESS, () => this.handleSetPosSuccess());
-        socket.on(GAME_BUILD_SUCCESS, (era : EraData) => this.handleBuildSucces(era));
+        socket.on(GAME_BUILD_SUCCESS, (faction : FactionData) => this.handleBuildSucces(faction));
         socket.on(GAME_INSTANCE_KEY, (data : GameData, team : number) => this.handleEmitGamestate(data));
         socket.on(SPECTATOR_GAME_KEY, (data : GeneralGameData) => this.handleEmitSpectatorGameState(data));
-        socket.on(UPDGRADE_SUCCESS_KEY, (era : EraData) => this.handleEraUpgradeSuccess(era));
+        socket.on(UPDGRADE_SUCCESS_KEY, (faction : FactionData) => this.handleEraUpgradeSuccess(faction));
         socket.on(GAME_OVER_KEY, (winner : string) => this.handleGameOver(winner));
         socket.on(RECONNECT_SUCCESS_KEY, (data : ReconnectData) => this.handleReconnectSuccess(data));
     }
@@ -43,10 +43,10 @@ export abstract class ClientReceiver {
     abstract handleStartSuccess(data : GameSetupData);
     abstract handleYourTurn(data : GameSetupData);
     abstract handleSetPosSuccess();
-    abstract handleBuildSucces(era : EraData);
+    abstract handleBuildSucces(faction : FactionData);
     abstract handleEmitGamestate(gameInstance : GameData);
     abstract handleEmitSpectatorGameState(data : GeneralGameData);
-    abstract handleEraUpgradeSuccess(era : EraData);
+    abstract handleEraUpgradeSuccess(faction : FactionData);
     abstract handleGameOver(winner : string);
     abstract handleReconnectSuccess(data : ReconnectData);
 }
@@ -79,8 +79,8 @@ export function emitSetPosSuccess(client : any) {
     client.emit(SET_POS_SUCCESS);
 }
 
-export function emitGameBuilt(client : any, era : EraData) {
-    client.emit(GAME_BUILD_SUCCESS, era);
+export function emitGameBuilt(client : any, faction : FactionData) {
+    client.emit(GAME_BUILD_SUCCESS, faction);
 }
 
 export function emitGameState(client : any, gameInstance : GameData) {
@@ -91,8 +91,8 @@ export function emitSpectatorGameState(client : any, data : GeneralGameData) {
     client.emit(SPECTATOR_GAME_KEY, data);
 }
 
-export function emitUpgradeEraSuccess(client : any, era : EraData) {
-    client.emit(UPDGRADE_SUCCESS_KEY, era);
+export function emitUpgradeEraSuccess(client : any, faction : FactionData) {
+    client.emit(UPDGRADE_SUCCESS_KEY, faction);
 }
 
 export function emitGameOver(io : any, winner : string) {

@@ -4,7 +4,7 @@ import { Resources } from "./resources.js";
 import { ObservableUnit, Unit, UnitObserver } from "./unit/unit.js";
 import { Pos } from "./pos.js";
 import { Era } from "./era.js";
-import { EraData, PlayerSpecificData, ResourceData } from "../../shared/types.js";
+import { EraData, FactionData, PlayerSpecificData, ResourceData } from "../../shared/types.js";
 import { GameUnit } from "./unit/game_unit.js";
 import { UNIT_MAP } from "./unit/all_units.js";
 import { Faction } from "./factions/faction.js";
@@ -17,9 +17,7 @@ export class Player implements UnitObserver {
 
     heart: Heart;
     hearts : Hearts = new Hearts();
-    faction : Faction = new Humans();
-
-    constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string, startingResources: ResourceData = { gold: 50, wood: 0, stone: 0 }) {
+    constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string, startingResources: ResourceData = { gold: 50, wood: 0, stone: 0 }, public faction: Faction = new Humans()) {
         this.resources = new Resources({ gold: startingResources.gold, wood: startingResources.wood, stone: startingResources.stone });
         this.board = board;
         this.heart = new Heart(this, pos, this.era.getHeart());
@@ -126,11 +124,8 @@ export class Player implements UnitObserver {
         }
     }
 
-    getEraData() : EraData {
-        let data = this.era.getEraData();
-        data.militaryUnits = this.faction.getMilitaryUnitCreationData();
-        data.resourceUnits = this.faction.getResourceUnitCreationData();
-        return data;
+    getFactionData() : FactionData {
+        return this.faction.getFactionData();
     }
 
     getAvailableUnits() : GameUnit[] {
@@ -139,8 +134,8 @@ export class Player implements UnitObserver {
 }
 
 export class PlayerProxy extends Player {
-    constructor(team: number, pos: Pos, board: Board, id: string, name: string, color: string, startingResources?: ResourceData) {
-        super(team, pos, board, id, name, color, startingResources);
+    constructor(team: number, pos: Pos, board: Board, id: string, name: string, color: string, startingResources?: ResourceData, faction?: Faction) {
+        super(team, pos, board, id, name, color, startingResources, faction);
     }
 
     NewUnit(unitType: string, pos: Pos): boolean {

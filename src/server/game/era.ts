@@ -67,8 +67,6 @@ export class Era {
             hasNextEra: nextEra != NO_MORE_ERAS,
             nextEraCost: nextEra.cost.getResourceData(),
             availableResources: currEra.availableResources,
-            resourceUnits: [],
-            militaryUnits: [],
         }
     }
 

@@ -18,6 +18,9 @@ const TEST_ERAS = [
 ];
 
 class TestFaction extends Faction {
+    getName(): string {
+        return "test";
+    }
     getEraInfo(): EraInfo[] {
         return TEST_ERAS;
     }

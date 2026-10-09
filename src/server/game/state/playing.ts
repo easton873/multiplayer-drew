@@ -80,7 +80,7 @@ export class PlayingState implements RoomState {
         let player = this.game.getPlayer(playerId);
         if (!player) return false;
         if (player.attemptUpgradeEra()) {
-            emitUpgradeEraSuccess(client, player.getEraData());
+            emitUpgradeEraSuccess(client, player.getFactionData());
             return true;
         }
         return false;
@@ -101,7 +101,7 @@ export class PlayingState implements RoomState {
         if (!player) return null;
         return {
             phase: "playing",
-            eraData: player.getEraData(),
+            factionData: player.getFactionData(),
             gameData: this.game.gameData(playerId),
         };
     }

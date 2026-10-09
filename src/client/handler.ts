@@ -4,7 +4,7 @@ import { ClientReceiver } from "../shared/client";
 import { ScreenManager } from "./screen/manager";
 import { DefaultEventsMap } from "socket.io";
 import { emitDeleteUnits, emitSpawnUnit, emitSubmitStartPos } from "../shared/routes";
-import { EraData, GameData, GeneralGameData, PosData, ReconnectData } from "../shared/types";
+import { FactionData, GameData, GeneralGameData, PosData, ReconnectData } from "../shared/types";
 
 function hexRelativeLuminance(hex: string): number {
     const r = parseInt(hex.slice(1, 3), 16) / 255;
@@ -88,14 +88,14 @@ export class FrontendClientHandler extends ClientReceiver {
         this.manager.gameScreen.controls.style.display = "none";
         this.manager.gameScreen.drawGeneralGameData(data);
     }
-    handleBuildSucces(era: EraData) {
+    handleBuildSucces(faction: FactionData) {
         console.log('build success!');
         this.manager.gameScreen.setupBanner.classList.add('hidden');
         this.manager.gameScreen.setupBanner.style.backgroundColor = '';
-        this.manager.gameScreen.upgradeEra(era);
+        this.manager.gameScreen.upgradeEra(faction);
     }
-    handleEraUpgradeSuccess(era: EraData) {
-        this.manager.gameScreen.upgradeEra(era);
+    handleEraUpgradeSuccess(faction: FactionData) {
+        this.manager.gameScreen.upgradeEra(faction);
     }
     handleGameOver(winner: string) {
         this.manager.toGameOverScreen();
@@ -103,6 +103,7 @@ export class FrontendClientHandler extends ClientReceiver {
     }
     handleLoadData(data: LoadData) {
         this.manager.gameScreen.loadImages(data);
+        this.manager.waitingScreen.setFactions(data.factions);
     }
     handleReconnectSuccess(data: ReconnectData) {
         switch (data.phase) {
@@ -119,7 +120,7 @@ export class FrontendClientHandler extends ClientReceiver {
                 break;
             case "playing":
                 this.manager.toGameScreen();
-                this.manager.gameScreen.upgradeEra(data.eraData);
+                this.manager.gameScreen.upgradeEra(data.factionData);
                 this.manager.gameScreen.controls.style.display = "flex";
                 this.manager.gameScreen.drawGame(data.gameData);
                 break;

@@ -390,6 +390,13 @@ input[type="color"].pixel-input {
   flex-shrink: 0;
 }
 
+.player-card__faction {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  min-width: 60px;
+  text-align: right;
+}
+
 .player-card__team {
   font-size: var(--font-size-xs);
   color: var(--text-muted);

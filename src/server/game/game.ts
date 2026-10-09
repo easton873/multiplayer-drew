@@ -79,7 +79,7 @@ export class Game {
         const gameData : GameData = {
             playerData: heart,
             resources: resources,
-            era: player.getEraData(),
+            faction: player.getFactionData(),
             generalData: this.generalGameData(),
             friendlyInvisibleUnits,
         };

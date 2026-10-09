@@ -2,6 +2,7 @@ import { PosData, ResourceData } from "./types.js"
 
 export interface LoadData {
     units : UnitLoadData[]
+    factions : string[]
 }
 
 export interface UnitLoadData {
@@ -30,6 +31,7 @@ export interface PlayerWaitingData {
     color : string
     id : string
     isComputer : boolean
+    faction : string
     difficulty? : string
 }
 

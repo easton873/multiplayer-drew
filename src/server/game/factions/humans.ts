@@ -42,7 +42,12 @@ export const FOURTH_ERA_NAME = "Fourth Era";
 export const FIFTH_ERA_NAME = "Fifth Era";
 export const SIXTH_ERA_NAME = "Sixth Era";
 
+export const HUMAN_FACTION_NAME = "Human"
+
 export class Humans extends Faction {
+    getName(): string {
+        return HUMAN_FACTION_NAME;
+    }
     getEraInfo(): EraInfo[] {
         // cost is what it takes to advance *into* that era
         //            name                  cost                              resources                   speed hp   units radius

@@ -11,6 +11,7 @@ import { ClientHandler, GameClient } from "./client_handler.js";
 import { emitYourTurn } from "../../shared/client.js";
 import { ComputerDifficulties, CreateComputer } from "./computer/factory.js";
 import { DEFAULT_BG_IMAGE_FILE, ResourceData } from "../../shared/types.js";
+import { createFaction, DEFAULT_FACTION_NAME, FACTION_NAMES } from "./factions/all_factions.js";
 import { backgrounds } from "./data/backgrounds.js";
 
 export class GameRoom {
@@ -110,7 +111,11 @@ export class SetupPlayer {
     protected team : number = null;
     protected pos : Pos = null;
     ready : boolean = true;
-    constructor(protected id : string, protected name: string, private client : GameClient, protected color : string, private isLeader : boolean) {}
+    protected faction : string;
+    constructor(protected id : string, protected name: string, private client : GameClient, protected color : string, private isLeader : boolean, faction : string = DEFAULT_FACTION_NAME) {
+        // the name comes from the client, so don't trust it
+        this.faction = FACTION_NAMES.includes(faction) ? faction : DEFAULT_FACTION_NAME;
+    }
 
     reset() {
         SetupPlayer.DefaultTeam = -1;
@@ -125,6 +130,7 @@ export class SetupPlayer {
         this.team = Math.abs(other.team);
         this.color = other.color;
         this.ready = other.ready;
+        this.faction = FACTION_NAMES.includes(other.faction) ? other.faction : this.faction;
     }
 
     updateTeam(team : number) {
@@ -156,7 +162,7 @@ export class SetupPlayer {
     }
 
     getJoinData() : PlayerWaitingData {
-        return {ready: this.ready, name: this.name, leader: this.isLeader, color: this.color, team: this.team, id: this.id, isComputer: false};
+        return {ready: this.ready, name: this.name, leader: this.isLeader, color: this.color, team: this.team, id: this.id, isComputer: false, faction: this.faction};
     }
 
     getSetupData() : PlayerSetupData {
@@ -171,7 +177,7 @@ export class SetupPlayer {
         if (this.team == null) {
             this.team = SetupPlayer.DefaultTeam--;
         }
-        return new PlayerProxy(this.team, this.pos, board, this.id, this.name, this.color, startingResources);
+        return new PlayerProxy(this.team, this.pos, board, this.id, this.name, this.color, startingResources, createFaction(this.faction));
     }
 }
 
@@ -200,7 +206,7 @@ class SetupComputerPlayer extends SetupPlayer {
     }
 
     getJoinData() : PlayerWaitingData {
-        return {ready: this.ready, name: this.name, leader: this.getIsLeader(), color: this.color, team: this.team, id: this.id, isComputer: true, difficulty: this.difficulty};
+        return {ready: this.ready, name: this.name, leader: this.getIsLeader(), color: this.color, team: this.team, id: this.id, isComputer: true, faction: this.faction, difficulty: this.difficulty};
     }
 
     createPlayer(board : Board, startingResources?: ResourceData) : Player {

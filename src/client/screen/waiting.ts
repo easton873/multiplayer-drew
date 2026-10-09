@@ -72,6 +72,7 @@ export class WaitingScreen {
 
     private isLeader = false;
     private difficulties: string[] = [];
+    private factions: string[] = [];
 
     constructor(private socket : Socket<DefaultEventsMap, DefaultEventsMap>) {
       this.widthInput.value = "100";
@@ -148,6 +149,16 @@ export class WaitingScreen {
       teamInput.className = "pixel-input";
       teamInput.placeholder = "Team";
 
+      const factionSelect = document.createElement('select');
+      factionSelect.className = "pixel-select";
+      this.factions.forEach((faction : string) => {
+        const option = document.createElement('option');
+        option.value = faction;
+        option.text = faction;
+        factionSelect.add(option);
+      });
+      factionSelect.value = p.faction;
+
       const submitBtn = document.createElement('button');
       submitBtn.className = "pixel-btn player-submit-btn hidden";
       submitBtn.innerText = "✓";
@@ -156,6 +167,7 @@ export class WaitingScreen {
 
       nameInput.oninput = () => { p.name = nameInput.value; markDirty(); };
       colorSelect.oninput = () => { p.color = colorSelect.value; markDirty(); };
+      factionSelect.onchange = () => { p.faction = factionSelect.value; markDirty(); };
       teamInput.onkeyup = () => {
         let team = null;
         if (teamInput.value !== "") {
@@ -179,9 +191,14 @@ export class WaitingScreen {
       span.appendChild(nameInput);
       span.appendChild(colorSelect);
       span.appendChild(teamInput);
+      span.appendChild(factionSelect);
       span.appendChild(submitBtn);
 
       this.waitingPlayerControls.appendChild(span);
+    }
+
+    setFactions(factions : string[]) {
+      this.factions = factions;
     }
 
     fillComputerSelect(difficulties : string[]) {
@@ -235,6 +252,10 @@ export class WaitingScreen {
         teamSpan.className = "player-card__team";
         teamSpan.innerText = p.team ? `Team ${p.team}` : "";
 
+        const factionSpan = document.createElement('span');
+        factionSpan.className = "player-card__faction";
+        factionSpan.innerText = p.faction;
+
         const typeSpan = document.createElement('span');
         typeSpan.className = "player-card__type";
         typeSpan.innerText = p.isComputer ? (p.difficulty ?? "Computer") : "Human";
@@ -245,6 +266,7 @@ export class WaitingScreen {
         li.appendChild(nameSpan);
         li.appendChild(colorSwatch);
         li.appendChild(teamSpan);
+        li.appendChild(factionSpan);
         li.appendChild(typeSpan);
 
         if (p.isComputer && this.isLeader) {

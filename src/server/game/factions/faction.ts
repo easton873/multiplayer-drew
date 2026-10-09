@@ -1,4 +1,4 @@
-import { UnitCreationData } from '../../../shared/types.js';
+import { EraData, FactionData, UnitCreationData } from '../../../shared/types.js';
 import { Era, EraInfo } from '../era.js';
 import { Resources } from '../resources.js';
 import { GameUnit } from "../unit/game_unit.js";
@@ -30,6 +30,7 @@ export abstract class Faction {
     abstract getEraInfo() : EraInfo[];
     abstract getMilitaryUnits() : EraUnit[];
     abstract getResourceUnits() : EraUnit[];
+    abstract getName() : string;
     getMilitaryUnitCreationData() : UnitCreationData[] {
         return this.getUnitsHelper(this.getMilitaryUnits());
     }
@@ -45,5 +46,14 @@ export abstract class Faction {
     getAllGameUnits(): GameUnit[] {
         let resource : GameUnit[] = this.getUnitsForEra(this.getResourceUnits());
         return resource.concat(this.getUnitsForEra(this.getMilitaryUnits()));
+    }
+
+    getFactionData() : FactionData {
+        return {
+            factionName: this.getName(),
+            resourceUnits: this.getResourceUnitCreationData(),
+            militaryUnits: this.getMilitaryUnitCreationData(),
+            eraData: this.era.getEraData(),
+        };
     }
 }
