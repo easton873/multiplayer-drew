@@ -1,8 +1,12 @@
 import { PosData, ResourceData } from "./types.js"
 
 export interface LoadData {
+    factions : FactionLoadData[]
+}
+
+export interface FactionLoadData {
+    name : string
     units : UnitLoadData[]
-    factions : string[]
 }
 
 export interface UnitLoadData {

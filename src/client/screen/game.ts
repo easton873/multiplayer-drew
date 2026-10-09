@@ -65,7 +65,6 @@ export class GameScreen {
     private isDelete : boolean = false
     private bg : HTMLImageElement = new Image();
     private images : Map<string, HTMLImageElement> = new Map<string, HTMLImageElement>();
-    private loadData : LoadData | null = null;
     private factionName : string = '';
 
     private pressedKeys : Set<string> = new Set<string>();
@@ -445,7 +444,7 @@ export class GameScreen {
         return;
       }
       this.drawBorder(unit.pos, unit.playerColor);
-      this.drawUnitByPos(unit.name, unit.pos, unit.color);
+      this.drawUnitByPos(unit.name, unit.pos, unit.color, unit.faction);
       this.drawUnitHealthBar(unit);
       this.drawRangedProjectile(unit);
     }
@@ -463,13 +462,13 @@ export class GameScreen {
       this.ctx.fillRect(sx - size / 2, sy - size / 2, size, size);
     }
 
-    drawUnitByPos(name : string, pos : PosData, color : string) {
+    drawUnitByPos(name : string, pos : PosData, color : string, faction : string = '') {
       let x : number = (pos.x - this.cameraX) * this.zoom;
       let y : number = (pos.y - this.cameraY) * this.zoom;
       this.ctx.fillStyle = color;
-      if (this.images.has(name)) {
-        let image = this.images.get(name);
-        this.ctx.drawImage(image!, x, y, this.zoom, this.zoom);
+      const image = this.getImage(faction, name);
+      if (image) {
+        this.ctx.drawImage(image, x, y, this.zoom, this.zoom);
       } else {
         this.ctx.fillRect(x, y, this.zoom, this.zoom);
       }
@@ -636,10 +635,7 @@ export class GameScreen {
 
     upgradeEra(faction : FactionData) {
       const era = faction.eraData;
-      if (faction.factionName !== this.factionName) {
-        this.factionName = faction.factionName;
-        this.reloadImages();
-      }
+      this.factionName = faction.factionName;
       this.resourceUnitsList = faction.resourceUnits;
       this.militaryUnitsList = faction.militaryUnits;
       this.availableResources = era.availableResources;
@@ -706,30 +702,27 @@ export class GameScreen {
         return combination.every(key => this.pressedKeys.has(key));
     }
 
-    loadImages(data: LoadData) {
-      this.loadData = data;
-      this.reloadImages();
+    private imageKey(faction : string, unitName : string) : string {
+      return faction + '/' + unitName;
     }
 
-    // Looks in the player's own faction folder first, then falls back to the other factions' folders.
-    private reloadImages() {
-      if (!this.loadData) return;
-      const own = this.factionName.toLowerCase();
-      const folders = [own, ...this.loadData.factions.map(f => f.toLowerCase()).filter(f => f !== own)]
-        .filter(f => f !== '');
+    private getImage(faction : string, unitName : string) : HTMLImageElement | undefined {
+      return this.images.get(this.imageKey(faction, unitName));
+    }
+
+    // Each unit's image lives in its own faction's folder: /units/<faction>/<unit>.png
+    loadImages(data: LoadData) {
       this.images.clear();
-      this.loadData.units.forEach((unit) => {
-        const normalized = unit.name.replace(/[^\x20-\x7E]/g, '').toLowerCase().replace(/\s/g, '');
-        const tryFolder = (i : number) => {
-          if (i >= folders.length) return;
+      data.factions.forEach((faction) => {
+        const folder = faction.name.toLowerCase();
+        faction.units.forEach((unit) => {
+          const normalized = unit.name.replace(/[^\x20-\x7E]/g, '').toLowerCase().replace(/\s/g, '');
           const img = new Image();
           img.onload = () => {
-            this.images.set(unit.name, img);
+            this.images.set(this.imageKey(faction.name, unit.name), img);
           };
-          img.onerror = () => tryFolder(i + 1);
-          img.src = `/units/${folders[i]}/${normalized}.png`;
-        };
-        tryFolder(0);
+          img.src = `/units/${folder}/${normalized}.png`;
+        });
       });
     }
 
@@ -789,8 +782,9 @@ export class GameScreen {
         cvs.width = 56;
         cvs.height = 56;
         const ctx2 = cvs.getContext('2d')!;
-        if (this.images.has(data.name)) {
-          ctx2.drawImage(this.images.get(data.name)!, 0, 0, 56, 56);
+        const cardImage = this.getImage(this.factionName, data.name);
+        if (cardImage) {
+          ctx2.drawImage(cardImage, 0, 0, 56, 56);
         } else {
           ctx2.fillStyle = '#555';
           ctx2.fillRect(0, 0, 56, 56);
@@ -822,8 +816,9 @@ export class GameScreen {
       this.unitSelectedLabel.textContent = key ? `[${key}] ${data.name}` : data.name;
       const ctx2 = this.unitSelectedCanvas.getContext('2d')!;
       ctx2.clearRect(0, 0, 28, 28);
-      if (this.images.has(data.name)) {
-        ctx2.drawImage(this.images.get(data.name)!, 0, 0, 28, 28);
+      const selectedImage = this.getImage(this.factionName, data.name);
+      if (selectedImage) {
+        ctx2.drawImage(selectedImage, 0, 0, 28, 28);
       } else {
         ctx2.fillStyle = '#555';
         ctx2.fillRect(0, 0, 28, 28);

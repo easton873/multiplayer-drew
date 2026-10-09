@@ -1,3 +1,3 @@
-export const EXTRA_UNITS : String[] = [
+export const EXTRA_UNITS : string[] = [
     "Summonee"
 ];

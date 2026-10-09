@@ -58,6 +58,7 @@ export type ResourceData = Record<ResourceType, number>
 
 export interface UnitData {
   name : string
+  faction : string
   pos : PosData
   team : number
   color : string

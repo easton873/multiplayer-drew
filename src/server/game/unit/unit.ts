@@ -187,6 +187,7 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
     getUnitData() : UnitData {
         return {
             name: this.name,
+            faction: this.owner.faction.getName(),
             pos : this.pos.getPosData(),
             team: this.team,
             color: this.color,

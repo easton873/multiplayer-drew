@@ -1,4 +1,5 @@
-import { EraData, FactionData, UnitCreationData } from '../../../shared/types.js';
+import { FactionData, UnitCreationData } from '../../../shared/types.js';
+import { FactionLoadData } from '../../../shared/bulider.js';
 import { Era, EraInfo } from '../era.js';
 import { Resources } from '../resources.js';
 import { GameUnit } from "../unit/game_unit.js";
@@ -46,6 +47,20 @@ export abstract class Faction {
     getAllGameUnits(): GameUnit[] {
         let resource : GameUnit[] = this.getUnitsForEra(this.getResourceUnits());
         return resource.concat(this.getUnitsForEra(this.getMilitaryUnits()));
+    }
+
+    // units a faction owns that can't be bought directly, like ones that other units summon
+    getExtraUnitNames() : string[] {
+        return [];
+    }
+
+    // every unit this faction can have on the board, regardless of era
+    getLoadData() : FactionLoadData {
+        const bought = this.getResourceUnits().concat(this.getMilitaryUnits()).map((eraUnit : EraUnit) => eraUnit.gameUnit.getName());
+        return {
+            name: this.getName(),
+            units: bought.concat(this.getExtraUnitNames()).map((name : string) => ({ name })),
+        };
     }
 
     getFactionData() : FactionData {

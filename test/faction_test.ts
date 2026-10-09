@@ -46,8 +46,26 @@ describe('Faction Test', () => {
         assert.ok(createFaction("nope") instanceof Humans);
     });
 
-    it('is sent to the frontend as load data', () => {
-        assert.deepStrictEqual(loadData().factions, FACTION_NAMES);
+    it('is sent to the frontend as load data with each faction\'s units', () => {
+        const factions = loadData().factions;
+        assert.deepStrictEqual(factions.map(f => f.name), FACTION_NAMES);
+        factions.forEach((faction) => {
+            assert.deepStrictEqual(faction, createFaction(faction.name).getLoadData());
+        });
+    });
+
+    it('load data lists units regardless of era, plus extras', () => {
+        const human = createFaction(HUMAN_FACTION_NAME);
+        const names = human.getLoadData().units.map(u => u.name);
+        human.getResourceUnits().concat(human.getMilitaryUnits()).forEach((eraUnit) => {
+            assert.ok(names.includes(eraUnit.gameUnit.getName()), eraUnit.gameUnit.getName());
+        });
+        human.getExtraUnitNames().forEach((name) => assert.ok(names.includes(name), name));
+    });
+
+    it('unit data carries its owner\'s faction', () => {
+        const player = new Player(0, new Pos(0, 0), new Board(10, 10), "0", "", "", undefined, new OtherFaction());
+        assert.strictEqual(player.heart.getUnitData().faction, "Other");
     });
 
     it('players default to humans', () => {

@@ -1,3 +1,4 @@
+import { EXTRA_UNITS } from "../data/units.js";
 import { HealerUnit } from "../unit/healer.js";
 import { GoblinUnit, QuickAttackerUnit, RandomMoverUnit, SabotagerUnit, ScountUnit, SoldierUnit } from "../unit/melee_unit.js";
 import { ArcherUnit, FireballThrowerUnit, SniperUnit } from "../unit/ranged_unit.js";
@@ -47,6 +48,9 @@ export const HUMAN_FACTION_NAME = "Human"
 export class Humans extends Faction {
     getName(): string {
         return HUMAN_FACTION_NAME;
+    }
+    getExtraUnitNames(): string[] {
+        return EXTRA_UNITS;
     }
     getEraInfo(): EraInfo[] {
         // cost is what it takes to advance *into* that era

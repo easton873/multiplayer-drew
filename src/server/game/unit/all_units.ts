@@ -10,7 +10,7 @@ import { ArcherUnit, FireballThrowerUnit, SniperUnit } from "./ranged_unit.js";
 import { CARPENTER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_GAME_UNIT, MASON_GAME_UNIT, SCAVENGER_GAME_UNIT, SCULPTOR_GAME_UNIT, ARCHITECT_GAME_UNIT, BANKER_GAME_UNIT, ALCHEMIST_GAME_UNIT, ENGINEER_GAME_UNIT, DRUID_GAME_UNIT } from "./resource_unit.js";
 import { SummonerUnit } from "./summoner.js";
 import { TurretUnit } from "./turret.js";
-import { LoadData, UnitLoadData } from "../../../shared/bulider.js";
+import { LoadData } from "../../../shared/bulider.js";
 import { BarracksUnit } from "./barracks.js";
 import { CityBuilderUnit, SettlerUnit } from "./settler.js";
 import { TeleporterUnit } from "./teleporter.js";
@@ -19,8 +19,7 @@ import { CatapultUnit } from "./catapult.js";
 import { MissionaryUnit } from "./combat/missionary.js";
 import { AssassainUnit, NinjaUnit, SpyUnit } from "./combat/stealth.js";
 import { VampireUnit } from "./combat/vampire.js";
-import { EXTRA_UNITS } from "../data/units.js";
-import { FACTION_NAMES } from "../factions/all_factions.js";
+import { createFaction, FACTION_NAMES } from "../factions/all_factions.js";
 
 export const ALL_RESOURCE_UNITS : GameUnit[] = [
     MERCHANT_GAME_UNIT,
@@ -103,10 +102,7 @@ function buildUnitMap() : Map<string, GameUnit> {
 export const UNIT_MAP : Map<string, GameUnit> = buildUnitMap();
 
 export function loadData() : LoadData {
-    let units : UnitLoadData[] = ALL_UNITS.map((unit : GameUnit) => {return {name: unit.getName()}});
-    let extra_units : UnitLoadData[] = EXTRA_UNITS.map((unitName : string) => {return {name: unitName}});
     return {
-        units: units.concat(extra_units),
-        factions: FACTION_NAMES,
+        factions: FACTION_NAMES.map((name : string) => createFaction(name).getLoadData()),
     };
 }
