@@ -1,5 +1,7 @@
 export interface DamageTaker {
-    takeNormalWeaponDamage(damage : number);
-    takeExplosionDamage(damage : number);
-    takeSiegeDamage(damage : number);
+    takePhysicalDamage(damage : number);
+    takeForcefulDamage(damage : number);
+    takeBuildingDamage(damage : number);
+    takeFireDamage(damage: number);
+    takeMagicDamage(damage: number);
 }

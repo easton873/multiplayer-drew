@@ -103,7 +103,7 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
     abstract doAcutalMove(board : Board);
 
     doDamage(unit : Unit, damage : number) {
-        unit.takeNormalWeaponDamage(damage);
+        unit.takePhysicalDamage(damage);
     }
 
     takeDamage(damage : number) {
@@ -114,16 +114,24 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
         }
     }
 
-    takeNormalWeaponDamage(damage: number) {
+    takePhysicalDamage(damage: number) {
         this.takeDamage(damage);
     }
 
-    takeExplosionDamage(damage: number) {
+    takeForcefulDamage(damage: number) {
         this.takeDamage(damage);
     }
 
-    takeSiegeDamage(damage: number) {
-        this.takeDamage(this.lessenDamage(damage, .5));
+    takeBuildingDamage(damage: number) {
+        this.takeDamage(this.lessenDamage(damage, .1));
+    }
+
+    takeFireDamage(damage: number) {
+        this.takeDamage(damage);
+    }
+
+    takeMagicDamage(damage: number) {
+        this.takeDamage(damage);
     }
 
     kill() {

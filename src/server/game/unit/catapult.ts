@@ -7,7 +7,7 @@ import { Unit } from "./unit.js";
 
 class Catapult extends Ranged {
     doDamage(unit: Unit, damage: number): void {
-        unit.takeSiegeDamage(damage);
+        unit.takeBuildingDamage(damage);
     }
 
     inRangeMove(board: Board): void {

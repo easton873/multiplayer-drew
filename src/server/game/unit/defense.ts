@@ -12,7 +12,11 @@ export abstract class Defense extends Ranged {
         return;
     }
 
-    takeNormalWeaponDamage(damage: number): void {
-        super.takeNormalWeaponDamage(this.lessenDamage(damage, .1));
+    takePhysicalDamage(damage: number): void {
+        super.takePhysicalDamage(this.lessenDamage(damage, .1));
+    }
+
+    takeBuildingDamage(damage: number): void {
+        this.takeDamage(damage);
     }
 }

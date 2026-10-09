@@ -15,7 +15,7 @@ export class ResourceUnit extends UnitWithCounter {
         this.owner.resources.add(this.resources);
     }
 
-    takeSiegeDamage(damage: number): void {
+    takeBuildingDamage(damage: number): void {
         this.takeDamage(damage);
     }
 }
