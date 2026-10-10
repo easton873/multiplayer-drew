@@ -1,8 +1,10 @@
+import { Castle, CASTLE_FACTION_NAME } from "./castle.js";
 import { Faction } from "./faction.js";
 import { HUMAN_FACTION_NAME, Humans } from "./humans.js";
 
 export const FACTION_FACTORIES : Record<string, () => Faction> = {
     [HUMAN_FACTION_NAME]: () => new Humans(),
+    [CASTLE_FACTION_NAME]: () => new Castle(),
 };
 
 export const DEFAULT_FACTION_NAME : string = HUMAN_FACTION_NAME;

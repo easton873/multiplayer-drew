@@ -2,7 +2,7 @@ import { Board } from "../../board.js";
 import { Counter } from "../../move/counter.js";
 import { Player } from "../../player.js";
 import { Pos } from "../../pos.js";
-import { ObservableUnit, Unit, UnitWithTarget } from "../unit.js";
+import { Unit, UnitWithTarget } from "../unit.js";
 
 export abstract class CombatUnit extends UnitWithTarget {
     public attackCounter : Counter;

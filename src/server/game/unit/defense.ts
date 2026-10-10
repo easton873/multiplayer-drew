@@ -12,11 +12,11 @@ export abstract class Defense extends Ranged {
         return;
     }
 
-    takePhysicalDamage(damage: number): void {
-        super.takePhysicalDamage(this.lessenDamage(damage, .1));
+    getPhysicalDamageMultiplier(): number {
+        return .1;
     }
 
-    takeBuildingDamage(damage: number): void {
-        this.takeDamage(damage);
+    getBuildingDamageMultiplier(): number {
+        return 1;
     }
 }

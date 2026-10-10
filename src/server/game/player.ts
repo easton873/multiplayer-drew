@@ -6,7 +6,6 @@ import { Pos } from "./pos.js";
 import { Era } from "./era.js";
 import { EraData, FactionData, PlayerSpecificData, ResourceData } from "../../shared/types.js";
 import { GameUnit } from "./unit/game_unit.js";
-import { UNIT_MAP } from "./unit/all_units.js";
 import { Faction } from "./factions/faction.js";
 import { Humans } from "./factions/humans.js";
 
@@ -17,8 +16,8 @@ export class Player implements UnitObserver {
 
     heart: Heart;
     hearts : Hearts = new Hearts();
-    constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string, startingResources: ResourceData = { gold: 50, wood: 0, stone: 0 }, public faction: Faction = new Humans()) {
-        this.resources = new Resources({ gold: startingResources.gold, wood: startingResources.wood, stone: startingResources.stone });
+    constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string, startingResources: ResourceData = { gold: 50, wood: 0, stone: 0, diamond: 0, iron: 0}, public faction: Faction = new Humans()) {
+        this.resources = new Resources({ gold: startingResources.gold, wood: startingResources.wood, stone: startingResources.stone, diamond: startingResources.diamond, iron: startingResources.iron });
         this.board = board;
         this.heart = new Heart(this, pos, this.era.getHeart());
         this.addHeart(this.heart);
@@ -88,7 +87,7 @@ export class Player implements UnitObserver {
     }
 
     whichUnit(s: string): GameUnit {
-        let unitInfo = UNIT_MAP.get(s);
+        let unitInfo = this.faction.findGameUnit(s);
         if (!unitInfo) {
             console.log("unrecognized unit type");
             return null;

@@ -114,38 +114,73 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
         }
     }
 
+    applyDamage(damage : number, multiplier : number) {
+        this.takeDamage(this.lessenDamage(damage, multiplier));
+    }
+
+    lessenDamage(damage : number, percentage : number) : number {
+        if (damage < 1) {
+            return 0;
+        }
+        return Math.max(damage * percentage, 1);
+    }
+
+    getPhysicalDamageMultiplier() : number {
+        return 1;
+    }
+
+    getForcefulDamageMultiplier() : number {
+        return 1;
+    }
+
+    getBuildingDamageMultiplier() : number {
+        return .1;
+    }
+
+    getFireDamageMultiplier() : number {
+        return 1;
+    }
+
+    getMagicDamageMultiplier() : number {
+        return 1;
+    }
+
     takePhysicalDamage(damage: number) {
-        this.takeDamage(damage);
+        this.applyDamage(damage, this.getPhysicalDamageMultiplier());
     }
 
     takeForcefulDamage(damage: number) {
-        this.takeDamage(damage);
+        this.applyDamage(damage, this.getForcefulDamageMultiplier());
     }
 
     takeBuildingDamage(damage: number) {
-        this.takeDamage(this.lessenDamage(damage, .1));
+        this.applyDamage(damage, this.getBuildingDamageMultiplier());
     }
 
     takeFireDamage(damage: number) {
-        this.takeDamage(damage);
+        this.applyDamage(damage, this.getFireDamageMultiplier());
     }
 
     takeMagicDamage(damage: number) {
-        this.takeDamage(damage);
+        this.applyDamage(damage, this.getMagicDamageMultiplier());
     }
 
     kill() {
         this.takeDamage(this.hp);
     }
 
+    applyToEntities(board : Board, predicate : (unit : Unit) => boolean, applyFn : (unit : Unit) => void) {
+        board.entities.forEach((unit : Unit) => {
+            if (predicate(unit)) {
+                applyFn(unit);
+            }
+        });
+    }
+
     public TESTkill() {
         this.notifyObserversDeath();
     }
     
-    lessenDamage(damage : number, percentage : number) : number {
-        return Math.max(damage * percentage, 1);
-    }
-
     isDead() : boolean {
         return this.hp <= 0;
     }
@@ -285,18 +320,37 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
         });
     }
 
+    applyToEntitesInArea(board : Board, pos: Pos, range: number, applyFn: (unit : Unit) => void) {
+        this.applyToEntities(board,
+            (unit : Unit) => {
+                return this.inRangeFromPoint(unit, range, pos)
+            }, 
+            applyFn
+        )
+    }
+
     doDamageInArea(board : Board, pos : Pos, range : number, damage : number) {
-        for (let i = 0; i < board.entities.length; ++i) {
-            let unit = board.entities[i];
-            if (this.inRangeFromPoint(unit, range, pos)) {
+        this.applyToEntitesInArea(board, pos, range,
+            (unit : Unit) => {
                 this.doDamage(unit, damage);
             }
-        }
+        )
     }
-}
 
-export function clampHealth(unit : Unit) {
-    if (unit.hp > unit.totalHP) {
-        unit.hp = unit.totalHP;
+    doDamageToPoses(board : Board, poses : Pos[], predicate : (unit : Unit) => boolean, damage : number) {
+        poses.forEach((pos : Pos) => {
+            this.doDamageToPos(board, pos, predicate, damage);
+        })
+    }
+
+    doDamageToPos(board : Board, pos : Pos, predicate : (unit : Unit) => boolean, damage : number) {
+        this.applyToEntities(board, 
+            (unit : Unit) => {
+                return unit.pos.equals(pos) && predicate(unit);
+            },
+            (unit : Unit) => {
+                this.doDamage(unit, damage);
+            }
+        )
     }
 }

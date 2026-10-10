@@ -14,10 +14,31 @@ export class EraUnit {
     }
 }
 
+class UnitLookup {
+    private _lookup : Map<string, GameUnit> = new Map<string, GameUnit>();
+
+    constructor(units : GameUnit[]) {
+        this.rebuildLookup(units);
+    }
+
+    get lookup() : Map<string, GameUnit> {
+        return this._lookup;
+    }
+
+    rebuildLookup(units : GameUnit[]) {
+        this._lookup.clear();
+        units.forEach((gu : GameUnit) => {
+            this._lookup.set(gu.getName(), gu);
+        });
+    }
+}
+
 export abstract class Faction {
     private _era : Era
+    private _unit_lookup : UnitLookup;
     constructor(){
         this._era = new Era(this.getEraInfo());
+        this._unit_lookup = new UnitLookup(this.getAllGameUnits());
     }
 
     get era() : Era {
@@ -25,7 +46,19 @@ export abstract class Faction {
     }
 
     attemptUpgradeEra(resources : Resources) : boolean {
-        return this.era.advanceToNextEra(resources);
+        if (this.era.advanceToNextEra(resources)) {
+            this.rebuildUnitLookup();
+            return true;
+        }
+        return false;
+    }
+
+    findGameUnit(unitType : string) : GameUnit {
+        return this._unit_lookup.lookup.get(unitType);
+    }
+
+    rebuildUnitLookup() {
+        this._unit_lookup.rebuildLookup(this.getAllGameUnits());
     }
 
     abstract getEraInfo() : EraInfo[];

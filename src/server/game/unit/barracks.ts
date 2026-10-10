@@ -16,11 +16,11 @@ export class Spawner extends UnitWithCounter {
         }
         this.owner.addUnitToBoard(this.unitToSpawn, this.pos.clone());
     }
-    takeBuildingDamage(damage: number): void {
-        this.takeDamage(damage);
+    getBuildingDamageMultiplier(): number {
+        return 1;
     }
-    takePhysicalDamage(damage: number): void {
-        this.takeDamage(this.lessenDamage(damage, .1));
+    getPhysicalDamageMultiplier(): number {
+        return .1;
     }
 }
 

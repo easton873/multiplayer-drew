@@ -21,7 +21,15 @@ export class ResourceUnit extends UnitWithCounter {
 }
 
 export class GameResourceUnit extends GameUnit {
-    constructor(name : string, cost : Resources, private hp : number, private speed : number, public resources : Resources, private color : string, private blurb : string) {
+    constructor(
+        name : string, 
+        cost : Resources, 
+        private hp : number, 
+        private speed : number, 
+        public resources : Resources, 
+        private color : string, 
+        private blurb : string
+    ) {
         super(name, cost, blurb);
     }
     construct(player: Player, pos: Pos): Unit {

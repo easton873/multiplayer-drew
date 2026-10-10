@@ -2,7 +2,8 @@ import { Resources } from "../../../game/resources.js";
 import { Player } from "../../player.js";
 import { Pos } from "../../pos.js";
 import { Melee, MeleeUnit } from "../melee_unit.js";
-import { clampHealth, Unit } from "../unit.js";
+import { Unit } from "../unit.js";
+import { healUnit } from "./helper.js";
 
 class Vampire extends Melee {
     constructor(player : Player, name : string, pos : Pos, hp : number, color : string, moveSpeed : number, attackSpeed : number, damage : number) {
@@ -13,8 +14,7 @@ class Vampire extends Melee {
         let ogHp = unit.hp;
         super.doDamage(unit, damage);
         let afterHp = unit.hp;
-        this.hp += ogHp - afterHp;
-        clampHealth(this);
+        healUnit(this, ogHp - afterHp)
     }
 }
 

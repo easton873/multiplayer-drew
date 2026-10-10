@@ -8,7 +8,8 @@ import { Resources } from "../src/server/game/resources.js";
 import { EraInfo } from "../src/server/game/era.js";
 import { GOLD_RESOURCE } from "../src/shared/resource_types.js";
 import { Humans } from "../src/server/game/factions/humans.js";
-import { ALL_UNITS } from "../src/server/game/unit/all_units.js";
+import { createFaction, FACTION_NAMES } from "../src/server/game/factions/all_factions.js";
+import { EraUnit, Faction } from "../src/server/game/factions/faction.js";
 import { GameUnit } from "../src/server/game/unit/game_unit.js";
 import { SoldierUnit } from "../src/server/game/unit/melee_unit.js";
 import { Counter } from "../src/server/game/move/counter.js";
@@ -22,12 +23,24 @@ class TestFaction extends Humans {
 }
 
 describe('Unit Test', () => {
-    it ('spawn all units', () => {
-        let board : Board = new Board(10, 10);
-        let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "");
-        ALL_UNITS.forEach((unit : GameUnit) => {
-            player.resources.add(unit.getUnitCreationInfo().getCost());
-            player.NewUnit(unit.getName(), new Pos(0, 0));
+    it ('spawn all units for every faction', () => {
+        FACTION_NAMES.forEach((factionName : string) => {
+            let maxEra : Faction = createFaction(factionName);
+            while (maxEra.attemptUpgradeEra(new Resources({ gold: 100000, wood: 100000, stone: 100000 }))) {}
+            let eraUnits : EraUnit[] = maxEra.getResourceUnits().concat(maxEra.getMilitaryUnits());
+            assert.ok(eraUnits.length > 0, `${factionName} has no units`);
+
+            eraUnits.forEach((eraUnit : EraUnit) => {
+                let gameUnit : GameUnit = eraUnit.gameUnit;
+                let board : Board = new Board(10, 10);
+                let faction : Faction = createFaction(factionName);
+                while (faction.attemptUpgradeEra(new Resources({ gold: 100000, wood: 100000, stone: 100000 }))) {}
+                let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "", undefined, faction);
+                let unitCount = player.unitCount;
+                player.resources.add(gameUnit.getUnitCreationInfo().getCost());
+                assert.ok(player.NewUnit(gameUnit.getName(), new Pos(0, 0)), `${factionName} could not spawn ${gameUnit.getName()}`);
+                assert.strictEqual(player.unitCount, unitCount + 1);
+            });
         });
     });
 
