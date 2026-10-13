@@ -5,6 +5,7 @@ import { Player } from "../player.js";
 import { Pos } from "../pos.js";
 import { Resources } from "../resources.js";
 import { TargetChasingUnit } from "./combat/combat.js";
+import { randomPos } from "./combat/helper.js";
 import { GameUnit } from "./game_unit.js";
 import { ResourceUnit } from "./resource_unit.js";
 import { Unit } from "./unit.js";
@@ -96,10 +97,7 @@ class randomMoverUnit extends MeleeUnit {
             doMove(board: Board): void {
                 if (!this.hasTeleported && Random.fromRange(1, 10) == 1) {
                     this.hasTeleported = true;
-                    this.pos = new Pos(
-                        Random.fromRange(0, board.width),
-                        Random.fromRange(0, board.height)
-                    );
+                    this.pos = randomPos(board);
                 }
                 super.doMove(board);
             }

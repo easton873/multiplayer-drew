@@ -16,8 +16,8 @@ export class Player implements UnitObserver {
 
     heart: Heart;
     hearts : Hearts = new Hearts();
-    constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string, startingResources: ResourceData = { gold: 50, wood: 0, stone: 0, diamond: 0, iron: 0}, public faction: Faction = new Humans()) {
-        this.resources = new Resources({ gold: startingResources.gold, wood: startingResources.wood, stone: startingResources.stone, diamond: startingResources.diamond, iron: startingResources.iron });
+    constructor(private team: number, pos: Pos, board: Board, private id: string, private name: string, private color: string, startingResources: ResourceData = { gold: 50, wood: 0, stone: 0, diamond: 0, iron: 0, randomonium: 0}, public faction: Faction = new Humans()) {
+        this.resources = new Resources({ gold: startingResources.gold, wood: startingResources.wood, stone: startingResources.stone, diamond: startingResources.diamond, iron: startingResources.iron, randomonium: startingResources.randomonium });
         this.board = board;
         this.heart = new Heart(this, pos, this.era.getHeart());
         this.addHeart(this.heart);

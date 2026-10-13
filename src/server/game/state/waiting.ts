@@ -45,6 +45,7 @@ export class WaitingState implements RoomState {
             stone: Math.max(0, Math.floor(resources.stone)),
             diamond: Math.max(0, Math.floor(resources.diamond)),
             iron: Math.max(0, Math.floor(resources.iron)),
+            randomonium: Math.max(0, Math.floor(resources.randomonium)),
         };
     }
 

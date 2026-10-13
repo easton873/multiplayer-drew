@@ -7,6 +7,7 @@ import { GameUnit } from "../unit/game_unit.js";
 import { Unit } from "../unit/unit.js";
 import { getRandomIndex } from "../utils.js";
 import { FIFTH_ERA_NAME, FOURTH_ERA_NAME, SECOND_ERA_NAME, SIXTH_ERA_NAME, STARTING_ERA_NAME, THIRD_ERA_NAME } from "../factions/humans.js";
+import { getTerritory } from "../unit/combat/helper.js";
 
 export abstract class BaseComputerPlayer extends PlayerProxy {
     protected territory : Pos[] = [];
@@ -120,16 +121,7 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
     }
 
     rebuildTerritory() {
-        let spots : Pos[] = [];
-        for (let y = 0; y < this.board.height; y++) {
-            for (let x = 0; x < this.board.width; x++) {
-                let pos : Pos = new Pos(x, y);
-                if (this.hearts.isInRange(pos)) {
-                    spots.push(pos);
-                }
-            }
-        }
-        this.territory = spots;
+        this.territory = getTerritory(this.board, this.hearts);
     }
 
     randomPosInTerritory() : Pos {        

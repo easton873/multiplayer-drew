@@ -1,10 +1,12 @@
 import { Castle, CASTLE_FACTION_NAME } from "./castle.js";
 import { Faction } from "./faction.js";
 import { HUMAN_FACTION_NAME, Humans } from "./humans.js";
+import { Random, RANDOM_FACTION_NAME } from "./random.js";
 
 export const FACTION_FACTORIES : Record<string, () => Faction> = {
     [HUMAN_FACTION_NAME]: () => new Humans(),
     [CASTLE_FACTION_NAME]: () => new Castle(),
+    [RANDOM_FACTION_NAME]: () => new Random(),
 };
 
 export const DEFAULT_FACTION_NAME : string = HUMAN_FACTION_NAME;

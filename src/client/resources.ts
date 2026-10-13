@@ -7,6 +7,7 @@ export const RESOURCE_EMOJI: Record<ResourceType, string> = {
   stone: "\u{1FAA8}",
   diamond: "\u{1F48E}",
   iron: "\u{1F529}",
+  randomonium: "\u{1F3B2}",
 };
 
 export function resourceLabel(type: ResourceType): string {

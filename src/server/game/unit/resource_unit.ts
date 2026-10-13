@@ -28,15 +28,12 @@ export class GameResourceUnit extends GameUnit {
         private speed : number, 
         public resources : Resources, 
         private color : string, 
-        private blurb : string
+        blurb: string
     ) {
         super(name, cost, blurb);
     }
     construct(player: Player, pos: Pos): Unit {
         return new ResourceUnit(player, pos, this.creationInfo.getName(), this.hp, this.speed, this.resources, this.color);
-    }
-    getBlurb(): string {
-        return this.blurb
     }
 }
 
