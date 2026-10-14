@@ -34,7 +34,8 @@ describe('Unit Test', () => {
                 let gameUnit : GameUnit = eraUnit.gameUnit;
                 let board : Board = new Board(10, 10);
                 let faction : Faction = createFaction(factionName);
-                while (faction.attemptUpgradeEra(new Resources({ gold: 100000, wood: 100000, stone: 100000 }))) {}
+                faction.era.level = 99
+                faction.rebuildUnitLookup();
                 let player : Player = new Player(0, new Pos(0, 0), board, "0", "", "", undefined, faction);
                 let unitCount = player.unitCount;
                 player.resources.add(gameUnit.getUnitCreationInfo().getCost());

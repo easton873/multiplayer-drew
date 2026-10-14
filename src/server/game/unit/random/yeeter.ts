@@ -20,4 +20,4 @@ class yeeterGameUnit extends GameUnit {
     }
 }
 
-export const YeeterGameUnit = new yeeterGameUnit("Yeeter", new Resources({ randomonium: 10 }), "Yeets its targets to random parts of the board");
+export const YeeterGameUnit = new yeeterGameUnit("Yeeter", new Resources({ randomonium: 30 }), "Yeets its targets to random parts of the board");

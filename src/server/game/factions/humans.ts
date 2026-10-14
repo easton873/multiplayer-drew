@@ -1,6 +1,6 @@
 import { EXTRA_UNITS } from "../data/units.js";
 import { HealerUnit } from "../unit/healer.js";
-import { GoblinUnit, QuickAttackerUnit, RandomMoverUnit, SabotagerUnit, ScountUnit, SoldierUnit } from "../unit/melee_unit.js";
+import { GoblinUnit, QuickAttackerUnit, SabotagerUnit, ScountUnit, SoldierUnit } from "../unit/melee_unit.js";
 import { ArcherUnit, FireballThrowerUnit, SniperUnit } from "../unit/ranged_unit.js";
 import {
     MERCHANT_GAME_UNIT,
@@ -35,6 +35,7 @@ import { EraUnit, Faction } from "./faction.js";
 import { EraInfo } from "../era.js";
 import { Resources } from "../resources.js";
 import { GOLD_RESOURCE, STONE_RESOURCE, WOOD_RESOURCE } from "../../../shared/resource_types.js";
+import { LegacyRandomMoverUnit } from "../unit/random/random_mover.js";
 
 export const STARTING_ERA_NAME = "The Starting Era";
 export const SECOND_ERA_NAME = "The Second Era";
@@ -94,7 +95,7 @@ export class Humans extends Faction {
             new EraUnit(QuickAttackerUnit, 1),
             new EraUnit(KamakazeUnit, 1),
             new EraUnit(GoblinUnit, 1),
-            new EraUnit(RandomMoverUnit, 1),
+            new EraUnit(LegacyRandomMoverUnit, 1),
             new EraUnit(SettlerUnit, 1),
             new EraUnit(new TurretUnit(), 1),
             new EraUnit(NinjaUnit, 1),

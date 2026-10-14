@@ -14,13 +14,17 @@ export class Spawner extends UnitWithCounter {
         if (this.owner.atUnitCap()) {
             return;
         }
-        this.owner.addUnitToBoard(this.unitToSpawn, this.pos.clone());
+        this.owner.addUnitToBoard(this.getUnitToSpawn(), this.pos.clone());
     }
     getBuildingDamageMultiplier(): number {
         return 1;
     }
     getPhysicalDamageMultiplier(): number {
         return .1;
+    }
+
+    getUnitToSpawn(): GameUnit {
+        return this.unitToSpawn;
     }
 }
 

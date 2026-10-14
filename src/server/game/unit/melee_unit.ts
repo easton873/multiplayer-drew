@@ -87,27 +87,8 @@ class sabotagerUnit extends MeleeUnit {
     }
 }
 
-class randomMoverUnit extends MeleeUnit {
-    constructor() {
-        super("Random Mover", new Resources({ gold: 5, wood: 5 }), 10, 10, 1, 3, "#ccccff", "Is just like a soldier but randomly teleports to a part of the map");
-    }
-    construct(player: Player, pos: Pos): Unit {
-        return new class extends Melee {
-            private hasTeleported : boolean = false;
-            doMove(board: Board): void {
-                if (!this.hasTeleported && Random.fromRange(1, 10) == 1) {
-                    this.hasTeleported = true;
-                    this.pos = randomPos(board);
-                }
-                super.doMove(board);
-            }
-        }(player, this.name, pos, this.hp, this.moveSpeed, this.attackSpeed, this.color, this.damage);
-    }
-}
-
 export const SoldierUnit : soldierUnit = new soldierUnit();
 export const ScountUnit : scoutUnit = new scoutUnit();
 export const QuickAttackerUnit : quickAttackerUnit = new quickAttackerUnit();
 export const GoblinUnit : goblinUnit = new goblinUnit();
 export const SabotagerUnit : sabotagerUnit = new sabotagerUnit();
-export const RandomMoverUnit : randomMoverUnit = new randomMoverUnit();

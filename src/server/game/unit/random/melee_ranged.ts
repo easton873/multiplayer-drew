@@ -37,9 +37,9 @@ class randomRangedUnit extends GameUnit {
     }
 }
 
-export const RandomMeleeUnit: randomMeleeUnit = new randomMeleeUnit("Random Melee", new Resources({ randomonium: 25 }), "A random melee unit with random stats between 1 and 10", "#000000", 1, 10);
-export const ImprovedRandomMeleeUnit: randomMeleeUnit = new randomMeleeUnit("Improved Random Melee", new Resources({ randomonium: 100 }), "A random melee unit with random stats between 1 and 100", "#555555", 1, 100);
-export const OpRandomMeleeUnit: randomMeleeUnit = new randomMeleeUnit("OP Random Melee", new Resources({ randomonium: 5000 }), "A random melee unit with random stats between 1 and 500", "#aaaaaa", 1, 500);
+export const RandomMeleeUnit: randomMeleeUnit = new randomMeleeUnit("Random Melee", new Resources({ randomonium: 50 }), "A random melee unit with random stats between 1 and 10", "#000000", 1, 10);
+export const BiggerRandomMeleeUnit: randomMeleeUnit = new randomMeleeUnit("Bigger Random Melee", new Resources({ randomonium: 50 }), "A random melee unit with random stats between 1 and 100", "#555555", 1, 100);
+export const BiggestRandomMeleeUnit: randomMeleeUnit = new randomMeleeUnit("Biggest Random Melee", new Resources({ randomonium: 50 }), "A random melee unit with random stats between 1 and 500", "#aaaaaa", 1, 500);
 
-export const RandomRangedUnit: randomRangedUnit = new randomRangedUnit("Random Ranged", new Resources({ randomonium: 250 }), "A random ranged unit with random stats between 1 and 25", "#19174d", 1, 25);
-export const CoolRandomRanged: randomRangedUnit = new randomRangedUnit("Cool Random Ranged", new Resources({ randomonium: 7500 }), "A random ranged unit with random stats between 1 and 500", "#312d92", 1, 500);
+export const RandomRangedUnit: randomRangedUnit = new randomRangedUnit("Random Ranged", new Resources({ randomonium: 150 }), "A random ranged unit with random stats between 1 and 25", "#19174d", 1, 10);
+export const HugeRandomRanged: randomRangedUnit = new randomRangedUnit("Huge Random Ranged", new Resources({ randomonium: 150 }), "A random ranged unit with random stats between 1 and 500", "#312d92", 1, 500);

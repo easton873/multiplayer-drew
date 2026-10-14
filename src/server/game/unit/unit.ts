@@ -259,11 +259,15 @@ export abstract class UnitWithCounter extends Unit {
         this.moveCounter = new Counter(speed);
     }
     doAcutalMove(board: Board) {
-        if (this.moveCounter.tick()) {
+        if (this.tick()) {
             this.doMove(board);
         }
     }
     abstract doMove(board : Board);
+
+    tick(): boolean {
+        return this.moveCounter.tick();
+    }
 
     set speed(newSpeed : number) {
         this.moveCounter.setSpeed(newSpeed);

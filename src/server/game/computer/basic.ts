@@ -8,7 +8,6 @@ export class BasicComputer extends PlayerProxy {
     private targetMerchantNum : number = 15;
     private placed : number = 0;
     doTurn() : void {
-        // return;
         if (this.resources.canAfford(MERCHANT_GAME_UNIT.getUnitCreationInfo().getCost()) &&
         this.unitCount < this.targetMerchantNum) {
             let pos = this.heart.pos.clone();

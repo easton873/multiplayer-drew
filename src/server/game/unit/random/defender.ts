@@ -40,4 +40,4 @@ class defenderUnit extends GameUnit {
 
 export const WeakDefenderUnit: defenderUnit = new defenderUnit("Weak Defender", new Resources({ randomonium: 2}), "Randomly defends your territory", 10, 30, "#c51919", 10);
 export const DefenderUnit: defenderUnit = new defenderUnit("Defender", new Resources( {randomonium: 100}), "Randomly defends your territory", 100, 10, "#700909", 20);
-export const SuperDefenderUnit: defenderUnit = new defenderUnit("Super Defender", new Resources({randomonium: 500}), "Randomly defends your territory", 1000, 2, "#450667", 100);
+export const SuperDefenderUnit: defenderUnit = new defenderUnit("Super Defender", new Resources({randomonium: 250}), "Randomly defends your territory", 1000, 2, "#450667", 100);
