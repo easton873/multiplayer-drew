@@ -26,6 +26,14 @@ class Angel extends Melee {
     getFireDamageMultiplier(): number {
         return .25;
     }
+
+    getMagicDamageMultiplier(): number {
+        return .25;
+    }
+
+    getPhysicalDamageMultiplier(): number {
+        return .5;
+    }
 }
 
 class angelUnit extends GameUnit {

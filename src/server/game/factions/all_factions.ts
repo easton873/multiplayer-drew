@@ -1,11 +1,13 @@
 import { Castle, CASTLE_FACTION_NAME } from "./castle.js";
 import { Faction } from "./faction.js";
+import { Heckspawn, HECKSPAWN_FACTION_NAME } from "./heckspawn.js";
 import { HUMAN_FACTION_NAME, Humans } from "./humans.js";
 import { Random, RANDOM_FACTION_NAME } from "./random.js";
 
 export const FACTION_FACTORIES : Record<string, () => Faction> = {
     [HUMAN_FACTION_NAME]: () => new Humans(),
     [CASTLE_FACTION_NAME]: () => new Castle(),
+    [HECKSPAWN_FACTION_NAME]: () => new Heckspawn,
     [RANDOM_FACTION_NAME]: () => new Random(),
 };
 

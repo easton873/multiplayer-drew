@@ -4,6 +4,7 @@ import { Heart } from "../heart.js";
 import { Counter } from "../move/counter.js";
 import { Player } from "../player.js";
 import { Pos, PositionDifference } from "../pos.js";
+import { healUnit } from "./combat/helper.js";
 import { DamageTaker } from "./damage.js";
 
 export abstract class ObservableUnit {
@@ -167,6 +168,10 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
 
     kill() {
         this.takeDamage(this.hp);
+    }
+
+    heal(amount: number) {
+        healUnit(this, amount);
     }
 
     applyToEntities(board : Board, predicate : (unit : Unit) => boolean, applyFn : (unit : Unit) => void) {
