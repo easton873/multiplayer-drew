@@ -11,7 +11,8 @@ import { ClientHandler, GameClient } from "./client_handler.js";
 import { emitYourTurn } from "../../shared/client.js";
 import { ComputerDifficulties, CreateComputer } from "./computer/factory.js";
 import { DEFAULT_BG_IMAGE_FILE, ResourceData } from "../../shared/types.js";
-import { createFaction, DEFAULT_FACTION_NAME, FACTION_NAMES } from "./factions/all_factions.js";
+import { CHOOSE_FOR_ME_NAME, createFaction, DEFAULT_FACTION_NAME, CLIENT_FACTION_CHOICES } from "./factions/all_factions.js";
+import { HUMAN_FACTION_NAME } from "./factions/humans.js";
 import { backgrounds } from "./data/backgrounds.js";
 
 export class GameRoom {
@@ -112,9 +113,9 @@ export class SetupPlayer {
     protected pos : Pos = null;
     ready : boolean = true;
     protected faction : string;
-    constructor(protected id : string, protected name: string, private client : GameClient, protected color : string, private isLeader : boolean, faction : string = DEFAULT_FACTION_NAME) {
+    constructor(protected id : string, protected name: string, private client : GameClient, protected color : string, private isLeader : boolean, faction : string = CHOOSE_FOR_ME_NAME) {
         // the name comes from the client, so don't trust it
-        this.faction = FACTION_NAMES.includes(faction) ? faction : DEFAULT_FACTION_NAME;
+        this.faction = CLIENT_FACTION_CHOICES.includes(faction) ? faction : DEFAULT_FACTION_NAME;
     }
 
     reset() {
@@ -130,7 +131,7 @@ export class SetupPlayer {
         this.team = Math.abs(other.team);
         this.color = other.color;
         this.ready = other.ready;
-        this.faction = FACTION_NAMES.includes(other.faction) ? other.faction : this.faction;
+        this.faction = CLIENT_FACTION_CHOICES.includes(other.faction) ? other.faction : this.faction;
     }
 
     updateTeam(team : number) {
@@ -195,7 +196,8 @@ class ComputerClient implements GameClient {
 
 class SetupComputerPlayer extends SetupPlayer {
     constructor(protected handler : ClientHandler, id : string, name: string, client : GameClient, color : string, isLeader : boolean, private difficulty : string) {
-        super(id, name, client, color, isLeader);
+        // computers only know how to play the human faction for now
+        super(id, name, client, color, isLeader, HUMAN_FACTION_NAME);
     }
 
     updateComputerData(name : string, color : string, team : number | null, difficulty : string) {

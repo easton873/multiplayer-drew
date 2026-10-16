@@ -1,5 +1,5 @@
 import { emitAddComputer, emitBackgroundUpdate, emitBoardUpdate, emitEditComputer, emitRemoveComputer, emitResourceUpdate, emitUpdateSetupPlayer } from "../../shared/routes";
-import { GameWaitingData, PlayerWaitingData } from "../../shared/bulider";
+import { CHOOSE_FOR_ME_FACTION, GameWaitingData, PlayerWaitingData } from "../../shared/bulider";
 import { ResourceData } from "../../shared/types";
 import { GOLD_RESOURCE, RESOURCE_TYPES, ResourceType } from "../../shared/resource_types";
 import { RESOURCE_EMOJI, resourceLabel } from "../resources";
@@ -31,6 +31,12 @@ function randomColor(): string {
     const [r, g, b] = hslToRgb(h, 0.8, 0.5);
     const toHex = (n: number) => n.toString(16).padStart(2, "0");
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+// A faction's picture lives at /units/<faction>/<faction>.png
+function factionImageSrc(faction: string): string {
+    const folder = faction.toLowerCase();
+    return `/units/${folder}/${folder}.png`;
 }
 
 export class WaitingScreen {
@@ -149,16 +155,6 @@ export class WaitingScreen {
       teamInput.className = "pixel-input";
       teamInput.placeholder = "Team";
 
-      const factionSelect = document.createElement('select');
-      factionSelect.className = "pixel-select";
-      this.factions.forEach((faction : string) => {
-        const option = document.createElement('option');
-        option.value = faction;
-        option.text = faction;
-        factionSelect.add(option);
-      });
-      factionSelect.value = p.faction;
-
       const submitBtn = document.createElement('button');
       submitBtn.className = "pixel-btn player-submit-btn hidden";
       submitBtn.innerText = "✓";
@@ -167,7 +163,6 @@ export class WaitingScreen {
 
       nameInput.oninput = () => { p.name = nameInput.value; markDirty(); };
       colorSelect.oninput = () => { p.color = colorSelect.value; markDirty(); };
-      factionSelect.onchange = () => { p.faction = factionSelect.value; markDirty(); };
       teamInput.onkeyup = () => {
         let team = null;
         if (teamInput.value !== "") {
@@ -191,14 +186,67 @@ export class WaitingScreen {
       span.appendChild(nameInput);
       span.appendChild(colorSelect);
       span.appendChild(teamInput);
-      span.appendChild(factionSelect);
       span.appendChild(submitBtn);
 
       this.waitingPlayerControls.appendChild(span);
+      this.waitingPlayerControls.appendChild(this.buildFactionPicker(p, markDirty));
+    }
+
+    private buildFactionPicker(p : PlayerWaitingData, markDirty : () => void) : HTMLDivElement {
+      const choices = this.factions;
+      let index = Math.max(0, choices.indexOf(p.faction));
+
+      const image = document.createElement('img');
+      image.className = "faction-picker__image";
+      const placeholder = document.createElement('div');
+      placeholder.className = "faction-picker__image faction-picker__placeholder";
+      placeholder.innerText = "?";
+      const name = document.createElement('div');
+      name.className = "faction-picker__name";
+
+      const imageBox = document.createElement('div');
+      imageBox.className = "faction-picker__image-box";
+      imageBox.append(image, placeholder);
+
+      const render = () => {
+        const faction = choices[index];
+        name.innerText = faction;
+        const isReal = faction !== CHOOSE_FOR_ME_FACTION;
+        image.classList.toggle("hidden", !isReal);
+        placeholder.classList.toggle("hidden", isReal);
+        if (isReal) {
+          image.src = factionImageSrc(faction);
+        }
+      };
+
+      const step = (delta : number) => {
+        index = (index + delta + choices.length) % choices.length;
+        p.faction = choices[index];
+        render();
+        markDirty();
+      };
+
+      const makeArrow = (label : string, delta : number) => {
+        const btn = document.createElement('button');
+        btn.className = "pixel-btn faction-picker__arrow";
+        btn.innerText = label;
+        btn.onclick = () => step(delta);
+        return btn;
+      };
+
+      const row = document.createElement('div');
+      row.className = "faction-picker__row";
+      row.append(makeArrow("◀", -1), imageBox, makeArrow("▶", 1));
+
+      const picker = document.createElement('div');
+      picker.className = "faction-picker";
+      picker.append(row, name);
+      render();
+      return picker;
     }
 
     setFactions(factions : string[]) {
-      this.factions = factions;
+      this.factions = [CHOOSE_FOR_ME_FACTION, ...factions.filter(f => f !== CHOOSE_FOR_ME_FACTION)];
     }
 
     fillComputerSelect(difficulties : string[]) {
@@ -254,7 +302,18 @@ export class WaitingScreen {
 
         const factionSpan = document.createElement('span');
         factionSpan.className = "player-card__faction";
-        factionSpan.innerText = p.faction;
+        if (p.faction === CHOOSE_FOR_ME_FACTION) {
+          const unknown = document.createElement('span');
+          unknown.className = "player-card__faction-icon player-card__faction-unknown";
+          unknown.innerText = "?";
+          factionSpan.appendChild(unknown);
+        } else {
+          const icon = document.createElement('img');
+          icon.className = "player-card__faction-icon";
+          icon.src = factionImageSrc(p.faction);
+          factionSpan.appendChild(icon);
+        }
+        factionSpan.appendChild(document.createTextNode(p.faction));
 
         const typeSpan = document.createElement('span');
         typeSpan.className = "player-card__type";

@@ -5,7 +5,7 @@ import { Pos } from "../src/server/game/pos.js";
 import { Resources } from "../src/server/game/resources.js";
 import { Era, EraInfo } from "../src/server/game/era.js";
 import { EraUnit, Faction } from "../src/server/game/factions/faction.js";
-import { createFaction, DEFAULT_FACTION_NAME, FACTION_FACTORIES, FACTION_NAMES } from "../src/server/game/factions/all_factions.js";
+import { CHOOSE_FOR_ME_NAME, createFaction, DEFAULT_FACTION_NAME, CLIENT_FACTION_CHOICES, FACTION_FACTORIES, FACTION_NAMES } from "../src/server/game/factions/all_factions.js";
 import { HUMAN_FACTION_NAME, Humans } from "../src/server/game/factions/humans.js";
 import { SetupPlayer } from "../src/server/game/game_room.js";
 import { loadData } from "../src/server/game/unit/all_units.js";
@@ -30,8 +30,16 @@ describe('Faction Test', () => {
     });
 
     it('lists every factory name', () => {
-        assert.deepStrictEqual(FACTION_NAMES, Object.keys(FACTION_FACTORIES));
-        assert.ok(FACTION_NAMES.includes(DEFAULT_FACTION_NAME));
+        assert.deepStrictEqual(CLIENT_FACTION_CHOICES, Object.keys(FACTION_FACTORIES));
+        assert.ok(CLIENT_FACTION_CHOICES.includes(DEFAULT_FACTION_NAME));
+        assert.ok(!FACTION_NAMES.includes(CHOOSE_FOR_ME_NAME));
+        assert.strictEqual(FACTION_NAMES.length, CLIENT_FACTION_CHOICES.length - 1);
+    });
+
+    it('choose for me builds a real faction', () => {
+        for (let i = 0; i < 50; i++) {
+            assert.ok(FACTION_NAMES.includes(createFaction(CHOOSE_FOR_ME_NAME).getName()));
+        }
     });
 
     it('creates a fresh faction each time', () => {
@@ -42,8 +50,8 @@ describe('Faction Test', () => {
         assert.strictEqual(b.era.level, 0);
     });
 
-    it('falls back to humans on an unknown faction', () => {
-        assert.ok(createFaction("nope") instanceof Humans);
+    it('falls back to a real faction on an unknown faction', () => {
+        assert.ok(FACTION_NAMES.includes(createFaction("nope").getName()));
     });
 
     it('is sent to the frontend as load data with each faction\'s units', () => {
@@ -92,16 +100,16 @@ describe('Faction Test', () => {
         assert.strictEqual(player.faction.getName(), HUMAN_FACTION_NAME);
     });
 
-    it('setup player falls back to the default for an unknown faction', () => {
+    it('setup player falls back to a real faction for an unknown faction', () => {
         const setup = new SetupPlayer("1", "p", fakeClient, "#fff", true, "garbage");
         setup.setPos(new Pos(1, 1));
         const player = setup.createPlayer(new Board(10, 10));
-        assert.strictEqual(player.faction.getName(), DEFAULT_FACTION_NAME);
+        assert.ok(FACTION_NAMES.includes(player.faction.getName()));
     });
 
-    it('join data includes the faction and defaults to humans', () => {
+    it('join data includes the faction and defaults to choose for me', () => {
         const setup = new SetupPlayer("1", "p", fakeClient, "#fff", true);
-        assert.strictEqual(setup.getJoinData().faction, DEFAULT_FACTION_NAME);
+        assert.strictEqual(setup.getJoinData().faction, CHOOSE_FOR_ME_NAME);
     });
 
     it('a player can change their faction from the waiting room', () => {

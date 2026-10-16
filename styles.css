@@ -394,7 +394,26 @@ input[type="color"].pixel-input {
   font-size: var(--font-size-xs);
   color: var(--text-muted);
   min-width: 60px;
-  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.player-card__faction-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+.player-card__faction-unknown {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--border-purple);
+  box-sizing: border-box;
 }
 
 .player-card__team {
@@ -915,4 +934,45 @@ canvas#game {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.faction-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.faction-picker__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.faction-picker__image {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.faction-picker__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: var(--text-muted);
+  border: 2px dashed var(--border-purple);
+  box-sizing: border-box;
+}
+
+.faction-picker__name {
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+}
+
+.faction-picker__placeholder.hidden {
+  display: none;
 }

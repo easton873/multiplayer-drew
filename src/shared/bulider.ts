@@ -1,5 +1,8 @@
 import { PosData, ResourceData } from "./types.js"
 
+// Lobby-only faction choice: the server picks a real faction when the game starts
+export const CHOOSE_FOR_ME_FACTION = "Choose For Me";
+
 export interface LoadData {
     factions : FactionLoadData[]
 }
