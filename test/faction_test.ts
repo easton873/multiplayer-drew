@@ -13,6 +13,7 @@ import { GOLD_RESOURCE } from "../src/shared/resource_types.js";
 
 class OtherFaction extends Faction {
     getName(): string { return "Other"; }
+    generalBlurb(): string { return "Other"; }
     getEraInfo(): EraInfo[] {
         return [new EraInfo("only", new Resources(), new Resources(), 10, 7, 1, 0, [GOLD_RESOURCE])];
     }

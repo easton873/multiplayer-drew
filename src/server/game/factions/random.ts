@@ -45,4 +45,7 @@ export class Random extends Faction {
     getName(): string {
         return RANDOM_FACTION_NAME;
     }
+    generalBlurb(): string {
+        return "The random faction thrives on not letting their opponent know their next move. The beauty of it is, you won't know your next move either. This is a fun but difficult to master faction. Timing and luck are everything in this faction."
+    }
 }

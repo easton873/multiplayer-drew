@@ -14,7 +14,7 @@ import { GorillaWarfarer, GorillaWarfareUnit } from "../src/server/game/unit/gor
 import { TargetChasingUnit } from "../src/server/game/unit/combat/combat.js";
 import { TankUnit } from "../src/server/game/unit/tank.js";
 import { CatapultUnit } from "../src/server/game/unit/catapult.js";
-import { MissionaryUnit } from "../src/server/game/unit/combat/missionary.js";
+import { LegacyMissionaryUnit } from "../src/server/game/unit/shared/missionary.js";
 import { NinjaUnit, SpyUnit, AssassainUnit } from "../src/server/game/unit/combat/stealth.js";
 import { MERCHANT_GAME_UNIT } from "../src/server/game/unit/resource_unit.js";
 import { VampireUnit } from "../src/server/game/unit/combat/vampire.js";
@@ -280,7 +280,7 @@ describe('Units Test', () => {
         let player: Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2: Player = new Player(1, new Pos(10, 10), board, "1", "", "");
 
-        let missionary = MissionaryUnit.construct(player, new Pos(5, 5)) as TargetChasingUnit;
+        let missionary = LegacyMissionaryUnit.construct(player, new Pos(5, 5)) as TargetChasingUnit;
         let soldier = SoldierUnit.construct(p2, new Pos(5, 5));
         p2.addUnit(soldier);  // register p2 as observer so notifyDeath works correctly
         board.addEntity(missionary);
@@ -318,7 +318,7 @@ describe('Units Test', () => {
         let p2: Player = new Player(1, new Pos(3, 3), board, "1", "", "");
 
         // missionary at (3, 3), p2 heart also at (3, 3) - within range 5
-        let missionary = MissionaryUnit.construct(player, new Pos(3, 3)) as TargetChasingUnit;
+        let missionary = LegacyMissionaryUnit.construct(player, new Pos(3, 3)) as TargetChasingUnit;
         board.addEntity(missionary);
         // board: player.heart (9,9), p2.heart (3,3), missionary (3,3) - no non-heart enemies
 
@@ -335,7 +335,7 @@ describe('Units Test', () => {
         let player: Player = new Player(0, new Pos(0, 0), board, "0", "", "");
         let p2: Player = new Player(1, new Pos(10, 10), board, "1", "", "");
 
-        let missionary = MissionaryUnit.construct(player, new Pos(5, 5)) as TargetChasingUnit;
+        let missionary = LegacyMissionaryUnit.construct(player, new Pos(5, 5)) as TargetChasingUnit;
         let soldier = SoldierUnit.construct(p2, new Pos(5, 5));
         p2.addUnit(soldier);
         board.addEntity(missionary);

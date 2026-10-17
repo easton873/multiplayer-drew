@@ -22,10 +22,10 @@ function randomFaction(): Faction {
 
 export const FACTION_FACTORIES : Record<string, () => Faction> = {
     [CHOOSE_FOR_ME_NAME]: () => randomFaction(),
-    [HUMAN_FACTION_NAME]: () => new Humans(),
     [CASTLE_FACTION_NAME]: () => new Castle(),
     [HECKSPAWN_FACTION_NAME]: () => new Heckspawn,
     [RANDOM_FACTION_NAME]: () => new Random(),
+    [HUMAN_FACTION_NAME]: () => new Humans(),
 };
 
 // Everything a player can select in the lobby

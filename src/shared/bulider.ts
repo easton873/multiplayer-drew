@@ -10,6 +10,7 @@ export interface LoadData {
 
 export interface FactionLoadData {
     name : string
+    blurb : string
     units : UnitLoadData[]
     eras : EraLoadData[]
 }

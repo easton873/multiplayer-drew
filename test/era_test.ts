@@ -21,6 +21,9 @@ class TestFaction extends Faction {
     getName(): string {
         return "test";
     }
+    generalBlurb(): string {
+        return "test";
+    }
     getEraInfo(): EraInfo[] {
         return TEST_ERAS;
     }

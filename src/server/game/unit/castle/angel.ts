@@ -42,4 +42,4 @@ class angelUnit extends GameUnit {
     }
 }
 
-export const AngelUnit : angelUnit = new angelUnit("Angel", new Resources({ gold: 1000, wood: 50, stone: 50, diamond: 10 }), "");
+export const AngelUnit : angelUnit = new angelUnit("Angel", new Resources({ gold: 1000, wood: 50, stone: 50, artifact: 10, diamond: 10 }), "");

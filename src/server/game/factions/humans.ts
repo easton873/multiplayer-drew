@@ -23,7 +23,7 @@ import { TurretUnit } from "../unit/turret.js";
 import { NinjaUnit, SpyUnit, AssassainUnit } from "../unit/combat/stealth.js";
 import { CatapultUnit } from "../unit/catapult.js";
 import { SummonerUnit } from "../unit/summoner.js";
-import { MissionaryUnit } from "../unit/combat/missionary.js";
+import { LegacyMissionaryUnit } from "../unit/shared/missionary.js";
 import { BarracksUnit } from "../unit/barracks.js";
 import { VampireUnit } from "../unit/combat/vampire.js";
 import { TeleporterUnit } from "../unit/teleporter.js";
@@ -47,6 +47,9 @@ export const SIXTH_ERA_NAME = "Sixth Era";
 export const HUMAN_FACTION_NAME = "Human"
 
 export class Humans extends Faction {
+    generalBlurb(): string {
+        return "This is a legacy faction whose days are numbers. So many fun and crazy units are available here";
+    }
     getName(): string {
         return HUMAN_FACTION_NAME;
     }
@@ -104,7 +107,7 @@ export class Humans extends Faction {
             new EraUnit(TankUnit, 2),
             new EraUnit(new SummonerUnit(), 2),
             new EraUnit(HealerUnit, 2),
-            new EraUnit(MissionaryUnit, 2),
+            new EraUnit(LegacyMissionaryUnit, 2),
             new EraUnit(FireballThrowerUnit, 2),
             new EraUnit(SpyUnit, 2),
             new EraUnit(SabotagerUnit, 2),

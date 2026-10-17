@@ -68,6 +68,7 @@ export abstract class Faction {
     abstract getMilitaryUnits() : EraUnit[];
     abstract getResourceUnits() : EraUnit[];
     abstract getName() : string;
+    abstract generalBlurb(): string;
     getMilitaryUnitCreationData() : UnitCreationData[] {
         return this.getUnitsHelper(this.getMilitaryUnits());
     }
@@ -99,6 +100,7 @@ export abstract class Faction {
         const extra : UnitLoadData[] = this.getExtraUnitNames().map((name : string) => ({ name }));
         return {
             name: this.getName(),
+            blurb: this.generalBlurb(),
             units: bought.concat(extra),
             eras: this.getEraInfo().map((era : EraInfo) => ({
                 name: era.name,

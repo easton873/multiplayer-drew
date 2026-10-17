@@ -324,7 +324,9 @@ export class WaitingScreen {
 
         const image = el('img', "faction-picker__image faction-modal__image");
         image.src = factionImageSrc(name);
-        body.append(image);
+        const intro = el('div', "faction-modal__intro");
+        intro.append(image, el('p', "faction-modal__blurb", data.blurb));
+        body.append(intro);
 
         body.append(el('h4', "faction-modal__section", "Eras"));
         const eras = el('div', "faction-modal__eras");

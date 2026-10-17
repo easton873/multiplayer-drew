@@ -1023,6 +1023,18 @@ canvas#game {
   padding: 0 8px;
 }
 
+.faction-modal__intro {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.faction-modal__intro .faction-modal__blurb {
+  flex: 1;
+  text-align: left;
+}
+
 .faction-modal__image {
   width: 192px;
   height: 192px;
@@ -1030,6 +1042,7 @@ canvas#game {
 }
 
 .faction-modal__note,
+.faction-modal__blurb,
 .faction-modal__era-line,
 .faction-modal__unit-blurb {
   margin: 0;

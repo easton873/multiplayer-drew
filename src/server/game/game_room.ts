@@ -11,6 +11,7 @@ import { ClientHandler, GameClient } from "./client_handler.js";
 import { emitYourTurn } from "../../shared/client.js";
 import { ComputerDifficulties, CreateComputer } from "./computer/factory.js";
 import { DEFAULT_BG_IMAGE_FILE, ResourceData } from "../../shared/types.js";
+import { defaultStartingResources } from "../../shared/resource_types.js";
 import { CHOOSE_FOR_ME_NAME, createFaction, DEFAULT_FACTION_NAME, CLIENT_FACTION_CHOICES } from "./factions/all_factions.js";
 import { HUMAN_FACTION_NAME } from "./factions/humans.js";
 import { backgrounds } from "./data/backgrounds.js";
@@ -19,7 +20,7 @@ export class GameRoom {
     public players : Map<string, SetupPlayer> = new Map<string, SetupPlayer>; // player id to player
     public boardX : number = 100;
     public boardY : number = 100;
-    public startingResources : ResourceData = { gold: 50, wood: 0, stone: 0, diamond: 0, iron: 0, randomonium: 0 };
+    public startingResources : ResourceData = defaultStartingResources();
     public background : string = DEFAULT_BG_IMAGE_FILE;
     public state : RoomState = new WaitingState();
     public tokenToPlayerId : Map<string, string> = new Map();

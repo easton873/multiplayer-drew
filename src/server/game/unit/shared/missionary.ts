@@ -4,8 +4,8 @@ import { Player } from "../../player.js";
 import { Pos } from "../../pos.js";
 import { GameUnit } from "../game_unit.js";
 import { Unit } from "../unit.js";
-import { TargetChasingUnit } from "./combat.js";
-import { Heart } from "../..//heart.js";
+import { TargetChasingUnit } from "../combat/combat.js";
+import { Heart } from "../../heart.js";
 
 class Missionary extends TargetChasingUnit {
     constructor(player : Player, name : string, pos : Pos, hp : number, color : string, moveSpeed : number, attackSpeed : number, public range : number) {
@@ -52,15 +52,13 @@ class Missionary extends TargetChasingUnit {
     }
 }
 
-class missionaryUnit extends GameUnit {
-    constructor(public name : string, cost : Resources, public moveSpeed : number, 
-            public attackSpeed : number, public hp : number, public color : string, 
-            blurb : string, public range : number) {
-        super(name, cost, blurb);
+export class MissionaryUnit extends GameUnit {
+    constructor(cost : Resources) {
+        super("Missionary", cost, "Converts units to your side");
     }
     construct(player: Player, pos: Pos): Unit {
-        return new Missionary(player, this.name, pos, this.hp, this.color, this.moveSpeed, this.attackSpeed, this.range);
+        return new Missionary(player, this.getName(), pos, 15, "#000000", 10, 100, 5);
     }
 }
 
-export const MissionaryUnit : missionaryUnit = new missionaryUnit("Missionary", new Resources({ wood: 300, stone: 250 }), 10, 100, 15, "#000000", "Converts units to your side", 5);
+export const LegacyMissionaryUnit : MissionaryUnit = new MissionaryUnit(new Resources({ wood: 300, stone: 250 }));

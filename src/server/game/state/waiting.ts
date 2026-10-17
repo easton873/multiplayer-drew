@@ -4,6 +4,7 @@ import type { GameRoom } from "../game_room.js";
 import type { ClientHandler } from "../client_handler.js";
 import type { EditComputerData, PlayerWaitingData } from "../../../shared/bulider.js";
 import { backgrounds } from "../data/backgrounds.js";
+import { RESOURCE_TYPES, defaultStartingResources } from "../../../shared/resource_types.js";
 
 export class WaitingState implements RoomState {
     readonly phase: RoomPhase = "waiting";
@@ -39,14 +40,11 @@ export class WaitingState implements RoomState {
     }
 
     updateResources(room: GameRoom, resources: ResourceData) {
-        room.startingResources = {
-            gold: Math.max(0, Math.floor(resources.gold)),
-            wood: Math.max(0, Math.floor(resources.wood)),
-            stone: Math.max(0, Math.floor(resources.stone)),
-            diamond: Math.max(0, Math.floor(resources.diamond)),
-            iron: Math.max(0, Math.floor(resources.iron)),
-            randomonium: Math.max(0, Math.floor(resources.randomonium)),
-        };
+        const sanitized = defaultStartingResources();
+        for (const t of RESOURCE_TYPES) {
+            sanitized[t] = Math.max(0, Math.floor(resources[t] || 0));
+        }
+        room.startingResources = sanitized;
     }
 
     updateBackground(room: GameRoom, filename: string) {
