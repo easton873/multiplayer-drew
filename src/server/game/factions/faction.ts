@@ -1,16 +1,19 @@
 import { FactionData, UnitCreationData } from '../../../shared/types.js';
-import { FactionLoadData } from '../../../shared/bulider.js';
+import { FactionLoadData, UnitLoadData } from '../../../shared/bulider.js';
 import { Era, EraInfo } from '../era.js';
 import { Resources } from '../resources.js';
 import { GameUnit } from "../unit/game_unit.js";
 
 export class EraUnit {
-    constructor(private _gameUnit : GameUnit, private era : number){}
+    constructor(private _gameUnit : GameUnit, private _era : number){}
     public eraGoodEnough(currEra : number) : boolean {
-        return currEra >= this.era;
+        return currEra >= this._era;
     }
     get gameUnit() : GameUnit {
         return this._gameUnit;
+    }
+    get era() : number {
+        return this._era;
     }
 }
 
@@ -89,10 +92,20 @@ export abstract class Faction {
 
     // every unit this faction can have on the board, regardless of era
     getLoadData() : FactionLoadData {
-        const bought = this.getResourceUnits().concat(this.getMilitaryUnits()).map((eraUnit : EraUnit) => eraUnit.gameUnit.getName());
+        const bought : UnitLoadData[] = this.getResourceUnits().concat(this.getMilitaryUnits()).map((eraUnit : EraUnit) => {
+            const info = eraUnit.gameUnit.getUnitCreationInfo().getUnitCreationData();
+            return { name: info.name, cost: info.cost, blurb: info.blurb, era: eraUnit.era };
+        });
+        const extra : UnitLoadData[] = this.getExtraUnitNames().map((name : string) => ({ name }));
         return {
             name: this.getName(),
-            units: bought.concat(this.getExtraUnitNames()).map((name : string) => ({ name })),
+            units: bought.concat(extra),
+            eras: this.getEraInfo().map((era : EraInfo) => ({
+                name: era.name,
+                cost: era.cost.getResourceData(),
+                heartResources: era.resources.getResourceData(),
+                availableResources: era.availableResources,
+            })),
         };
     }
 

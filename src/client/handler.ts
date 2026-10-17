@@ -103,7 +103,7 @@ export class FrontendClientHandler extends ClientReceiver {
     }
     handleLoadData(data: LoadData) {
         this.manager.gameScreen.loadImages(data);
-        this.manager.waitingScreen.setFactions(data.factions.map(f => f.name));
+        this.manager.waitingScreen.setFactions(data.factions);
     }
     handleReconnectSuccess(data: ReconnectData) {
         switch (data.phase) {

@@ -1,3 +1,4 @@
+import { ResourceType } from "./resource_types.js";
 import { PosData, ResourceData } from "./types.js"
 
 // Lobby-only faction choice: the server picks a real faction when the game starts
@@ -10,10 +11,24 @@ export interface LoadData {
 export interface FactionLoadData {
     name : string
     units : UnitLoadData[]
+    eras : EraLoadData[]
+}
+
+export interface EraLoadData {
+    name : string
+    // what it costs to advance into this era
+    cost : ResourceData
+    // what the heart produces while in this era
+    heartResources : ResourceData
+    availableResources : ResourceType[]
 }
 
 export interface UnitLoadData {
     name : string
+    // absent for units that can't be bought directly, like summoned ones
+    cost? : ResourceData
+    blurb? : string
+    era? : number
 }
 
 export interface GameWaitingData {

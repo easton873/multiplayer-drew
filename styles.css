@@ -976,3 +976,129 @@ canvas#game {
 .faction-picker__placeholder.hidden {
   display: none;
 }
+
+
+/* Faction selection modal */
+.faction-picker__controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.faction-picker__preview-btn {
+  font-size: var(--font-size-sm);
+}
+
+.faction-modal {
+  width: min(900px, 94vw);
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.faction-modal__header,
+.faction-modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.faction-modal__title {
+  min-width: 220px;
+  margin: 0;
+  text-align: center;
+  font-size: var(--font-size-lg);
+  color: var(--accent-gold);
+}
+
+.faction-modal__body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px;
+}
+
+.faction-modal__image {
+  width: 192px;
+  height: 192px;
+  flex-shrink: 0;
+}
+
+.faction-modal__note,
+.faction-modal__era-line,
+.faction-modal__unit-blurb {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.faction-modal__section {
+  align-self: stretch;
+  margin: 8px 0 0;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--border-purple);
+  font-size: var(--font-size-base);
+  color: var(--accent-cyan);
+}
+
+.faction-modal__eras,
+.faction-modal__units {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.faction-modal__era,
+.faction-modal__unit {
+  padding: 8px;
+  border: 2px solid var(--border-purple);
+  background: var(--bg-medium);
+}
+
+.faction-modal__era-name,
+.faction-modal__unit-name {
+  margin-bottom: 4px;
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+}
+
+.faction-modal__unit {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.faction-modal__unit-info {
+  flex: 0 0 240px;
+}
+
+.faction-modal__unit-blurb {
+  flex: 1;
+  padding-left: 12px;
+  border-left: 2px solid var(--border-purple);
+}
+
+.faction-modal__unit-image {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.faction-modal__accept,
+.faction-modal__cancel {
+  min-width: 80px;
+  font-size: var(--font-size-lg);
+  color: #fff;
+}
+
+.faction-modal__accept { background: #22c55e; }
+.faction-modal__cancel { background: #ef4444; }

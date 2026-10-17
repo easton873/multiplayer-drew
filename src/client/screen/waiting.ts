@@ -1,5 +1,5 @@
 import { emitAddComputer, emitBackgroundUpdate, emitBoardUpdate, emitEditComputer, emitRemoveComputer, emitResourceUpdate, emitUpdateSetupPlayer } from "../../shared/routes";
-import { CHOOSE_FOR_ME_FACTION, GameWaitingData, PlayerWaitingData } from "../../shared/bulider";
+import { CHOOSE_FOR_ME_FACTION, EraLoadData, FactionLoadData, GameWaitingData, PlayerWaitingData, UnitLoadData } from "../../shared/bulider";
 import { ResourceData } from "../../shared/types";
 import { GOLD_RESOURCE, RESOURCE_TYPES, ResourceType } from "../../shared/resource_types";
 import { RESOURCE_EMOJI, resourceLabel } from "../resources";
@@ -37,6 +37,24 @@ function randomColor(): string {
 function factionImageSrc(faction: string): string {
     const folder = faction.toLowerCase();
     return `/units/${folder}/${folder}.png`;
+}
+
+// A unit's picture lives at /units/<faction>/<unit>.png, with emoji and spaces stripped from the name
+function unitImageSrc(faction: string, unitName: string): string {
+    const normalized = unitName.replace(/[^\x20-\x7E]/g, '').toLowerCase().replace(/\s/g, '');
+    return `/units/${faction.toLowerCase()}/${normalized}.png`;
+}
+
+function resourceText(r: ResourceData | undefined): string {
+    const parts = RESOURCE_TYPES.filter(t => (r?.[t] ?? 0) > 0).map(t => `${RESOURCE_EMOJI[t]} ${r![t]}`);
+    return parts.length > 0 ? parts.join("  ") : "Free";
+}
+
+function el<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string): HTMLElementTagNameMap[K] {
+    const e = document.createElement(tag);
+    e.className = className;
+    if (text !== undefined) e.textContent = text;
+    return e;
 }
 
 export class WaitingScreen {
@@ -79,6 +97,7 @@ export class WaitingScreen {
     private isLeader = false;
     private difficulties: string[] = [];
     private factions: string[] = [];
+    private factionData = new Map<string, FactionLoadData>();
 
     constructor(private socket : Socket<DefaultEventsMap, DefaultEventsMap>) {
       this.widthInput.value = "100";
@@ -219,12 +238,14 @@ export class WaitingScreen {
         }
       };
 
-      const step = (delta : number) => {
-        index = (index + delta + choices.length) % choices.length;
+      const select = (newIndex : number) => {
+        index = newIndex;
         p.faction = choices[index];
         render();
         markDirty();
       };
+
+      const step = (delta : number) => select((index + delta + choices.length) % choices.length);
 
       const makeArrow = (label : string, delta : number) => {
         const btn = document.createElement('button');
@@ -238,15 +259,117 @@ export class WaitingScreen {
       row.className = "faction-picker__row";
       row.append(makeArrow("◀", -1), imageBox, makeArrow("▶", 1));
 
+      const previewBtn = document.createElement('button');
+      previewBtn.className = "pixel-btn faction-picker__preview-btn";
+      previewBtn.innerText = "Faction Selection";
+      previewBtn.onclick = () => this.openFactionModal(index, select);
+
+      const controls = document.createElement('div');
+      controls.className = "faction-picker__controls";
+      controls.append(row, previewBtn);
+
       const picker = document.createElement('div');
       picker.className = "faction-picker";
-      picker.append(row, name);
+      picker.append(controls, name);
       render();
       return picker;
     }
 
-    setFactions(factions : string[]) {
-      this.factions = [CHOOSE_FOR_ME_FACTION, ...factions.filter(f => f !== CHOOSE_FOR_ME_FACTION)];
+    setFactions(factions : FactionLoadData[]) {
+      this.factionData = new Map(factions.map(f => [f.name, f]));
+      this.factions = [CHOOSE_FOR_ME_FACTION, ...factions.map(f => f.name).filter(f => f !== CHOOSE_FOR_ME_FACTION)];
+    }
+
+    // Big preview of every faction; the check applies the faction being viewed, the X leaves the selection alone
+    private openFactionModal(startIndex : number, onSelect : (index : number) => void) {
+      const choices = this.factions;
+      let index = startIndex;
+
+      const overlay = el('div', "modal-overlay");
+      const panel = el('div', "pixel-panel faction-modal");
+
+      const makeArrow = (label : string, delta : number) => {
+        const btn = el('button', "pixel-btn faction-picker__arrow", label);
+        btn.onclick = () => { index = (index + delta + choices.length) % choices.length; render(); };
+        return btn;
+      };
+      const title = el('h3', "faction-modal__title");
+      const header = el('div', "faction-modal__header");
+      header.append(makeArrow("◀", -1), title, makeArrow("▶", 1));
+
+      const body = el('div', "faction-modal__body");
+
+      const close = () => overlay.remove();
+      const accept = el('button', "pixel-btn faction-modal__accept", "✓");
+      accept.title = "Select this faction";
+      accept.onclick = () => { onSelect(index); close(); };
+      const cancel = el('button', "pixel-btn faction-modal__cancel", "✕");
+      cancel.title = "Cancel";
+      cancel.onclick = close;
+      const footer = el('div', "faction-modal__footer");
+      footer.append(accept, cancel);
+
+      const render = () => {
+        const name = choices[index];
+        title.textContent = name;
+        body.replaceChildren();
+        body.scrollTop = 0;
+
+        const data = this.factionData.get(name);
+        if (name === CHOOSE_FOR_ME_FACTION || !data) {
+          body.append(el('div', "faction-picker__image faction-picker__placeholder faction-modal__image", "?"));
+          body.append(el('p', "faction-modal__note", "A random faction is picked for you when the game starts."));
+          return;
+        }
+
+        const image = el('img', "faction-picker__image faction-modal__image");
+        image.src = factionImageSrc(name);
+        body.append(image);
+
+        body.append(el('h4', "faction-modal__section", "Eras"));
+        const eras = el('div', "faction-modal__eras");
+        data.eras.forEach((era, i) => eras.append(this.buildEraRow(era, i)));
+        body.append(eras);
+
+        body.append(el('h4', "faction-modal__section", "Units"));
+        const units = el('div', "faction-modal__units");
+        data.units.filter(u => u.cost).sort((a, b) => (a.era ?? 0) - (b.era ?? 0))
+          .forEach(u => units.append(this.buildUnitRow(name, u, data.eras)));
+        body.append(units);
+      };
+
+      overlay.onclick = (e) => { if (e.target === overlay) close(); };
+      panel.append(header, body, footer);
+      overlay.append(panel);
+      this.div.append(overlay);
+      render();
+    }
+
+    private buildEraRow(era : EraLoadData, i : number) : HTMLDivElement {
+      const row = el('div', "faction-modal__era");
+      row.append(
+        el('div', "faction-modal__era-name", `${i + 1}. ${era.name}`),
+        el('div', "faction-modal__era-line", `Cost: ${i === 0 ? "Starting era" : resourceText(era.cost)}`),
+        el('div', "faction-modal__era-line", `Resources: ${era.availableResources.map(t => `${RESOURCE_EMOJI[t]} ${resourceLabel(t)}`).join("  ")}`),
+        el('div', "faction-modal__era-line", `Heart makes: ${resourceText(era.heartResources)}`),
+      );
+      return row;
+    }
+
+    private buildUnitRow(faction : string, unit : UnitLoadData, eras : EraLoadData[]) : HTMLDivElement {
+      const row = el('div', "faction-modal__unit");
+      const img = el('img', "faction-modal__unit-image");
+      img.src = unitImageSrc(faction, unit.name);
+      img.onerror = () => { img.style.visibility = "hidden"; };
+      const info = el('div', "faction-modal__unit-info");
+      const eraIndex = unit.era ?? 0;
+      info.append(
+        el('div', "faction-modal__unit-name", unit.name.replace(/[^\x20-\x7E]/g, '')),
+        el('div', "faction-modal__era-line", `Cost: ${resourceText(unit.cost)}`),
+        el('div', "faction-modal__era-line", `Era ${eraIndex + 1}: ${eras[eraIndex]?.name ?? ""}`),
+      );
+      row.append(img, info, el('div', "faction-modal__unit-blurb", unit.blurb ?? ""));
+      return row;
     }
 
     fillComputerSelect(difficulties : string[]) {
