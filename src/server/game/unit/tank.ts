@@ -5,8 +5,8 @@ import { Melee, MeleeUnit } from "./melee_unit.js";
 import { Unit } from "./unit.js";
 
 export class Tank extends Melee {
-    takeDamage(damage: number): void {
-        super.takeDamage(1);
+    takePhysicalDamage(damage: number): void {
+        super.takePhysicalDamage(1);
     }
 }
 

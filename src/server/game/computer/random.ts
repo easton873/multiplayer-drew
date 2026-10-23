@@ -14,17 +14,17 @@ import { BaseComputerPlayer } from "./basics.js";
 // you make no wood)
 export class RandomComputer extends BaseComputerPlayer {
     private nextUnit : GameUnit = null;
-    firstEra() {
+    firstEra(): void {
     }
-    secontEra() {
+    secontEra(): void {
     }
-    thirdEra() {
+    thirdEra(): void {
     }
-    fourthEra() {
+    fourthEra(): void {
     }
-    fifthEra() {
+    fifthEra(): void {
     }
-    sixthEra() {
+    sixthEra(): void {
     }
     doTurn(): void {
         this.advanceEra();
@@ -39,7 +39,7 @@ export class RandomComputer extends BaseComputerPlayer {
         return true;
     }
 
-    placeRandomUnit() {
+    placeRandomUnit(): void {
         if (!this.nextUnit) {
             this.setNextUnit();
         }
@@ -53,7 +53,7 @@ export class RandomComputer extends BaseComputerPlayer {
         }
     }
 
-    setNextUnit() {
+    setNextUnit(): void {
         this.nextUnit = getRandomIndex(this.getAvailableUnits());
         if (this.nextUnit == MERCHANT_GAME_UNIT || this.nextUnit == LUMBER_JACK_GAME_UNIT) {
             return;

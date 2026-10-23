@@ -89,8 +89,12 @@ describe('Units Test', () => {
 
         // tank only takes 1 damage no matter what
         beforeHP = unit.hp;
-        unit.takeDamage(10000);
+        unit.takePhysicalDamage(10000);
         assert.strictEqual(unit.hp, beforeHP - 1);
+
+        // but it can still be killed outright
+        unit.kill();
+        assert.strictEqual(unit.isDead(), true);
     });
 
     it('goblin test', () => {

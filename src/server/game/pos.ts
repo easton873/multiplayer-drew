@@ -34,23 +34,23 @@ export class Pos {
         return this._x == other._x && this._y == other._y;
     }
 
-    moveUp() {
+    moveUp(): void {
         this._y++;
     }
 
-    moveDown() {
+    moveDown(): void {
         this._y--;
     }
 
-    moveRight() {
+    moveRight(): void {
         this._x++;
     }
 
-    moveLeft() {
+    moveLeft(): void {
         this._x--;
     }
 
-    clamp(maxX : number, maxY : number) {
+    clamp(maxX : number, maxY : number): void {
         if (this._x < 0) {
             this._x = 0;
         } else if (this._x > maxX) {
@@ -70,7 +70,7 @@ export class Pos {
         return x * x + y * y;
     }
 
-    moveTowards(other : Pos) {
+    moveTowards(other : Pos): void {
         if (this.equals(other)) {
             return;
         } else if (this._y == other._y) {
@@ -86,7 +86,7 @@ export class Pos {
         }
     }
 
-    private moveXTowards(other : Pos) {
+    private moveXTowards(other : Pos): void {
         if (this._x < other._x) {
             this.moveRight();
         } else if (this._x > other._x) {
@@ -94,7 +94,7 @@ export class Pos {
         }
     }
 
-    private moveYTowards(other : Pos) {
+    private moveYTowards(other : Pos): void {
         if (this._y < other._y) {
             this.moveUp();
         } else if (this._y > other._y) {

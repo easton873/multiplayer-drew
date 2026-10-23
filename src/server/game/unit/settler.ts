@@ -20,7 +20,7 @@ class AbstractSettler extends UnitWithCounter {
         this.goal *= this.moveDir.magnitude;
     }
 
-    doMove(board: Board) {
+    doMove(board: Board): void {
         if (this.moveCount >= this.goal) {
             this.spawnHeart();
             return;
@@ -40,7 +40,7 @@ class AbstractSettler extends UnitWithCounter {
         this.moveCount++;
     }
 
-    spawnHeart() {
+    spawnHeart(): void {
         this.owner.addHeart(new Heart(this.owner, this.pos.clone(), this.heartInfo));
         this.kill();
     }

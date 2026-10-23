@@ -1,39 +1,45 @@
 import { GameData, UnitData, PosData, BoardData, ResourceData, EraData, PlayerSpecificData, GeneralGameData, GeneralHeartData } from '../../shared/types.js';
 import { Board } from "./board.js";
+import { DrawingManager } from './drawing/manager.js';
 import { Player } from "./player.js";
 import { Unit } from "./unit/unit.js";
 
 export class Game {
     public spectators : string[] = []; // client ids
+    private drawingManager : DrawingManager = new DrawingManager();
     constructor(private _players : Player[], private board : Board) {
         this._players.push()
+        this._players.forEach((player : Player) => {
+            player.drawingManager = this.drawingManager;
+        });
     }
 
-    gameLoop() {
+    gameLoop(): void {
         while (this.checkGameStillGoing()) {
             this.mainLoop();
         }
     }
 
-    mainLoop() {
+    mainLoop(): void {
+        this.drawingManager.tick();
         this.move();
         this.arePlayersStillAlive();
         this.playerTurns();
     }
 
-    move() {
+    move(): void {
         this.board.entities.forEach((entity : Unit) => {
             this.board.moveUnit(entity);
         })
     }
 
-    playerTurns() {
+    playerTurns(): void {
         this._players.forEach((player : Player) => {
             player.doTurn();
         })
     }
 
-    arePlayersStillAlive() {
+    arePlayersStillAlive(): void {
         for (let i = 0; i < this.players.length; ++i) {
             if (this.players[i].isDead()) {
                 this.removeAllUnitsFromAPlayer(this.players[i]);
@@ -44,7 +50,7 @@ export class Game {
         }
     }
 
-    removeAllUnitsFromAPlayer(player : Player) {
+    removeAllUnitsFromAPlayer(player : Player): void {
         for (let i = 0; i < this.board.entities.length; ++i) {
             if (this.board.entities[i].owner == player) {
                 this.board.entities[i].notifyObserversDeath();
@@ -82,6 +88,7 @@ export class Game {
             faction: player.getFactionData(),
             generalData: this.generalGameData(),
             friendlyInvisibleUnits,
+            drawings: this.drawingManager.getDrawings(),
         };
         return gameData;
     }

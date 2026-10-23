@@ -30,11 +30,11 @@ export class GameRoom {
         return this.state.phase;
     }
 
-    setState(state : RoomState) {
+    setState(state : RoomState): void {
         this.state = state;
     }
 
-    reset() {
+    reset(): void {
         this.state = new WaitingState(this, true);
     }
 
@@ -46,7 +46,7 @@ export class GameRoom {
         return token;
     }
     
-    addComputerPlayer(handler : ClientHandler, name : string, color : string, team : number, difficulty : string) {
+    addComputerPlayer(handler : ClientHandler, name : string, color : string, team : number, difficulty : string): void {
         let client = new ComputerClient()
         let id = client.id;
         let computer = new SetupComputerPlayer(handler, id, name, client, color, false, difficulty);
@@ -54,7 +54,7 @@ export class GameRoom {
         this.players.set(id, computer);
     }
 
-    editComputerPlayer(id : string, data : EditComputerData) {
+    editComputerPlayer(id : string, data : EditComputerData): void {
         let player = this.players.get(id);
         if (!player || !player.getJoinData().isComputer) {
             return;
@@ -119,7 +119,7 @@ export class SetupPlayer {
         this.faction = CLIENT_FACTION_CHOICES.includes(faction) ? faction : DEFAULT_FACTION_NAME;
     }
 
-    reset() {
+    reset(): void {
         SetupPlayer.DefaultTeam = -1;
         if (this.team !== null && this.team < 0) {
             this.team = null;
@@ -127,7 +127,7 @@ export class SetupPlayer {
         this.pos = null;
     }
 
-    update(other : PlayerWaitingData) {
+    update(other : PlayerWaitingData): void {
         this.name = other.name;
         this.team = Math.abs(other.team);
         this.color = other.color;
@@ -135,7 +135,7 @@ export class SetupPlayer {
         this.faction = CLIENT_FACTION_CHOICES.includes(other.faction) ? other.faction : this.faction;
     }
 
-    updateTeam(team : number) {
+    updateTeam(team : number): void {
         this.team = team;
     }
 
@@ -143,7 +143,7 @@ export class SetupPlayer {
         return this.client;
     }
 
-    setClient(client : GameClient) {
+    setClient(client : GameClient): void {
         this.client = client;
     }
 
@@ -155,7 +155,7 @@ export class SetupPlayer {
         return this.pos;
     }
 
-    setPos(pos : Pos) {
+    setPos(pos : Pos): void {
         this.pos = pos;
     }
 
@@ -171,7 +171,7 @@ export class SetupPlayer {
         return {name : this.name, pos : this.pos ? this.pos.getPosData() : null, color: this.color, team: this.team};
     }
 
-    public findStartingPos(data : GameSetupData) {
+    public findStartingPos(data : GameSetupData): void {
         emitYourTurn(this.client, data);
     }
 
@@ -201,7 +201,7 @@ class SetupComputerPlayer extends SetupPlayer {
         super(id, name, client, color, isLeader, HUMAN_FACTION_NAME);
     }
 
-    updateComputerData(name : string, color : string, team : number | null, difficulty : string) {
+    updateComputerData(name : string, color : string, team : number | null, difficulty : string): void {
         this.name = name;
         this.color = color;
         this.team = team;

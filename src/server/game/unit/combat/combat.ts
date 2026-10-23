@@ -13,7 +13,7 @@ export abstract class CombatUnit extends UnitWithTarget {
         this.moveCounter = new Counter(moveSpeed);
     }
 
-    doAcutalMove(board: Board) {
+    doAcutalMove(board: Board): void {
         if (this.hasNoTarget() || !this.isValidTarget(this.target)) {
             this.findNewTarget(board.entities); // guarentee a target sort of
         }
@@ -55,8 +55,8 @@ export abstract class CombatUnit extends UnitWithTarget {
     }
 
     abstract inRange(other : Unit) : boolean;
-    abstract inRangeMove(board : Board);
-    abstract doMove(board : Board);
+    abstract inRangeMove(board : Board): void;
+    abstract doMove(board : Board): void;
 
     hasNoTargetMove(): void {
         return;
@@ -64,7 +64,7 @@ export abstract class CombatUnit extends UnitWithTarget {
 }
 
 export abstract class TargetChasingUnit extends CombatUnit {
-    doMove(board: Board) {
+    doMove(board: Board): void {
         this.pos.moveTowards(this.target.pos);
     }
 }

@@ -72,22 +72,22 @@ export class WaveComputer extends BaseComputerPlayer {
     constructor(team: number, pos: Pos, board: Board, id: string, name: string, color: string, startingResources?: ResourceData) {
         super(team, new Pos(board.width / 2, board.height / 2), board, id, name, color, startingResources);
     }
-    firstEra() {
+    firstEra(): void {
         this.wave(this.waves[this.currIdx]);
     }
-    secontEra() {}
-    thirdEra() {}
-    fourthEra() { }
-    fifthEra() {}
-    sixthEra() {}
+    secontEra(): void {}
+    thirdEra(): void {}
+    fourthEra(): void { }
+    fifthEra(): void {}
+    sixthEra(): void {}
 
-    wavePlace(gameUnit : GameUnit, pos : Pos, num : number) {
+    wavePlace(gameUnit : GameUnit, pos : Pos, num : number): void {
         for (let i = 0; i < num; i++) {
             this.addUnitToBoard(gameUnit, pos.clone());
         }
     }
 
-    wave(wave : Wave) {
+    wave(wave : Wave): void {
         wave.tick(this);
     }
 }
@@ -100,7 +100,7 @@ class Wave {
             this.state = new CounterState(this.timeToNextWave);
         }
     
-    tick(computer : WaveComputer) {
+    tick(computer : WaveComputer): void {
         this.state.tick(computer, this);
     }
 }
@@ -119,7 +119,7 @@ class CounterState implements WaveState {
     getNextState(wave : Wave): WaveState {
         return new PlacingState(wave.units, wave.rateOfPlacement);
     }
-    tick(computer : WaveComputer, wave : Wave) {
+    tick(computer : WaveComputer, wave : Wave): void {
         this.counter--;
         if (this.counter <= 0) {
             wave.state = this.getNextState(wave);
@@ -137,7 +137,7 @@ class PlacingState implements WaveState {
     getNextState(wave : Wave): WaveState {
         return new CompleteState();
     }
-    tick(computer : WaveComputer, wave : Wave) {
+    tick(computer : WaveComputer, wave : Wave): void {
         if (this.currIdx >= this.units.length) {
             wave.state = this.getNextState(wave);
             return;
@@ -156,7 +156,7 @@ class PlacingState implements WaveState {
         }
     }
 
-    setWaveUnit() {
+    setWaveUnit(): void {
         if (this.currIdx < this.units.length) {
             let curr : WaveUnit = this.units[this.currIdx];
             this.unitsLeft = curr.num;
@@ -168,7 +168,7 @@ class CompleteState implements WaveState {
     getNextState(wave: Wave): WaveState {
         return new CounterState(wave.timeToNextWave);
     }
-    tick(computer: WaveComputer, wave: Wave) {
+    tick(computer: WaveComputer, wave: Wave): void {
         computer.currIdx++;
         if (computer.currIdx >= computer.waves.length) {
             computer.currIdx = 0;

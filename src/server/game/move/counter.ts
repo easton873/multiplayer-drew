@@ -21,7 +21,7 @@ export class Counter {
         return false;
     }
 
-    reset() {
+    reset(): void {
         this.counter = this.speed;
     }
 
@@ -33,7 +33,7 @@ export class Counter {
         return this.speed;
     }
 
-    setSpeed(newSpeed : number) {
+    setSpeed(newSpeed : number): void {
         this.speed = newSpeed;
         // if (this.counter > this.speed) {
         //     this.counter = this.speed;

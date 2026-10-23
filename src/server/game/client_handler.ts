@@ -35,7 +35,7 @@ export class ClientHandler extends RouteReceiver {
         return this.playerId ?? this.client.id;
     }
 
-    handleJoinRoom(name : string, color : string){
+    handleJoinRoom(name : string, color : string): void{
         let currGame : GameRoom = this.room;
         this.client.join(ROOM_CODE);
         this.playerId = this.client.id;
@@ -46,34 +46,34 @@ export class ClientHandler extends RouteReceiver {
         console.log("Client " + this.client.id + " joined");
     }
 
-    handleUpdateSetupPlayer(player: PlayerWaitingData) {
+    handleUpdateSetupPlayer(player: PlayerWaitingData): void {
         if (!(this.room.state instanceof WaitingState)) return;
         this.room.state.updatePlayer(this.room, this.getPlayerId(), player);
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 
-    handleAddComputerPlayer(data : ComputerWaitingData) {
+    handleAddComputerPlayer(data : ComputerWaitingData): void {
         if (!(this.room.state instanceof WaitingState)) return;
         if (!this.isLeader()) return;
         this.room.state.addComputerPlayer(this.room, this, data.name, data.color, data.team, data.difficulty);
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 
-    handleBoardUpdate(board: BoardData) {
+    handleBoardUpdate(board: BoardData): void {
         if (!(this.room.state instanceof WaitingState)) return;
         if (!this.isLeader()) return;
         this.room.state.updateBoard(this.room, board.width, board.height);
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 
-    handleResourceUpdate(resources: ResourceData) {
+    handleResourceUpdate(resources: ResourceData): void {
         if (!(this.room.state instanceof WaitingState)) return;
         if (!this.isLeader()) return;
         this.room.state.updateResources(this.room, resources);
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 
-    handleStartGame() {
+    handleStartGame(): void {
         if (!this.room || !this.isLeader()) {
             return;
         }
@@ -83,17 +83,17 @@ export class ClientHandler extends RouteReceiver {
         placingState.init();
     }
 
-    handleSubmitStartPos(pos: PosData) {
+    handleSubmitStartPos(pos: PosData): void {
         if (!(this.room.state instanceof PlacingState)) return;
         this.submitStartPosWithID(pos, this.getPlayerId());
     }
 
-    submitStartPosWithID(pos : PosData, id : string) {
+    submitStartPosWithID(pos : PosData, id : string): void {
         if (!(this.room.state instanceof PlacingState)) return;
         this.room.state.submitPos(pos, id, this.client);
     }
 
-    handleDisconnect(){
+    handleDisconnect(): void{
         const player = this.room.players.get(this.getPlayerId());
         if (player) {
             console.log('player disconnected:', player.getId());
@@ -102,7 +102,7 @@ export class ClientHandler extends RouteReceiver {
         }
     }
 
-    handleReconnect(token : string) {
+    handleReconnect(token : string): void {
         const playerId = this.room.getPlayerIdByToken(token);
         if (!playerId) {
             console.log('reconnect failed: invalid token');
@@ -133,36 +133,36 @@ export class ClientHandler extends RouteReceiver {
         return this.room.state.reconnectData(this.room, playerId);
     }
 
-    handleSpawnUnit(pos : PosData, unitType : string) {
+    handleSpawnUnit(pos : PosData, unitType : string): void {
         if (!(this.room.state instanceof PlayingState)) return;
         this.room.state.spawnUnit(this.getPlayerId(), pos, unitType);
     }
 
-    handleDeleteUnits(pos: PosData) {
+    handleDeleteUnits(pos: PosData): void {
         if (!(this.room.state instanceof PlayingState)) return;
         this.room.state.deleteUnits(this.getPlayerId(), pos);
     }
 
-    handleEraUpgrade() {
+    handleEraUpgrade(): void {
         if (!(this.room.state instanceof PlayingState)) return;
         this.room.state.upgradeEra(this.getPlayerId(), this.client);
     }
 
-    handleEditComputerPlayer(data : EditComputerData) {
+    handleEditComputerPlayer(data : EditComputerData): void {
         if (!(this.room.state instanceof WaitingState)) return;
         if (!this.isLeader()) return;
         this.room.state.editComputerPlayer(this.room, data.id, data);
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 
-    handleRemoveComputerPlayer(id : string) {
+    handleRemoveComputerPlayer(id : string): void {
         if (!(this.room.state instanceof WaitingState)) return;
         if (!this.isLeader()) return;
         this.room.state.removeComputerPlayer(this.room, id);
         emitWaitingRoomUpdate(this.io, this.room.joinRoomData());
     }
 
-    handleBackgroundUpdate(filename: string) {
+    handleBackgroundUpdate(filename: string): void {
         if (!(this.room.state instanceof WaitingState)) return;
         if (!this.isLeader()) return;
         this.room.state.updateBackground(this.room, filename);

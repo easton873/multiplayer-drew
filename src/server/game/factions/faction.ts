@@ -28,7 +28,7 @@ class UnitLookup {
         return this._lookup;
     }
 
-    rebuildLookup(units : GameUnit[]) {
+    rebuildLookup(units : GameUnit[]): void {
         this._lookup.clear();
         units.forEach((gu : GameUnit) => {
             this._lookup.set(gu.getName(), gu);
@@ -60,7 +60,7 @@ export abstract class Faction {
         return this._unit_lookup.lookup.get(unitType);
     }
 
-    rebuildUnitLookup() {
+    rebuildUnitLookup(): void {
         this._unit_lookup.rebuildLookup(this.getAllGameUnits());
     }
 

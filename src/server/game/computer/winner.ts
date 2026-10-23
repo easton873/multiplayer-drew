@@ -10,7 +10,7 @@ import { BaseComputerPlayer } from "./basics.js";
 
 export class WinnerComputerPlayer extends BaseComputerPlayer {
     private savings = new Resources({ gold: 25 });
-    firstEra() {
+    firstEra(): void {
         this.protectBase(SoldierUnit);
         if (!this.resources.canAfford(new Resources({ gold: 35 }))) {
             return;
@@ -18,14 +18,14 @@ export class WinnerComputerPlayer extends BaseComputerPlayer {
         this.maintainCountOfUnits(MERCHANT_GAME_UNIT, 15);
         this.advanceEra();
     }
-    secontEra() {
+    secontEra(): void {
         this.protectBase(QuickAttackerUnit);
         this.maintainCountOfUnits(MERCHANT_GAME_UNIT, 25);
         this.maintainCountOfUnits(LUMBER_JACK_GAME_UNIT, 15);
         this.maintainCountOfUnits(LegacyRandomMoverUnit, 10);
         this.attemptUpgradeEra();
     }
-    thirdEra() {
+    thirdEra(): void {
         this.maintainCountOfUnits(CARPENTER_GAME_UNIT, 20);
         this.maintainCountOfUnits(MINER_GAME_UNIT, 10);
         this.maintainCountOfUnits(LegacyRandomMoverUnit, 15);
@@ -35,14 +35,14 @@ export class WinnerComputerPlayer extends BaseComputerPlayer {
         this.maintainCountOfUnits(FireballThrowerUnit, 1);
         this.attemptUpgradeEra();
     }
-    fourthEra() {
+    fourthEra(): void {
         this.maintainCountOfUnits(SCAVENGER_GAME_UNIT, 30);
         this.maintainCountOfUnits(MASON_GAME_UNIT, 10);
     }
-    fifthEra() {
+    fifthEra(): void {
         return;
     }
-    sixthEra() {
+    sixthEra(): void {
         return;
     }
 
@@ -50,7 +50,7 @@ export class WinnerComputerPlayer extends BaseComputerPlayer {
         super.maintainCountOfUnits(unit, targetCount, this.savings.copy());
     }
 
-    maintainResourceUnit(unit: GameUnit, targetCount: number) {
+    maintainResourceUnit(unit: GameUnit, targetCount: number): void {
 
     }
 }

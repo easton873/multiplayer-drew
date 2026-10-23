@@ -62,7 +62,7 @@ class Assassain extends Melee {
         this.doAssassaination();
     }
 
-    doAssassaination() {
+    doAssassaination(): void {
         this.target.kill();
         this.assassainationCompleted = true;
         this.goVisibile();

@@ -16,7 +16,7 @@ export class Castle extends Faction {
             new EraInfo("The Beginning", new Resources(), new Resources({gold: 1}), 30, 10, 25, 25, [GOLD_RESOURCE]),
             new EraInfo("The Small Village", new Resources({gold: 400}), new Resources({gold: 20, wood: 1, stone: 1}), 300, 25, 50, 49, [GOLD_RESOURCE, WOOD_RESOURCE, STONE_RESOURCE]),
             new EraInfo("Faith and Steel", new Resources({gold: 1000, wood: 25, stone: 25}), new Resources({gold: 1}), 30, 100, 100, 100, [GOLD_RESOURCE, WOOD_RESOURCE, STONE_RESOURCE, IRON_RESOURCE, ARTIFACT_RESOURCE]),
-            new EraInfo("The New Empire", new Resources({gold: 7500, wood: 100, stone: 100, iron: 20}), new Resources({gold: 1}), 30, 100, 100, 100, [GOLD_RESOURCE, WOOD_RESOURCE, STONE_RESOURCE, DIAMOND_RESOURCE])
+            new EraInfo("The New Empire", new Resources({gold: 7500, wood: 100, stone: 100, iron: 20}), new Resources({gold: 1}), 30, 100, 200, 100, [GOLD_RESOURCE, WOOD_RESOURCE, STONE_RESOURCE, DIAMOND_RESOURCE])
         ];
     }
     getMilitaryUnits(): EraUnit[] {

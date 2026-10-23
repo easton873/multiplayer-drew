@@ -146,7 +146,7 @@ export class WaitingScreen {
       };
     }
 
-    drawPlayerControls(p : PlayerWaitingData) {
+    drawPlayerControls(p : PlayerWaitingData): void {
       this.isLeader = p.leader;
       if (p.leader) {
         this.gameInfoDiv.classList.add("hidden");
@@ -178,7 +178,7 @@ export class WaitingScreen {
       submitBtn.className = "pixel-btn player-submit-btn hidden";
       submitBtn.innerText = "✓";
 
-      const markDirty = () => submitBtn.classList.remove("hidden");
+      const markDirty = (): void => submitBtn.classList.remove("hidden");
 
       nameInput.oninput = () => { p.name = nameInput.value; markDirty(); };
       colorSelect.oninput = () => { p.color = colorSelect.value; markDirty(); };
@@ -227,7 +227,7 @@ export class WaitingScreen {
       imageBox.className = "faction-picker__image-box";
       imageBox.append(image, placeholder);
 
-      const render = () => {
+      const render = (): void => {
         const faction = choices[index];
         name.innerText = faction;
         const isReal = faction !== CHOOSE_FOR_ME_FACTION;
@@ -238,14 +238,14 @@ export class WaitingScreen {
         }
       };
 
-      const select = (newIndex : number) => {
+      const select = (newIndex : number): void => {
         index = newIndex;
         p.faction = choices[index];
         render();
         markDirty();
       };
 
-      const step = (delta : number) => select((index + delta + choices.length) % choices.length);
+      const step = (delta : number): void => select((index + delta + choices.length) % choices.length);
 
       const makeArrow = (label : string, delta : number) => {
         const btn = document.createElement('button');
@@ -275,13 +275,13 @@ export class WaitingScreen {
       return picker;
     }
 
-    setFactions(factions : FactionLoadData[]) {
+    setFactions(factions : FactionLoadData[]): void {
       this.factionData = new Map(factions.map(f => [f.name, f]));
       this.factions = [CHOOSE_FOR_ME_FACTION, ...factions.map(f => f.name).filter(f => f !== CHOOSE_FOR_ME_FACTION)];
     }
 
     // Big preview of every faction; the check applies the faction being viewed, the X leaves the selection alone
-    private openFactionModal(startIndex : number, onSelect : (index : number) => void) {
+    private openFactionModal(startIndex : number, onSelect : (index : number) => void): void {
       const choices = this.factions;
       let index = startIndex;
 
@@ -299,7 +299,7 @@ export class WaitingScreen {
 
       const body = el('div', "faction-modal__body");
 
-      const close = () => overlay.remove();
+      const close = (): void => overlay.remove();
       const accept = el('button', "pixel-btn faction-modal__accept", "✓");
       accept.title = "Select this faction";
       accept.onclick = () => { onSelect(index); close(); };
@@ -309,7 +309,7 @@ export class WaitingScreen {
       const footer = el('div', "faction-modal__footer");
       footer.append(accept, cancel);
 
-      const render = () => {
+      const render = (): void => {
         const name = choices[index];
         title.textContent = name;
         body.replaceChildren();
@@ -374,7 +374,7 @@ export class WaitingScreen {
       return row;
     }
 
-    fillComputerSelect(difficulties : string[]) {
+    fillComputerSelect(difficulties : string[]): void {
       this.difficulties = difficulties;
       const prevAdd = this.addDifficulty.value;
       removeOptions(this.editDifficulty);
@@ -392,7 +392,7 @@ export class WaitingScreen {
       if (prevAdd) this.addDifficulty.value = prevAdd;
     }
 
-    fillBackgroundSelect(backgrounds: string[], current: string) {
+    fillBackgroundSelect(backgrounds: string[], current: string): void {
       this.backgroundSelect.innerHTML = '';
       backgrounds.forEach((filename: string) => {
         const option = document.createElement('option');
@@ -410,7 +410,7 @@ export class WaitingScreen {
       };
     }
 
-    drawPlayerList(data : PlayerWaitingData[]) {
+    drawPlayerList(data : PlayerWaitingData[]): void {
       this.playerList.innerHTML = '';
       data.forEach((p : PlayerWaitingData) => {
         const nameSpan = document.createElement('span');
@@ -466,7 +466,7 @@ export class WaitingScreen {
       })
     }
 
-    private openEditModal(p : PlayerWaitingData) {
+    private openEditModal(p : PlayerWaitingData): void {
       this.editName.value = p.name;
       this.editTeam.value = p.team != null ? String(p.team) : "";
       this.editColor.value = p.color;
@@ -495,7 +495,7 @@ export class WaitingScreen {
       this.editModal.classList.remove("hidden");
     }
 
-    boardUpdate() {
+    boardUpdate(): void {
       let width = parseInt(this.widthInput.value);
       if (isNaN(width)) {
         return;
@@ -507,7 +507,7 @@ export class WaitingScreen {
       emitBoardUpdate(this.socket, {width: width, height: height});
     }
 
-    resourceUpdate() {
+    resourceUpdate(): void {
       const resources = {} as ResourceData;
       for (const type of RESOURCE_TYPES) {
         resources[type] = Math.max(0, parseInt(this.resourceInputs[type].value) || 0);
@@ -515,13 +515,13 @@ export class WaitingScreen {
       emitResourceUpdate(this.socket, resources);
     }
 
-    updateResourceInputs(r: ResourceData) {
+    updateResourceInputs(r: ResourceData): void {
       for (const type of RESOURCE_TYPES) {
         this.resourceInputs[type].value = String(r[type]);
       }
     }
 
-    updateGameInfo(data: GameWaitingData) {
+    updateGameInfo(data: GameWaitingData): void {
       this.gameInfoBoard.textContent = `Board: ${data.board.boardX} × ${data.board.boardY}`;
       const r = data.startingResources;
       this.gameInfoResources.textContent = RESOURCE_TYPES

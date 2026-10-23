@@ -4,5 +4,5 @@ import { MoveRequestHandler } from "./move_request_handler";
 
 export abstract class MoveRequester {
     board : MoveRequestHandler;
-    abstract sendMoveRequest(entity : Unit, pos : Pos);
+    abstract sendMoveRequest(entity : Unit, pos : Pos): void;
 }

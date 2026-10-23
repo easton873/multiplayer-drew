@@ -8,12 +8,15 @@ import { EraData, FactionData, PlayerSpecificData, ResourceData } from "../../sh
 import { GameUnit } from "./unit/game_unit.js";
 import { Faction } from "./factions/faction.js";
 import { Humans } from "./factions/humans.js";
+import { DrawingManager } from "./drawing/manager.js";
 import { defaultStartingResources } from "../../shared/resource_types.js";
 
 export class Player implements UnitObserver {
     resources: Resources;
     board: Board;
     unitCount = 0;
+    // Replaced by the Game's shared manager once the player joins a game
+    drawingManager : DrawingManager = new DrawingManager();
 
     heart: Heart;
     hearts : Hearts = new Hearts();
@@ -28,9 +31,9 @@ export class Player implements UnitObserver {
         return this.faction.era;
     }
 
-    doTurn() {}
+    doTurn(): void {}
 
-    notifyDeath(unit: ObservableUnit) {
+    notifyDeath(unit: ObservableUnit): void {
         unit.unregisterObserver(this);
         if (this.heart != null && unit == this.heart) {
             this.heart = null;
@@ -47,7 +50,7 @@ export class Player implements UnitObserver {
         return this.team;
     }
 
-    DeleteUnits(pos : Pos) {
+    DeleteUnits(pos : Pos): void {
         for (let i = 0; i < this.board.entities.length; ++i) {
             let entity = this.board.entities[i];
             if (!(entity instanceof Heart) && entity.owner == this && entity.pos.equals(pos)) {
@@ -71,18 +74,18 @@ export class Player implements UnitObserver {
         return false;
     }
 
-    addUnitToBoard(gameUnit : GameUnit, pos : Pos) {
+    addUnitToBoard(gameUnit : GameUnit, pos : Pos): void {
         let unit = gameUnit.construct(this, pos);
         this.addUnit(unit);
     }
 
-    addUnit(unit : Unit) {
+    addUnit(unit : Unit): void {
          unit.registerObserver(this);
          this.unitCount++;
          this.board.addEntity(unit);
     }
 
-    addHeart(heart : Heart) {
+    addHeart(heart : Heart): void {
         this.board.addEntity(heart);
         this.hearts.addHeart(heart);
     }

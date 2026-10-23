@@ -21,14 +21,14 @@ export class FrontendClientHandler extends ClientReceiver {
     constructor(socket : Socket<DefaultEventsMap, DefaultEventsMap>, private manager : ScreenManager)  {
         super(socket);
     }
-    handleJoinSuccess(token : string) {
+    handleJoinSuccess(token : string): void {
         sessionStorage.setItem("reconnectToken", token);
         this.manager.toWaitingScreen();
     }
-    handlePlayerWaitingInfo(data: PlayerWaitingData) {
+    handlePlayerWaitingInfo(data: PlayerWaitingData): void {
         this.manager.waitingScreen.drawPlayerControls(data);
     }
-    handleWaitingRoomUpdate(data: GameWaitingData) {
+    handleWaitingRoomUpdate(data: GameWaitingData): void {
         this.manager.waitingScreen.drawPlayerList(data.players);
         this.manager.waitingScreen.fillComputerSelect(data.computerDifficulties);
         this.manager.waitingScreen.widthLabel.innerHTML = `Board Width: ${data.board.boardX}`;
@@ -39,7 +39,7 @@ export class FrontendClientHandler extends ClientReceiver {
             this.manager.waitingScreen.fillBackgroundSelect(data.backgrounds, data.background);
         }
     }
-    handleStartSuccess(data: GameSetupData) {
+    handleStartSuccess(data: GameSetupData): void {
         this.manager.toGameScreen();
         this.latestData = data;
         if (data.background) this.manager.gameScreen.setBackground(data.background);
@@ -55,15 +55,15 @@ export class FrontendClientHandler extends ClientReceiver {
         }
         this.manager.gameScreen.setupBanner.classList.remove('hidden');
     }
-    handleYourTurn(data: GameSetupData) {
+    handleYourTurn(data: GameSetupData): void {
         let gameScreen = this.manager.gameScreen;
         this.latestData = data;
         gameScreen.updateSetupData(data);
-        let temp = (e : MouseEvent) => {
+        let temp = (e : MouseEvent): void => {
             const pos = gameScreen.screenToGame(e.clientX, e.clientY);
             gameScreen.setupPreview = { pos, color: data.currPlayer.color };
         };
-        let temp2 = (e : MouseEvent) => {
+        let temp2 = (e : MouseEvent): void => {
             const pos = gameScreen.screenToGame(e.clientX, e.clientY);
             emitSubmitStartPos(this.socket, pos);
         };
@@ -72,40 +72,40 @@ export class FrontendClientHandler extends ClientReceiver {
         this.mouseMoveSelectStartPos = temp;
         this.clickSelectStartPos = temp2;
     }
-    handleSetPosSuccess() {
+    handleSetPosSuccess(): void {
         this.manager.gameScreen.canvas.removeEventListener('mousemove', this.mouseMoveSelectStartPos);
         this.manager.gameScreen.canvas.removeEventListener('click', this.clickSelectStartPos);
         this.manager.gameScreen.setupPreview = null;
     }
-    handleEmitGamestate(gameInstance: GameData) {
+    handleEmitGamestate(gameInstance: GameData): void {
         this.manager.gameScreen.stopSetupRenderLoop();
         this.manager.gameScreen.setupBanner.classList.add('hidden');
         this.manager.gameScreen.setupBanner.style.backgroundColor = '';
         this.manager.gameScreen.controls.style.display = "flex";
         this.manager.gameScreen.drawGame(gameInstance);
     }
-    handleEmitSpectatorGameState(data: GeneralGameData) {
+    handleEmitSpectatorGameState(data: GeneralGameData): void {
         this.manager.gameScreen.controls.style.display = "none";
         this.manager.gameScreen.drawGeneralGameData(data);
     }
-    handleBuildSucces(faction: FactionData) {
+    handleBuildSucces(faction: FactionData): void {
         console.log('build success!');
         this.manager.gameScreen.setupBanner.classList.add('hidden');
         this.manager.gameScreen.setupBanner.style.backgroundColor = '';
         this.manager.gameScreen.upgradeEra(faction);
     }
-    handleEraUpgradeSuccess(faction: FactionData) {
+    handleEraUpgradeSuccess(faction: FactionData): void {
         this.manager.gameScreen.upgradeEra(faction);
     }
-    handleGameOver(winner: string) {
+    handleGameOver(winner: string): void {
         this.manager.toGameOverScreen();
         this.manager.gameOverScreen.displayWinner(winner);
     }
-    handleLoadData(data: LoadData) {
+    handleLoadData(data: LoadData): void {
         this.manager.gameScreen.loadImages(data);
         this.manager.waitingScreen.setFactions(data.factions);
     }
-    handleReconnectSuccess(data: ReconnectData) {
+    handleReconnectSuccess(data: ReconnectData): void {
         switch (data.phase) {
             case "waiting":
                 this.manager.toWaitingScreen();

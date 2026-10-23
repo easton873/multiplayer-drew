@@ -20,22 +20,22 @@ manager.joinScreen.joinButton.onclick = joinRoom;
 manager.waitingScreen.startButton.onclick = startGame;
 manager.gameScreen.upgradeButton.onclick = attemptUpgradeEra;
 
-function joinRoom() {
+function joinRoom(): void {
   emitJoinRoom(socket, manager.joinScreen.nameInput.value, manager.joinScreen.colorSelect.value);
 }
 
-function startGame() {
+function startGame(): void {
   emitStartGme(socket);
 }
 
 // socket.on(GAME_INSTANCE_KEY, drawGame);
 // socket.on(UPDGRADE_SUCCESS_KEY, upgradeEra);
 
-function attemptUpgradeEra() {
+function attemptUpgradeEra(): void {
   emitEraUpgrade(socket);
 }
 
-export function removeOptions(selectElement) {
+export function removeOptions(selectElement): void {
   var i, L = selectElement.options.length - 1;
   for(i = L; i >= 0; i--) {
       selectElement.remove(i);

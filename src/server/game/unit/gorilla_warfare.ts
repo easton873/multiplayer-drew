@@ -40,7 +40,7 @@ export class GorillaWarfarer extends Ranged {
         this.pos.moveTowards(this.retreatPos);
         return true;
     }
-    reset() {
+    reset(): void {
         this.retreating = false;
         this.moveSpeed = this.originalSpeed;
         this.retreatPos = null;

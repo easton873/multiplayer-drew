@@ -23,7 +23,7 @@ export class PlayingState implements RoomState {
         this.intervalId = setInterval(() => this.tick(), 1000 / FRAME_RATE);
     }
 
-    private tick() {
+    private tick(): void {
         this.game.mainLoop();
 
         this.game.players.forEach((player: Player) => {
@@ -64,13 +64,13 @@ export class PlayingState implements RoomState {
         }
     }
 
-    spawnUnit(playerId: string, pos: PosData, unitType: string) {
+    spawnUnit(playerId: string, pos: PosData, unitType: string): void {
         let player = this.game.getPlayer(playerId);
         if (!player) return;
         player.NewUnit(unitType, new Pos(pos.x, pos.y));
     }
 
-    deleteUnits(playerId: string, pos: PosData) {
+    deleteUnits(playerId: string, pos: PosData): void {
         let player = this.game.getPlayer(playerId);
         if (!player) return;
         player.DeleteUnits(new Pos(pos.x, pos.y));

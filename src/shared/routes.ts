@@ -42,75 +42,75 @@ export abstract class RouteReceiver {
         client.on(RECONNECT_KEY, (token : string) => this.handleReconnect(token));
         client.on(DISCONNECT_KEY, () => this.handleDisconnect());
     }
-    abstract handleJoinRoom(playerName : string, color : string);
-    abstract handleUpdateSetupPlayer(player : PlayerWaitingData);
-    abstract handleAddComputerPlayer(data : ComputerWaitingData);
-    abstract handleEditComputerPlayer(data : EditComputerData);
-    abstract handleRemoveComputerPlayer(id : string);
-    abstract handleBoardUpdate(board : BoardData);
-    abstract handleResourceUpdate(resources : ResourceData);
-    abstract handleStartGame();
-    abstract handleSubmitStartPos(pos : PosData);
-    abstract handleSpawnUnit(pos : PosData, unitType : string);
-    abstract handleDeleteUnits(pos : PosData);
-    abstract handleEraUpgrade();
-    abstract handleBackgroundUpdate(filename: string);
-    abstract handleReconnect(token: string);
-    abstract handleDisconnect();
+    abstract handleJoinRoom(playerName : string, color : string): void;
+    abstract handleUpdateSetupPlayer(player : PlayerWaitingData): void;
+    abstract handleAddComputerPlayer(data : ComputerWaitingData): void;
+    abstract handleEditComputerPlayer(data : EditComputerData): void;
+    abstract handleRemoveComputerPlayer(id : string): void;
+    abstract handleBoardUpdate(board : BoardData): void;
+    abstract handleResourceUpdate(resources : ResourceData): void;
+    abstract handleStartGame(): void;
+    abstract handleSubmitStartPos(pos : PosData): void;
+    abstract handleSpawnUnit(pos : PosData, unitType : string): void;
+    abstract handleDeleteUnits(pos : PosData): void;
+    abstract handleEraUpgrade(): void;
+    abstract handleBackgroundUpdate(filename: string): void;
+    abstract handleReconnect(token: string): void;
+    abstract handleDisconnect(): void;
 }
 
-export function emitJoinRoom(socket : any, playerName : string, color : string) {
+export function emitJoinRoom(socket : any, playerName : string, color : string): void {
   socket.emit(JOIN_ROOM_KEY, playerName, color);
 }
 
-export function emitUpdateSetupPlayer(socket : any, player : PlayerWaitingData) {
+export function emitUpdateSetupPlayer(socket : any, player : PlayerWaitingData): void {
     socket.emit(UPDATE_PLAYER_KEY, player);
 }
 
-export function emitAddComputer(socket : any, data : ComputerWaitingData) {
+export function emitAddComputer(socket : any, data : ComputerWaitingData): void {
     socket.emit(ADD_COMPUTER_KEY, data);
 }
 
-export function emitEditComputer(socket : any, data : EditComputerData) {
+export function emitEditComputer(socket : any, data : EditComputerData): void {
     socket.emit(EDIT_COMPUTER_KEY, data);
 }
 
-export function emitRemoveComputer(socket : any, id : string) {
+export function emitRemoveComputer(socket : any, id : string): void {
     socket.emit(REMOVE_COMPUTER_KEY, id);
 }
 
-export function emitBoardUpdate(socket : any, game : BoardData) {
+export function emitBoardUpdate(socket : any, game : BoardData): void {
     socket.emit(UPDATE_BOARD_KEY, game);
 }
 
-export function emitResourceUpdate(socket : any, resources : ResourceData) {
+export function emitResourceUpdate(socket : any, resources : ResourceData): void {
     socket.emit(UPDATE_RESOURCES_KEY, resources);
 }
 
-export function emitStartGme(socket : any){
+export function emitStartGme(socket : any): void{
     socket.emit(START_GAME_KEY);
 }
 
-export function emitSubmitStartPos(socket : any, pos : PosData){
+export function emitSubmitStartPos(socket : any, pos : PosData): void{
     socket.emit(SUBMIT_START_POS_KEY, pos);
 }
 
-export function emitSpawnUnit(socket : any, pos : PosData, unitType : string) {
+export function emitSpawnUnit(socket : any, pos : PosData, unitType : string): void {
     socket.emit(UNIT_SPAWN_KEY, pos, unitType);
 }
 
-export function emitDeleteUnits(socket : any, pos : PosData) {
+export function emitDeleteUnits(socket : any, pos : PosData): void {
     socket.emit(DELETE_UNITS_KEY, pos);
 }
 
-export function emitEraUpgrade(socket : any) {
+export function emitEraUpgrade(socket : any): void {
     socket.emit(UPGRADE_ERA_KEY);
 }
 
-export function emitBackgroundUpdate(socket : any, filename: string) {
+export function emitBackgroundUpdate(socket : any, filename: string): void {
     socket.emit(UPDATE_BACKGROUND_KEY, filename);
 }
 
-export function emitReconnect(socket : any, token : string) {
+export function emitReconnect(socket : any, token : string): void {
     socket.emit(RECONNECT_KEY, token);
 }

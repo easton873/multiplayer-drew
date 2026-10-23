@@ -18,12 +18,12 @@ export class Summoner extends TargetChasingUnit  {
     constructor(player: Player, pos: Pos) {
         super(player, SummonerUnit.NAME, pos, SummonerUnit.HP, SummonerUnit.COLOR, SummonerUnit.SPEED, SummonerUnit.SPEED);
     }
-    doAcutalMove(board: Board) {
+    doAcutalMove(board: Board): void {
         super.doAcutalMove(board);
         this.summon(board);
     }
-    summon(board : Board) {
-        if (this.summonTimer.tick() && this.numSummons > 0) {
+    summon(board : Board): void {
+        if (this.summonTimer.tick() && this.numSummons > 0) { // cheats unit count
             let unit : Summonee = new Summonee(this.owner, this.pos.clone(), this);
             board.addEntity(unit);
             unit.registerObserver(this);
@@ -41,7 +41,7 @@ export class Summoner extends TargetChasingUnit  {
     inRange(other: Unit): boolean {
         return this.inRangeForDistance(other, this.range);
     }
-    inRangeMove(board: Board) {
+    inRangeMove(board: Board): void {
         return;
     }
     findNewTarget(units: Unit[]): void {

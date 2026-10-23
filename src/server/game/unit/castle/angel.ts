@@ -10,7 +10,7 @@ class Angel extends Melee {
     constructor(player : Player, name : string, pos : Pos) {
         super(player, name, pos, 250, 2, 15, "#fff3b0", 0);
     }
-    inRangeMove(board: Board) {
+    inRangeMove(board: Board): void {
        this.doDamageToPos(
         board, this.target.pos.clone(),
         (unit : Unit) => unit.team != this.team, 

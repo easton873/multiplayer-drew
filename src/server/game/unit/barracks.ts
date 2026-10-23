@@ -10,11 +10,8 @@ export class Spawner extends UnitWithCounter {
     constructor(player : Player, name : string, pos : Pos, hp : number, speed : number, color : string, protected unitToSpawn : GameUnit) {
         super(player, name, pos, hp, speed, color);
     }
-    doMove(board: Board) {
-        if (this.owner.atUnitCap()) {
-            return;
-        }
-        this.owner.addUnitToBoard(this.getUnitToSpawn(), this.pos.clone());
+    doMove(board: Board): void {
+        this.summonGameUnit(this.getUnitToSpawn(), this.pos.clone());
     }
     getBuildingDamageMultiplier(): number {
         return 1;

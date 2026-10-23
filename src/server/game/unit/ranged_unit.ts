@@ -11,7 +11,7 @@ export class Ranged extends TargetChasingUnit {
     constructor(player : Player, name : string, pos : Pos, hp : number, moveSpeed : number, attackSpeed : number, color : string, public damage : number, public range : number) {
         super(player, name, pos, hp, color, moveSpeed, attackSpeed);
     }
-    inRangeMove(board : Board) {
+    inRangeMove(board : Board): void {
         this.doDamage(this.target, this.damage);
     }
 

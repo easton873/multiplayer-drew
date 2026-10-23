@@ -15,31 +15,31 @@ export class WaitingState implements RoomState {
         }
     }
 
-    updatePlayer(room: GameRoom, id: string, data: PlayerWaitingData) {
+    updatePlayer(room: GameRoom, id: string, data: PlayerWaitingData): void {
         let player = room.players.get(id);
         if (!player) return;
         player.update(data);
     }
 
-    addComputerPlayer(room: GameRoom, handler: ClientHandler, name: string, color: string, team: number, difficulty: string) {
+    addComputerPlayer(room: GameRoom, handler: ClientHandler, name: string, color: string, team: number, difficulty: string): void {
         room.addComputerPlayer(handler, name, color, team, difficulty);
     }
 
-    removeComputerPlayer(room: GameRoom, id: string) {
+    removeComputerPlayer(room: GameRoom, id: string): void {
         room.players.delete(id);
     }
 
-    editComputerPlayer(room: GameRoom, id: string, data: EditComputerData) {
+    editComputerPlayer(room: GameRoom, id: string, data: EditComputerData): void {
         room.editComputerPlayer(id, data);
     }
 
-    updateBoard(room: GameRoom, width: number, height: number) {
+    updateBoard(room: GameRoom, width: number, height: number): void {
         if (width < 10 || height < 10) return;
         room.boardX = width;
         room.boardY = height;
     }
 
-    updateResources(room: GameRoom, resources: ResourceData) {
+    updateResources(room: GameRoom, resources: ResourceData): void {
         const sanitized = defaultStartingResources();
         for (const t of RESOURCE_TYPES) {
             sanitized[t] = Math.max(0, Math.floor(resources[t] || 0));
@@ -47,7 +47,7 @@ export class WaitingState implements RoomState {
         room.startingResources = sanitized;
     }
 
-    updateBackground(room: GameRoom, filename: string) {
+    updateBackground(room: GameRoom, filename: string): void {
         if (backgrounds.includes(filename)) {
             room.background = filename;
         }

@@ -11,7 +11,7 @@ export class ResourceUnit extends UnitWithCounter {
         super(player, name, pos, hp, speed, color);
         this.name = name;
     }
-    doMove(_ : Board) {
+    doMove(_ : Board): void {
         this.owner.resources.add(this.resources);
     }
 

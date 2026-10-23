@@ -29,7 +29,7 @@ class Teleporter extends UnitWithCounter {
         this.clamp(this.targetPos, this.owner.board);
     }
 
-    doMove(board: Board) {
+    doMove(board: Board): void {
         if (this.currWaitAmount >= this.waitingGoal) {
             const origin = this.pos.clone();
             const targetPos = this.targetPos.clone();

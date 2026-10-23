@@ -1,4 +1,4 @@
-import { PlayerHeartData } from "../../shared/types.js";
+import { PlayerHeartData, DrawingData } from "../../shared/types.js";
 import { Counter } from "./move/counter.js";
 import { Player } from "./player.js";
 import { Pos } from "./pos.js";
@@ -12,7 +12,7 @@ export class Hearts implements UnitObserver {
     private hearts : Heart[] = [];
     constructor() {}
 
-    notifyDeath(unit: ObservableUnit) {
+    notifyDeath(unit: ObservableUnit): void {
         unit.unregisterObserver(this);
         for (let i = 0; i < this.hearts.length; i++) {
             if (this.hearts[i] == unit) {
@@ -26,7 +26,7 @@ export class Hearts implements UnitObserver {
         return this.hearts.length == 0;
     }
 
-    addHeart(heart : Heart) {
+    addHeart(heart : Heart): void {
         this.hearts.push(heart);
         heart.registerObserver(this);
     }
@@ -67,7 +67,7 @@ export class Heart extends ResourceUnit {
         this.radius = info.radius;
     }
 
-    updateHeart(info : EraHeartInfo) {
+    updateHeart(info : EraHeartInfo): void {
         this.hp = info.hp;
         this.totalHP = this.hp;
         this.moveCounter = new Counter(info.speed);
@@ -90,6 +90,18 @@ export class Heart extends ResourceUnit {
 
     getRadius() : number {
         return this.radius;
+    }
+
+    getExtraDrawing(): DrawingData {
+        return {
+            circles: [
+                {
+                    pos: this.pos.getPosData(),
+                    radius: this.radius,
+                    color: this.color,
+                }
+            ]
+        }
     }
 }
 

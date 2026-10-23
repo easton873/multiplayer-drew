@@ -1,7 +1,7 @@
 import { Random } from "../../math.js";
 import { Board } from "../../board.js";
 import { Pos } from "../../pos.js";
-import { randomPos } from "../combat/helper.js";
+import { isEnemyInRange, randomPos } from "../combat/helper.js";
 import { Unit } from "../unit.js";
 import { GameUnit } from "../game_unit.js";
 import { Player } from "../../player.js";
@@ -21,14 +21,14 @@ class Migrator extends Spawner {
     constructor(player : Player, name : string, pos : Pos) {
         super(player, name, pos, 100, 7, "#18b47d", null);
     }
-    doMove(board: Board) {
+    doMove(board: Board): void {
         if (!this.destinationSet) {
             this.destination = randomPos(board);
             this.destinationSet = true;
         }
         for (let i = 0; i < board.entities.length; ++i) {
             let unit: Unit = board.entities[i];
-            if (unit.team != this.team && this.inRangeForDistance(unit, this.range)) {
+            if (isEnemyInRange(this, unit, this.range)) {
                 this.doDamage(unit, this.damage);
             }
         }

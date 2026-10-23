@@ -1,5 +1,5 @@
 import { GameSetupData, LoadData, PlayerSetupData, UnitLoadData } from "../../shared/bulider";
-import { DEFAULT_BG_IMAGE_FILE, FactionData, GameData, GeneralGameData, GeneralHeartData, PlayerHeartData, PosData, ResourceData, UnitCreationData, UnitData } from "../../shared/types";
+import { DEFAULT_BG_IMAGE_FILE, FactionData, GameData, GeneralGameData, GeneralHeartData, PlayerHeartData, PosData, ResourceData, UnitCreationData, UnitData, DrawingData } from "../../shared/types";
 import { emitDeleteUnits, emitSpawnUnit } from "../../shared/routes";
 import { RESOURCE_TYPES, ResourceType } from "../../shared/resource_types";
 import { RESOURCE_EMOJI } from "../resources";
@@ -65,6 +65,7 @@ export class GameScreen {
     private isDelete : boolean = false
     private bg : HTMLImageElement = new Image();
     private images : Map<string, HTMLImageElement> = new Map<string, HTMLImageElement>();
+    private extraImages : Map<string, HTMLImageElement> = new Map<string, HTMLImageElement>();
     private factionName : string = '';
 
     private pressedKeys : Set<string> = new Set<string>();
@@ -202,11 +203,11 @@ export class GameScreen {
       resizeObserver.observe(this.canvasContainer);
     }
 
-    setBackground(filename: string) {
+    setBackground(filename: string): void {
       this.bg.src = '/backgrounds/' + filename;
     }
 
-    resizeCanvasToContainer() {
+    resizeCanvasToContainer(): void {
       const w = this.canvasContainer.clientWidth;
       const h = this.canvasContainer.clientHeight;
       if (w > 0 && h > 0) {
@@ -215,7 +216,7 @@ export class GameScreen {
       }
     }
 
-    clampCamera() {
+    clampCamera(): void {
       // Center the board if it fits within the viewport
       if (this.boardWidth > 0) {
         const vpW = this.viewportWidthTiles;
@@ -245,7 +246,7 @@ export class GameScreen {
       };
     }
 
-    zoomToFit() {
+    zoomToFit(): void {
       if (this.boardWidth <= 0 || this.boardHeight <= 0) return;
       const zx = this.canvas.width / this.boardWidth;
       const zy = this.canvas.height / this.boardHeight;
@@ -255,7 +256,7 @@ export class GameScreen {
       this.clampCamera();
     }
 
-    updatePanScroll() {
+    updatePanScroll(): void {
       if (!this.isPanning) return;
       const dx = this.mouseScreenX - this.panAnchorX;
       const dy = this.mouseScreenY - this.panAnchorY;
@@ -263,14 +264,14 @@ export class GameScreen {
       this.cameraY += dy * PAN_SCROLL_SPEED;
     }
 
-    updateKeyScroll() {
+    updateKeyScroll(): void {
       if (this.pressedKeys.has('ArrowLeft')) this.cameraX -= KEY_SCROLL_SPEED;
       if (this.pressedKeys.has('ArrowRight')) this.cameraX += KEY_SCROLL_SPEED;
       if (this.pressedKeys.has('ArrowUp')) this.cameraY -= KEY_SCROLL_SPEED;
       if (this.pressedKeys.has('ArrowDown')) this.cameraY += KEY_SCROLL_SPEED;
     }
 
-    toggleFullscreen() {
+    toggleFullscreen(): void {
       if (document.fullscreenElement) {
         document.exitFullscreen();
       } else {
@@ -278,13 +279,13 @@ export class GameScreen {
       }
     }
 
-    requestFullscreen() {
+    requestFullscreen(): void {
       this.div.requestFullscreen({ navigationUI: 'hide' }).catch(() => {
         // Fullscreen request may be denied by browser
       });
     }
 
-    drawBG() {
+    drawBG(): void {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       if (this.bg.complete && this.bg.naturalWidth > 0 && this.boardWidth > 0 && this.boardHeight > 0) {
         this.ctx.save();
@@ -294,7 +295,7 @@ export class GameScreen {
       }
     }
 
-    clickFn(event : MouseEvent) {
+    clickFn(event : MouseEvent): void {
         const pos = this.screenToGame(event.clientX, event.clientY);
         if (pos.x < 0 || pos.y < 0 || pos.x >= this.boardWidth || pos.y >= this.boardHeight) {
             return;
@@ -307,7 +308,7 @@ export class GameScreen {
         }
     }
 
-    handlePlaceDelete(event: KeyboardEvent) {
+    handlePlaceDelete(event: KeyboardEvent): void {
       if (event.key == "d") {
         this.isDelete = true;
         this.modeIndicator.textContent = "DELETE";
@@ -319,13 +320,13 @@ export class GameScreen {
       }
     }
 
-    resetMode() {
+    resetMode(): void {
       this.isDelete = false;
       this.modeIndicator.textContent = "ADD";
       this.modeIndicator.className = "hud-mode hud-mode--add";
     }
 
-    drawSetupGame(data : GameSetupData) {
+    drawSetupGame(data : GameSetupData): void {
       if (!data) {
         return;
       }
@@ -338,10 +339,10 @@ export class GameScreen {
       this.drawSetupMinimap(data.players);
     }
 
-    startSetupRenderLoop(data : GameSetupData) {
+    startSetupRenderLoop(data : GameSetupData): void {
       this.setupData = data;
       if (this.setupRafId) return; // already running
-      const loop = () => {
+      const loop = (): void => {
         this.updatePanScroll();
         this.updateKeyScroll();
         this.clampCamera();
@@ -357,7 +358,7 @@ export class GameScreen {
       this.setupRafId = requestAnimationFrame(loop);
     }
 
-    stopSetupRenderLoop() {
+    stopSetupRenderLoop(): void {
       if (this.setupRafId) {
         cancelAnimationFrame(this.setupRafId);
         this.setupRafId = 0;
@@ -366,16 +367,15 @@ export class GameScreen {
       this.setupPreview = null;
     }
 
-    updateSetupData(data : GameSetupData) {
+    updateSetupData(data : GameSetupData): void {
       this.setupData = data;
     }
 
-    drawGame(data : GameData) {
+    drawGame(data : GameData): void {
       this.resourceLabel.innerText = this.formatResources(data.resources, this.availableResources);
       this.setHp(data);
       this.setUnitCount(data);
-      this.drawGeneralGameData(data.generalData, data.friendlyInvisibleUnits);
-      this.drawCircles(data.playerData.hearts, "black");
+      this.drawGeneralGameData(data.generalData, data.friendlyInvisibleUnits, data.drawings);
       this.ctx.globalAlpha = 0.2;
       data.friendlyInvisibleUnits.forEach((unit : UnitData) => {
         this.drawUnit(unit);
@@ -383,19 +383,24 @@ export class GameScreen {
       this.ctx.globalAlpha = 1.0;
     }
 
-    drawGeneralGameData(data : GeneralGameData, extraMinimapUnits : UnitData[] = []) {
+    drawGeneralGameData(data : GeneralGameData, extraMinimapUnits : UnitData[] = [], drawings? : DrawingData): void {
       this.setCanvasSize(data.board.width, data.board.height);
       this.updatePanScroll();
       this.updateKeyScroll();
       this.clampCamera();
       this.drawBG();
+      // Extra drawings go under every unit
+      this.drawExtraDrawing(drawings);
+      data.units.forEach((unit : UnitData) => {
+        this.drawExtraDrawing(unit.extraDrawing);
+      });
       data.units.forEach((unit : UnitData) => {
         this.drawUnit(unit);
       });
       this.drawMinimap([...data.units, ...extraMinimapUnits], data.hearts);
     }
 
-    setCanvasSize(width : number, height : number) {
+    setCanvasSize(width : number, height : number): void {
       this.boardWidth = width;
       this.boardHeight = height;
       this.resizeCanvasToContainer();
@@ -406,7 +411,7 @@ export class GameScreen {
       this.sizeMinimap();
     }
 
-    sizeMinimap() {
+    sizeMinimap(): void {
       if (this.boardWidth <= 0 || this.boardHeight <= 0) return;
       const aspect = this.boardWidth / this.boardHeight;
       if (aspect >= 1) {
@@ -418,7 +423,7 @@ export class GameScreen {
       }
     }
 
-    setHp(data : GameData) {
+    setHp(data : GameData): void {
       let hp = 0;
       data.playerData.hearts.forEach((currHeart : PlayerHeartData) => {
         hp += currHeart.health;
@@ -431,11 +436,11 @@ export class GameScreen {
       this.heartProgress.value = hp;
     }
 
-    setUnitCount(data : GameData) {
+    setUnitCount(data : GameData): void {
       this.unitCountLabel.innerText = 'Units ' + data.playerData.numUnits + '/' + data.playerData.maxUnits;
     }
 
-    drawUnit(unit : UnitData) {
+    drawUnit(unit : UnitData): void {
       // Frustum culling: skip off-screen units
       const sx = (unit.pos.x - this.cameraX) * this.zoom;
       const sy = (unit.pos.y - this.cameraY) * this.zoom;
@@ -449,7 +454,36 @@ export class GameScreen {
       this.drawRangedProjectile(unit);
     }
 
-    drawRangedProjectile(unit : UnitData) {
+    drawExtraDrawing(extra : DrawingData | undefined): void {
+      if (!extra) return;
+      extra.squares?.forEach((square) => {
+        const x = (square.pos.x - this.cameraX) * this.zoom;
+        const y = (square.pos.y - this.cameraY) * this.zoom;
+        const image = square.image ? this.getExtraImage(square.image) : undefined;
+        if (image) {
+          this.ctx.drawImage(image, x, y, this.zoom, this.zoom);
+        } else {
+          this.ctx.fillStyle = square.color;
+          this.ctx.fillRect(x, y, this.zoom, this.zoom);
+        }
+      });
+      extra.circles?.forEach((circle) => {
+        this.drawCircle(circle.pos.x, circle.pos.y, Math.floor(Math.sqrt(circle.radius)), circle.color);
+      });
+    }
+
+    // Lazily loads images referenced by extra drawings; falls back to the color until loaded
+    private getExtraImage(src : string) : HTMLImageElement | undefined {
+      let img = this.extraImages.get(src);
+      if (!img) {
+        img = new Image();
+        img.src = src;
+        this.extraImages.set(src, img);
+      }
+      return img.complete && img.naturalWidth > 0 ? img : undefined;
+    }
+
+    drawRangedProjectile(unit : UnitData): void {
       const rd = unit.rangedData;
       if (!rd.ranged || !rd.attacking || rd.counterTotal <= 0) return;
       const progress = (rd.counterTotal - rd.counter) / rd.counterTotal;
@@ -462,7 +496,7 @@ export class GameScreen {
       this.ctx.fillRect(sx - size / 2, sy - size / 2, size, size);
     }
 
-    drawUnitByPos(name : string, pos : PosData, color : string, faction : string = '') {
+    drawUnitByPos(name : string, pos : PosData, color : string, faction : string = ''): void {
       let x : number = (pos.x - this.cameraX) * this.zoom;
       let y : number = (pos.y - this.cameraY) * this.zoom;
       this.ctx.fillStyle = color;
@@ -474,7 +508,7 @@ export class GameScreen {
       }
     }
 
-    drawUnitHealthBar(unit : UnitData) {
+    drawUnitHealthBar(unit : UnitData): void {
       let x : number = (unit.pos.x - this.cameraX) * this.zoom;
       let y : number = (unit.pos.y - this.cameraY) * this.zoom;
       if (unit.hp == unit.totalHP) {
@@ -490,7 +524,7 @@ export class GameScreen {
       this.ctx.fillRect(x, heatlhY, healthBarLength, healthBarThickness);
     }
 
-    drawBorder(pos : PosData, color : string) {
+    drawBorder(pos : PosData, color : string): void {
       let x : number = (pos.x - this.cameraX) * this.zoom;
       let y : number = (pos.y - this.cameraY) * this.zoom;
       this.ctx.strokeStyle = color;
@@ -498,13 +532,7 @@ export class GameScreen {
       this.ctx.strokeRect(x - 1, y - 1, this.zoom + 2, this.zoom + 2);
     }
 
-    drawCircles(hearts : PlayerHeartData[], color : string) {
-      hearts.forEach((heart : PlayerHeartData) => {
-        this.drawCircle(heart.pos.x, heart.pos.y, Math.floor(Math.sqrt(heart.radius)), color);
-      });
-    }
-
-    drawCircle(x : number, y : number, radius : number, color : string) {
+    drawCircle(x : number, y : number, radius : number, color : string): void {
       let offset = this.zoom / 2;
       let ctx = this.ctx;
       ctx.strokeStyle = color;
@@ -513,7 +541,7 @@ export class GameScreen {
       ctx.stroke();
     }
 
-    drawMinimap(units : UnitData[], hearts : GeneralHeartData[]) {
+    drawMinimap(units : UnitData[], hearts : GeneralHeartData[]): void {
       if (this.boardWidth <= 0 || this.boardHeight <= 0) return;
       const mw = this.minimapCanvas.width;
       const mh = this.minimapCanvas.height;
@@ -567,7 +595,7 @@ export class GameScreen {
       mctx.strokeRect(vpX, vpY, vpW, vpH);
     }
 
-    drawSetupMinimap(players: PlayerSetupData[]) {
+    drawSetupMinimap(players: PlayerSetupData[]): void {
       if (this.boardWidth <= 0 || this.boardHeight <= 0) return;
       const mw = this.minimapCanvas.width;
       const mh = this.minimapCanvas.height;
@@ -609,7 +637,7 @@ export class GameScreen {
       mctx.strokeRect(vpX, vpY, vpW, vpH);
     }
 
-    handleMinimapClick(event : MouseEvent) {
+    handleMinimapClick(event : MouseEvent): void {
       const rect = this.minimapCanvas.getBoundingClientRect();
       const mx = event.clientX - rect.left;
       const my = event.clientY - rect.top;
@@ -623,7 +651,7 @@ export class GameScreen {
       this.clampCamera();
     }
 
-    fillSelect(selectElement : HTMLSelectElement, units : UnitCreationData[]) {
+    fillSelect(selectElement : HTMLSelectElement, units : UnitCreationData[]): void {
       removeOptions(selectElement);
       units.forEach((data : UnitCreationData) => {
         const optionElement = document.createElement('option');
@@ -633,7 +661,7 @@ export class GameScreen {
       });
     }
 
-    upgradeEra(faction : FactionData) {
+    upgradeEra(faction : FactionData): void {
       const era = faction.eraData;
       this.factionName = faction.factionName;
       this.resourceUnitsList = faction.resourceUnits;
@@ -711,7 +739,7 @@ export class GameScreen {
     }
 
     // Each unit's image lives in its own faction's folder: /units/<faction>/<unit>.png
-    loadImages(data: LoadData) {
+    loadImages(data: LoadData): void {
       this.images.clear();
       data.factions.forEach((faction) => {
         const folder = faction.name.toLowerCase();
@@ -726,7 +754,7 @@ export class GameScreen {
       });
     }
 
-    saveHotkeys() {
+    saveHotkeys(): void {
       const saved: Record<string, string> = {};
       this.hotKeys.forEach((unit, key) => {
         saved[key] = unit.name;
@@ -734,7 +762,7 @@ export class GameScreen {
       localStorage.setItem(HOTKEY_STORAGE_KEY, JSON.stringify(saved));
     }
 
-    restoreHotkeys() {
+    restoreHotkeys(): void {
       const raw = localStorage.getItem(HOTKEY_STORAGE_KEY);
       if (!raw) return;
       const saved: Record<string, string> = JSON.parse(raw);
@@ -750,7 +778,7 @@ export class GameScreen {
       });
     }
 
-    openUnitPicker(button: HTMLButtonElement, units: UnitCreationData[]) {
+    openUnitPicker(button: HTMLButtonElement, units: UnitCreationData[]): void {
       this.activePickerButton = button;
       this.activePickerUnits = units;
       const rect = button.getBoundingClientRect();
@@ -764,11 +792,11 @@ export class GameScreen {
       this.renderUnitPickerGrid(units);
     }
 
-    closeUnitPicker() {
+    closeUnitPicker(): void {
       this.unitPickerPopup.classList.add('hidden');
     }
 
-    renderUnitPickerGrid(units: UnitCreationData[]) {
+    renderUnitPickerGrid(units: UnitCreationData[]): void {
       this.unitPickerGrid.innerHTML = '';
       const nameToKey = new Map<string, string>();
       this.hotKeys.forEach((unit, key) => nameToKey.set(unit.name, key));
@@ -807,7 +835,7 @@ export class GameScreen {
       }
     }
 
-    updateUnitPickerButton() {
+    updateUnitPickerButton(): void {
       if (!this.unitSelect.value) return;
       const data = this.getUnitSelect();
       const nameToKey = new Map<string, string>();
@@ -825,7 +853,7 @@ export class GameScreen {
       }
     }
 
-    updateHotkeyLabels() {
+    updateHotkeyLabels(): void {
       const nameToKey = new Map<string, string>();
       this.hotKeys.forEach((unit, key) => {
         nameToKey.set(unit.name, key);

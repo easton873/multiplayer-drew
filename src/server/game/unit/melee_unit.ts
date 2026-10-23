@@ -14,7 +14,7 @@ export class Melee extends TargetChasingUnit {
     constructor(player : Player, name : string, pos : Pos, hp : number, moveSpeed : number, attackSpeed : number, color : string, protected damage : number) {
         super(player, name, pos, hp, color, moveSpeed, attackSpeed);
     }
-    inRangeMove(board : Board) {
+    inRangeMove(board : Board): void {
         this.doDamage(this.target, this.damage);
     }
 

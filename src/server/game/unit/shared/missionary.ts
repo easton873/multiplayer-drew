@@ -5,7 +5,7 @@ import { Pos } from "../../pos.js";
 import { GameUnit } from "../game_unit.js";
 import { Unit } from "../unit.js";
 import { TargetChasingUnit } from "../combat/combat.js";
-import { Heart } from "../../heart.js";
+import { isEnemyNonHeart } from "../combat/helper.js";
 
 class Missionary extends TargetChasingUnit {
     constructor(player : Player, name : string, pos : Pos, hp : number, color : string, moveSpeed : number, attackSpeed : number, public range : number) {
@@ -16,7 +16,7 @@ class Missionary extends TargetChasingUnit {
         return this.inRangeForDistance(other, this.range);
     }
 
-    inRangeMove(board: Board) {
+    inRangeMove(board: Board): void {
         if (this.owner.atUnitCap()) {
             return;
         }
@@ -47,8 +47,7 @@ class Missionary extends TargetChasingUnit {
     }
 
     isValidTarget(unit: Unit): boolean {
-        return unit.team != this.team &&
-            !(unit instanceof Heart);
+        return isEnemyNonHeart(this, unit);
     }
 }
 

@@ -45,12 +45,12 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
         }
     }
 
-    abstract firstEra();
-    abstract secontEra();
-    abstract thirdEra();
-    abstract fourthEra();
-    abstract fifthEra();
-    abstract sixthEra();
+    abstract firstEra(): void;
+    abstract secontEra(): void;
+    abstract thirdEra(): void;
+    abstract fourthEra(): void;
+    abstract fifthEra(): void;
+    abstract sixthEra(): void;
 
     placeUnit(unit : GameUnit, pos : Pos, num : number = 1) : boolean {
         for (let i = 0; i < num; i++) {
@@ -71,7 +71,7 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
         return count;
     }
 
-    maintainCountOfUnits(unit : GameUnit, targetCount : number, savings : Resources = new Resources()) {
+    maintainCountOfUnits(unit : GameUnit, targetCount : number, savings : Resources = new Resources()): void {
         if (this.countUnit(unit) < targetCount) {
             savings.add(unit.getUnitCreationInfo().getCost())
             if (this.resources.canAfford(savings)) {
@@ -91,7 +91,7 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
         return true;
     }
 
-    protectBase(defenseUnit : GameUnit) {
+    protectBase(defenseUnit : GameUnit): void {
         this.board.entities.forEach((unit : Unit) => {
             if (unit.team != this.getTeam() && this.heart.isInRange(unit.pos)) {
                 this.placeUnit(defenseUnit, unit.pos, 3);
@@ -99,14 +99,14 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
         })
     }
 
-    advanceEra() {
+    advanceEra(): void {
         if (this.era.canAffordNextEra(this.resources)) {
             this.attemptUpgradeEra();
             this.rebuildTerritory();
         }
     }
 
-    spamUnits(unit : GameUnit, num : number) {
+    spamUnits(unit : GameUnit, num : number): void {
         let cost : Resources = new Resources();
         for (let i = 0; i < num; i++) {
             cost.add(unit.getUnitCreationInfo().getCost());
@@ -120,7 +120,7 @@ export abstract class BaseComputerPlayer extends PlayerProxy {
         return this.heartCount != this.hearts.getNumHearts();
     }
 
-    rebuildTerritory() {
+    rebuildTerritory(): void {
         this.territory = getTerritory(this.board, this.hearts);
     }
 

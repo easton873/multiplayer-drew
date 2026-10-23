@@ -11,7 +11,7 @@ export class RandomResourceUnit extends UnitWithCounter {
     constructor(player: Player, name: string, pos: Pos, hp: number, speed: number, private rollableResources: ResourceType[], private amount: number, color: string) {
         super(player, name, pos, hp, speed, color);
     }
-    doMove(_: Board) {
+    doMove(_: Board): void {
         const type = Random.fromList(this.rollableResources);
         this.owner.resources.add(new Resources({ [type]: this.amount }));
     }

@@ -20,7 +20,7 @@ export class PlacingState implements RoomState {
         private callerId: string,
     ) {}
 
-    init() {
+    init(): void {
         let player = this.getPoslessPlayer();
         this.currentlyPlacingId = player.getId();
         let data = this.room.setupData(this.callerId);
@@ -30,7 +30,7 @@ export class PlacingState implements RoomState {
         player.findStartingPos(this.room.setupData(player.getClient().id));
     }
 
-    submitPos(pos: PosData, id: string, callerClient: any) {
+    submitPos(pos: PosData, id: string, callerClient: any): void {
         this.room.players.get(id).setPos(Pos.FromPosData(pos));
         emitSetPosSuccess(callerClient);
 

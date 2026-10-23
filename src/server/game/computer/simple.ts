@@ -4,27 +4,27 @@ import { CARPENTER_GAME_UNIT, LUMBER_JACK_GAME_UNIT, MERCHANT_GAME_UNIT, MINER_G
 import { BaseComputerPlayer } from "./basics.js";
 
 export class SimpleComputer extends BaseComputerPlayer {
-    firstEra() {
+    firstEra(): void {
         this.maintainCountOfUnits(MERCHANT_GAME_UNIT, 25);
         this.advanceEra();
     }
-    secontEra() {
+    secontEra(): void {
         this.maintainCountOfUnits(MERCHANT_GAME_UNIT, 30);
         this.maintainCountOfUnits(LUMBER_JACK_GAME_UNIT, 20);
         this.advanceEra();
     }
-    thirdEra() {
+    thirdEra(): void {
         this.maintainCountOfUnits(CARPENTER_GAME_UNIT, 20);
         this.maintainCountOfUnits(MINER_GAME_UNIT, 20);
         this.spamUnits(GorillaWarfareUnit, 10);
     }
-    fourthEra() {
+    fourthEra(): void {
         throw new Error("Method not implemented.");
     }
-    fifthEra() {
+    fifthEra(): void {
         throw new Error("Method not implemented.");
     }
-    sixthEra() {
+    sixthEra(): void {
         throw new Error("Method not implemented.");
     }
 

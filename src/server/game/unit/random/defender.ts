@@ -13,7 +13,7 @@ class Defender extends UnitWithCounter {
     constructor(player: Player, name: string, pos: Pos, hp: number, speed: number, color: string, private damage: number) {
         super(player, name, pos, hp, speed, color);
     }
-    doMove(board: Board) {
+    doMove(board: Board): void {
         if (!this.hasTerritory) {
             this.spots = getTerritory(board, this.owner.hearts);
             this.hasTerritory = true;

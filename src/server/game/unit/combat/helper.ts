@@ -2,15 +2,16 @@ import { Random } from "../../../game/math.js";
 import { Pos } from "../../../game/pos.js";
 import { Board } from "../../../game/board.js";
 import { Unit } from "../unit.js";
-import { Hearts } from "../../heart.js";
+import { Heart, Hearts } from "../../heart.js";
+import { Player } from "../../player.js";
 
-export function clampHealth(unit : Unit) {
+export function clampHealth(unit : Unit): void {
     if (unit.hp > unit.totalHP) {
         unit.hp = unit.totalHP;
     }
 }
 
-export function healUnit(unit : Unit, healAmount : number) {
+export function healUnit(unit : Unit, healAmount : number): void {
     unit.hp += healAmount
     clampHealth(unit);
 }
@@ -33,4 +34,28 @@ export function getTerritory(board: Board, hearts : Hearts): Pos[] {
         }
     }
     return spots;
+}
+
+export function findUnit(board: Board, predicate: (u: Unit) => boolean): Unit | undefined {
+    return Random.fromList(board.entities.filter(predicate));
+}
+
+export function isEnemy(self: Unit, other: Unit): boolean {
+    return other.team != self.team;
+}
+
+export function isEnemyNonHeart(self: Unit, other: Unit): boolean {
+    return isEnemy(self, other) && !(other instanceof Heart);
+}
+
+export function isEnemyInRange(self: Unit, other: Unit, range: number): boolean {
+    return isEnemy(self, other) && self.inRangeForDistance(other, range);
+}
+
+export function findEnemyUnit(board: Board, unit: Unit): Unit | undefined {
+    return findUnit(board, (u: Unit) => isEnemyNonHeart(unit, u));
+}
+
+export function findEnemyInRange(board: Board, unit: Unit, range: number): Unit | undefined {
+    return findUnit(board, (u: Unit) => isEnemyInRange(unit, u, range));
 }

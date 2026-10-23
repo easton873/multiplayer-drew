@@ -7,6 +7,7 @@ export interface GameData {
   faction : FactionData
   generalData : GeneralGameData
   friendlyInvisibleUnits : UnitData[]
+  drawings: DrawingData
 }
 
 export interface GeneralHeartData {
@@ -66,6 +67,7 @@ export interface UnitData {
   hp : number
   totalHP : number
   rangedData : UnitRangedAttackData
+  extraDrawing: DrawingData
 }
 
 export interface UnitRangedAttackData {
@@ -75,6 +77,23 @@ export interface UnitRangedAttackData {
   targetY : number
   counter : number
   counterTotal : number
+}
+
+export interface DrawingData {
+  squares?: SquareDrawingData[]
+  circles?: CircleDrawingData[]
+}
+
+export interface SquareDrawingData {
+  pos: PosData
+  color: string
+  image?: string
+}
+
+export interface CircleDrawingData {
+  pos: PosData
+  radius: number
+  color: string
 }
 
 export interface BoardData {

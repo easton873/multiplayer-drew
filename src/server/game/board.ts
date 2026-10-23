@@ -15,17 +15,17 @@ export class Board implements UnitObserver, QueueDeathObserver {
         return this._height;
     }
 
-    notifyDeath(unit: Unit) {
+    notifyDeath(unit: Unit): void {
         let index = this.entities.findIndex((u : Unit, index : number) => u === unit);
         this.entities.splice(index, 1);
         unit.unregisterObserver(this);
     }
 
-    queueDeath(unit: Unit) {
+    queueDeath(unit: Unit): void {
         this.pendingDeaths.push(unit);
     }
 
-    processDeaths() {
+    processDeaths(): void {
         let deaths = this.pendingDeaths;
         this.pendingDeaths = [];
         for (let i = 0; i < deaths.length; ++i) {
@@ -33,12 +33,12 @@ export class Board implements UnitObserver, QueueDeathObserver {
         }
     }
 
-    moveUnit(unit: Unit) {
+    moveUnit(unit: Unit): void {
         unit.move(this);
         this.processDeaths();
     }
 
-    addEntity(entity : Unit) {
+    addEntity(entity : Unit): void {
         this.entities.push(entity);
         entity.registerObserver(this);
         entity.registerQueueDeathObserver(this);

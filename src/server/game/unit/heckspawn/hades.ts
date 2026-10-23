@@ -3,9 +3,11 @@ import { Board } from "../../board.js";
 import { GameUnit } from "../game_unit.js";
 import { Ranged } from "../ranged_unit.js";
 import { Unit } from "../unit.js";
+import { isEnemyInRange } from "../combat/helper.js";
 import { Counter } from "../../move/counter.js";
 import { Player } from "../../player.js";
 import { Pos } from "../../pos.js";
+import { DrawingData } from "../../../../shared/types.js";
 
 class Hades extends Ranged {
     private radius: number = 25;
@@ -20,9 +22,9 @@ class Hades extends Ranged {
         }
         super.doAcutalMove(board);
     }
-    applyFireAura(board: Board) {
+    applyFireAura(board: Board): void {
         this.applyToEntities(board, 
-            (unit: Unit): boolean => unit.team != this.team && this.inRangeForDistance(unit, this.radius), 
+            (unit: Unit): boolean => isEnemyInRange(this, unit, this.radius), 
             (unit: Unit) => {
                 unit.takeFireDamage(1);
             }
@@ -43,6 +45,18 @@ class Hades extends Ranged {
 
     getPhysicalDamageMultiplier(): number {
         return 0.5;
+    }
+
+    getExtraDrawing(): DrawingData {
+        return {
+            circles: [
+                {
+                    pos: this.pos.getPosData(),
+                    radius: this.radius,
+                    color: this.color,
+                }
+            ]
+        }
     }
 }
 

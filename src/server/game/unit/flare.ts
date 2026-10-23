@@ -14,7 +14,7 @@ export class Flare extends TargetChasingUnit {
     inRange(other: Unit): boolean {
         return this.isAdjacent(other);
     }
-    inRangeMove(board: Board) {
+    inRangeMove(board: Board): void {
         return;
     }
 

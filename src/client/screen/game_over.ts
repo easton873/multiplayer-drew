@@ -10,11 +10,11 @@ export class GameOverScreen {
         }
     }
 
-    displayWinner(winner : string) {
+    displayWinner(winner : string): void {
         this.winnerLabel.innerHTML = `${winner} is the winner!`;
     }
 }
 
 export interface NextScreener {
-    toWaitingScreen();
+    toWaitingScreen(): void;
 }

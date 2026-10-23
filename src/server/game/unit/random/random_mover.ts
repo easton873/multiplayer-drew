@@ -16,7 +16,7 @@ class RandomMover extends Melee {
         this.tryTeleport(board);
         super.doMove(board);
     }
-    tryTeleport(board: Board) {
+    tryTeleport(board: Board): void {
         if (this.hasTeleportsRemaining() && Random.fromRange(1, 10) == 1) {
             this.numTeleports--;
             this.pos = randomPos(board);

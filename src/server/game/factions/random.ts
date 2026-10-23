@@ -9,6 +9,7 @@ import { EraUnit, Faction } from "./faction.js";
 import { HugeRandomRanged, BiggerRandomMeleeUnit, BiggestRandomMeleeUnit, RandomMeleeUnit, RandomRangedUnit } from "../unit/random/melee_ranged.js";
 import { MigratorUnit } from "../unit/random/migrator.js";
 import { RandomMoverUnit, JackedRandomMoverUnit } from "../unit/random/random_mover.js";
+import { ThanosUnit } from "../unit/random/thanos.js";
 
 export const RANDOM_FACTION_NAME = "Random";
 
@@ -34,6 +35,7 @@ export class Random extends Faction {
             new EraUnit(SuperDefenderUnit, 2),
             new EraUnit(JackedRandomMoverUnit, 2),
             new EraUnit(MigratorUnit, 2),
+            new EraUnit(ThanosUnit, 0),
         ];
     }
     getResourceUnits(): EraUnit[] {

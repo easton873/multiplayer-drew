@@ -36,69 +36,69 @@ export abstract class ClientReceiver {
         socket.on(RECONNECT_SUCCESS_KEY, (data : ReconnectData) => this.handleReconnectSuccess(data));
     }
 
-    abstract handleLoadData(data : LoadData);
-    abstract handlePlayerWaitingInfo(data : PlayerWaitingData);
-    abstract handleJoinSuccess(token : string);
-    abstract handleWaitingRoomUpdate(data : GameWaitingData);
-    abstract handleStartSuccess(data : GameSetupData);
-    abstract handleYourTurn(data : GameSetupData);
-    abstract handleSetPosSuccess();
-    abstract handleBuildSucces(faction : FactionData);
-    abstract handleEmitGamestate(gameInstance : GameData);
-    abstract handleEmitSpectatorGameState(data : GeneralGameData);
-    abstract handleEraUpgradeSuccess(faction : FactionData);
-    abstract handleGameOver(winner : string);
-    abstract handleReconnectSuccess(data : ReconnectData);
+    abstract handleLoadData(data : LoadData): void;
+    abstract handlePlayerWaitingInfo(data : PlayerWaitingData): void;
+    abstract handleJoinSuccess(token : string): void;
+    abstract handleWaitingRoomUpdate(data : GameWaitingData): void;
+    abstract handleStartSuccess(data : GameSetupData): void;
+    abstract handleYourTurn(data : GameSetupData): void;
+    abstract handleSetPosSuccess(): void;
+    abstract handleBuildSucces(faction : FactionData): void;
+    abstract handleEmitGamestate(gameInstance : GameData): void;
+    abstract handleEmitSpectatorGameState(data : GeneralGameData): void;
+    abstract handleEraUpgradeSuccess(faction : FactionData): void;
+    abstract handleGameOver(winner : string): void;
+    abstract handleReconnectSuccess(data : ReconnectData): void;
 }
 
-export function emitLoadData(client : any, data : LoadData) {
+export function emitLoadData(client : any, data : LoadData): void {
     client.emit(LOAD_DATA_KEY, data);
 }
 
-export function emitPlayerWaitingInfo(client : any, data : PlayerWaitingData) {
+export function emitPlayerWaitingInfo(client : any, data : PlayerWaitingData): void {
     client.emit(WAITING_PLAYER_KEY, data);
 }
 
-export function emitWaitingRoomUpdate(io : any, data : GameWaitingData) {
+export function emitWaitingRoomUpdate(io : any, data : GameWaitingData): void {
     io.sockets.in(ROOM_CODE).emit(WAITING_ROOM_UPDATE, data);
 }
 
-export function emitJoinSuccess(client : any, token : string) {
+export function emitJoinSuccess(client : any, token : string): void {
     client.emit(JOIN_SUCCESS_KEY, token);
 }
 
-export function emitStartSuccess(io : any, data : GameSetupData) {
+export function emitStartSuccess(io : any, data : GameSetupData): void {
     io.sockets.in(ROOM_CODE).emit(START_SUCCESS_KEY, data);
 }
 
-export function emitYourTurn(client : any, data : GameSetupData) {
+export function emitYourTurn(client : any, data : GameSetupData): void {
     client.emit(YOUR_TURN_KEY, data);
 }
 
-export function emitSetPosSuccess(client : any) {
+export function emitSetPosSuccess(client : any): void {
     client.emit(SET_POS_SUCCESS);
 }
 
-export function emitGameBuilt(client : any, faction : FactionData) {
+export function emitGameBuilt(client : any, faction : FactionData): void {
     client.emit(GAME_BUILD_SUCCESS, faction);
 }
 
-export function emitGameState(client : any, gameInstance : GameData) {
+export function emitGameState(client : any, gameInstance : GameData): void {
     client.emit(GAME_INSTANCE_KEY, gameInstance);
 }
 
-export function emitSpectatorGameState(client : any, data : GeneralGameData) {
+export function emitSpectatorGameState(client : any, data : GeneralGameData): void {
     client.emit(SPECTATOR_GAME_KEY, data);
 }
 
-export function emitUpgradeEraSuccess(client : any, faction : FactionData) {
+export function emitUpgradeEraSuccess(client : any, faction : FactionData): void {
     client.emit(UPDGRADE_SUCCESS_KEY, faction);
 }
 
-export function emitGameOver(io : any, winner : string) {
+export function emitGameOver(io : any, winner : string): void {
     io.sockets.in(ROOM_CODE).emit(GAME_OVER_KEY, winner);
 }
 
-export function emitReconnectSuccess(client : any, data : ReconnectData) {
+export function emitReconnectSuccess(client : any, data : ReconnectData): void {
     client.emit(RECONNECT_SUCCESS_KEY, data);
 }

@@ -20,19 +20,19 @@ export class ScreenManager {
       this.joinScreen.div.style.display = "flex";
     }
 
-    toWaitingScreen() {
+    toWaitingScreen(): void {
       this.hideAll();
       this.waitingScreen.div.style.display = "flex";
     }
       
-    toGameScreen() {
+    toGameScreen(): void {
       this.hideAll();
       this.gameScreen.div.style.display = "flex";
       this.gameScreen.controls.style.display = "none";
       this.gameScreen.resetMode();
     }
 
-    toGameOverScreen() {
+    toGameOverScreen(): void {
       if (document.fullscreenElement) {
         document.exitFullscreen();
       }
@@ -40,7 +40,7 @@ export class ScreenManager {
       this.gameOverScreen.div.style.display = "flex";
     }
 
-    hideAll() {
+    hideAll(): void {
       this.joinScreen.div.style.display = "none";
       this.waitingScreen.div.style.display = "none";
       this.gameScreen.div.style.display = "none";

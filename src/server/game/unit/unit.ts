@@ -1,11 +1,13 @@
-import { UnitData, UnitRangedAttackData } from "../../../shared/types.js";
+import { UnitData, DrawingData, UnitRangedAttackData } from "../../../shared/types.js";
 import { Board } from "../board.js";
+import { DrawingManager } from "../drawing/manager.js";
 import { Heart } from "../heart.js";
 import { Counter } from "../move/counter.js";
 import { Player } from "../player.js";
 import { Pos, PositionDifference } from "../pos.js";
 import { healUnit } from "./combat/helper.js";
 import { DamageTaker } from "./damage.js";
+import { GameUnit } from "./game_unit.js";
 
 export abstract class ObservableUnit {
     private observers : UnitObserver[] = [];
@@ -15,11 +17,11 @@ export abstract class ObservableUnit {
         return this.observers;
     }
 
-    registerObserver(o : UnitObserver) {
+    registerObserver(o : UnitObserver): void {
         this.observers.push(o);
     }
 
-    unregisterObserver(o : UnitObserver) {
+    unregisterObserver(o : UnitObserver): void {
         let index = this.observers.findIndex((observer : UnitObserver) => observer === o);
         if (index == -1) {
             console.log("issue removing observer");
@@ -27,11 +29,11 @@ export abstract class ObservableUnit {
         this.observers.splice(index, 1);
     }
 
-    registerQueueDeathObserver(o : QueueDeathObserver) {
+    registerQueueDeathObserver(o : QueueDeathObserver): void {
         this.queueDeathObservers.push(o);
     }
 
-    unregisterQueueDeathObserver(o : QueueDeathObserver) {
+    unregisterQueueDeathObserver(o : QueueDeathObserver): void {
         let index = this.queueDeathObservers.findIndex((observer : QueueDeathObserver) => observer === o);
         if (index == -1) {
             console.log("issue removing queue death observer");
@@ -39,7 +41,7 @@ export abstract class ObservableUnit {
         this.queueDeathObservers.splice(index, 1);
     }
 
-    notifyObserversDeath() {
+    notifyObserversDeath(): void {
         let currLength = this.observers.length;
         for (let i = 0; i < this.observers.length; ++i) {
             let o = this.observers[i];
@@ -51,7 +53,7 @@ export abstract class ObservableUnit {
         }
     }
 
-    notifyQueueDeathObservers() {
+    notifyQueueDeathObservers(): void {
         for (let i = 0; i < this.queueDeathObservers.length; ++i) {
             this.queueDeathObservers[i].queueDeath(this as unknown as Unit);
         }
@@ -89,7 +91,7 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
         this.color = color;
     }
 
-    move(board : Board) {
+    move(board : Board): void {
         if (this.freeze) {
             return;
         }
@@ -97,17 +99,17 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
         this.clamp(this.pos, board);
     }
 
-    clamp(pos : Pos, board : Board) {
+    clamp(pos : Pos, board : Board): void {
         pos.clamp(board.width - 1, board.height - 1);
     }
 
     abstract doAcutalMove(board : Board);
 
-    doDamage(unit : Unit, damage : number) {
+    doDamage(unit : Unit, damage : number): void {
         unit.takePhysicalDamage(damage);
     }
 
-    takeDamage(damage : number) {
+    takeDamage(damage : number): void {
         if (this.isDead()) return;
         this.hp -= damage;
         if (this.isDead()) {
@@ -115,7 +117,7 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
         }
     }
 
-    applyDamage(damage : number, multiplier : number) {
+    applyDamage(damage : number, multiplier : number): void {
         this.takeDamage(this.lessenDamage(damage, multiplier));
     }
 
@@ -146,35 +148,35 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
         return 1;
     }
 
-    takePhysicalDamage(damage: number) {
+    takePhysicalDamage(damage: number): void {
         this.applyDamage(damage, this.getPhysicalDamageMultiplier());
     }
 
-    takeForcefulDamage(damage: number) {
+    takeForcefulDamage(damage: number): void {
         this.applyDamage(damage, this.getForcefulDamageMultiplier());
     }
 
-    takeBuildingDamage(damage: number) {
+    takeBuildingDamage(damage: number): void {
         this.applyDamage(damage, this.getBuildingDamageMultiplier());
     }
 
-    takeFireDamage(damage: number) {
+    takeFireDamage(damage: number): void {
         this.applyDamage(damage, this.getFireDamageMultiplier());
     }
 
-    takeMagicDamage(damage: number) {
+    takeMagicDamage(damage: number): void {
         this.applyDamage(damage, this.getMagicDamageMultiplier());
     }
 
-    kill() {
+    kill(): void {
         this.takeDamage(this.hp);
     }
 
-    heal(amount: number) {
+    heal(amount: number): void {
         healUnit(this, amount);
     }
 
-    applyToEntities(board : Board, predicate : (unit : Unit) => boolean, applyFn : (unit : Unit) => void) {
+    applyToEntities(board : Board, predicate : (unit : Unit) => boolean, applyFn : (unit : Unit) => void): void {
         board.entities.forEach((unit : Unit) => {
             if (predicate(unit)) {
                 applyFn(unit);
@@ -182,12 +184,28 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
         });
     }
 
-    public TESTkill() {
+    public TESTkill(): void {
         this.notifyObserversDeath();
     }
     
     isDead() : boolean {
         return this.hp <= 0;
+    }
+
+    summonUnit(unit: Unit): boolean {
+        if (this.owner.atUnitCap()) {
+            return false;
+        }
+        this.owner.addUnit(unit);
+        return true;
+    }
+
+    summonGameUnit(gu: GameUnit, pos: Pos): boolean {
+        return this.summonUnit( gu.construct(this.owner, pos));
+    }
+
+    forceSummonUnit(unit: Unit, board: Board): void {
+        board.addEntity(unit);
     }
 
     inRangeForDistance(other : Unit, range : number) : boolean {
@@ -216,11 +234,11 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
         return this.invisible;
     }
 
-    goInvisible() {
+    goInvisible(): void {
         this.invisible = true;
     }
 
-    goVisibile() {
+    goVisibile(): void {
         this.invisible = false;
     }
 
@@ -235,6 +253,7 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
             hp : this.hp,
             totalHP: this.totalHP,
             rangedData: this.getRangedData(),
+            extraDrawing: this.getExtraDrawing(),
         };
         // if (this.invisible) {
         //     let invisibleColor = "#00000000";
@@ -255,6 +274,14 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
             counterTotal: 0,
         };
     }
+
+    protected getDrawingManager(): DrawingManager {
+        return this.owner.drawingManager;
+    }
+
+    getExtraDrawing(): DrawingData {
+        return {};
+    }
 }
 
 export abstract class UnitWithCounter extends Unit {
@@ -263,7 +290,7 @@ export abstract class UnitWithCounter extends Unit {
         super(player, name, pos, hp, color);
         this.moveCounter = new Counter(speed);
     }
-    doAcutalMove(board: Board) {
+    doAcutalMove(board: Board): void {
         if (this.tick()) {
             this.doMove(board);
         }
@@ -281,7 +308,7 @@ export abstract class UnitWithCounter extends Unit {
 
 export abstract class UnitWithTarget extends Unit implements UnitObserver {
     private _target : Unit = null;
-    notifyDeath(unit: ObservableUnit) {
+    notifyDeath(unit: ObservableUnit): void {
         if (unit == this._target) {
             this._target = null;
             unit.unregisterObserver(this);
@@ -310,7 +337,7 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
         return this._target;
     }
 
-    findNewTarget(units : Unit[]) {
+    findNewTarget(units : Unit[]): void {
         this.findTargetWithPredicate(units, (unit : Unit) => this.isValidTarget(unit));
     }
 
@@ -318,7 +345,7 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
         return unit.team != this.team;
     }
 
-    findTargetWithPredicate(units : Unit[], predicate : (unit : Unit) => boolean) {
+    findTargetWithPredicate(units : Unit[], predicate : (unit : Unit) => boolean): void {
         let currDist = -1;
         units.forEach((unit : Unit) => {
             let dist = this.pos.distanceTo(unit.pos);
@@ -329,7 +356,7 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
         });
     }
 
-    applyToEntitesInArea(board : Board, pos: Pos, range: number, applyFn: (unit : Unit) => void) {
+    applyToEntitesInArea(board : Board, pos: Pos, range: number, applyFn: (unit : Unit) => void): void {
         this.applyToEntities(board,
             (unit : Unit) => {
                 return this.inRangeFromPoint(unit, range, pos)
@@ -338,7 +365,7 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
         )
     }
 
-    doDamageInArea(board : Board, pos : Pos, range : number, damage : number) {
+    doDamageInArea(board : Board, pos : Pos, range : number, damage : number): void {
         this.applyToEntitesInArea(board, pos, range,
             (unit : Unit) => {
                 this.doDamage(unit, damage);
@@ -346,13 +373,13 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
         )
     }
 
-    doDamageToPoses(board : Board, poses : Pos[], predicate : (unit : Unit) => boolean, damage : number) {
+    doDamageToPoses(board : Board, poses : Pos[], predicate : (unit : Unit) => boolean, damage : number): void {
         poses.forEach((pos : Pos) => {
             this.doDamageToPos(board, pos, predicate, damage);
         })
     }
 
-    doDamageToPos(board : Board, pos : Pos, predicate : (unit : Unit) => boolean, damage : number) {
+    doDamageToPos(board : Board, pos : Pos, predicate : (unit : Unit) => boolean, damage : number): void {
         this.applyToEntities(board, 
             (unit : Unit) => {
                 return unit.pos.equals(pos) && predicate(unit);

@@ -13,19 +13,19 @@ export class Resources {
       return this.amounts.get(type) ?? 0;
     }
 
-    add(other : Resources) {
+    add(other : Resources): void {
         for(const t of RESOURCE_TYPES) {
             this.amounts.set(t, this.get(t) + other.get(t));
         }
     }
 
-    multiply(scalar : number) {
+    multiply(scalar : number): void {
         for(const t of RESOURCE_TYPES) {
             this.amounts.set(t, this.get(t) * scalar);
         }
     }
 
-    spend(other : Resources) {
+    spend(other : Resources): void {
         for(const t of RESOURCE_TYPES) {
             this.amounts.set(t, this.get(t) - other.get(t));
         }

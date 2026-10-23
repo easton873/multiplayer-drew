@@ -14,13 +14,13 @@ export class Kamakaze extends TargetChasingUnit {
         return this.isAdjacent(other);
     }
 
-    inRangeMove(board : Board) {
+    inRangeMove(board : Board): void {
         if (this.inRange(this.target)) {
             this.explode(board);
         }
     }
 
-    explode(board : Board) {
+    explode(board : Board): void {
         this.doDamageInArea(board, this.pos, this.range, this.damage);
         this.kill(); // make sure this unit died too
     }

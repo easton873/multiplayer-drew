@@ -10,10 +10,10 @@ import { Unit } from "./unit.js";
 // of a unit becomes null, this is a bug I just found, but I haven't looksed so I don't
 // know if that is quite it.
 export class Healer extends Ranged {
-    inRangeMove(board: Board) {
+    inRangeMove(board: Board): void {
         this.healTarget();
     }
-    healTarget() {
+    healTarget(): void {
         healUnit(this.target, this.damage)
     }
     findNewTarget(units: Unit[]): void {
