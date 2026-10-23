@@ -1,13 +1,12 @@
 import { Board } from "../../board.js";
 import { drawExpandingCircle, drawRandomPath } from "../../drawing/helper.js";
-import { Heart } from "../../heart.js";
 import { Random } from "../../math.js";
 import { Counter } from "../../move/counter.js";
 import { Player } from "../../player.js";
 import { Pos } from "../../pos.js";
 import { Resources } from "../../resources.js";
 import { CombatUnit } from "../combat/combat.js";
-import { isEnemyInRange, isEnemyNonHeart } from "../combat/helper.js";
+import { isEnemyNonHeart } from "../combat/helper.js";
 import { GameUnit } from "../game_unit.js";
 import { Melee } from "../melee_unit.js";
 import { Unit } from "../unit.js";
@@ -44,7 +43,7 @@ class Thanos extends Melee {
     }
 
     powerStone(board: Board): void {
-        let target: Unit | undefined = this.findStrongestInRange(board);
+        let target: Unit | null = this.findStrongestInRange(board);
         if (target) {
             drawRandomPath(this.pos, target.pos, "#cd08ef", this.getDrawingManager());
             target.kill();
@@ -61,16 +60,8 @@ class Thanos extends Melee {
         // also a tactical retreat could be cool too, based on how much health you have
     }
 
-    findStrongestInRange(board: Board): Unit | undefined {
-        let target: Unit;
-        board.entities.forEach((u: Unit) => {
-            if (isEnemyInRange(this, u, this.range)) {
-                if (!target || u.totalHP > target.totalHP) {
-                    target = u;
-                }
-            }
-        });
-        return target;
+    findStrongestInRange(board: Board): Unit | null {
+        return this.findBestEnemyInRange(board.entities, this.range, (u: Unit, target: Unit) => u.totalHP > target.totalHP);
     }
 }
 

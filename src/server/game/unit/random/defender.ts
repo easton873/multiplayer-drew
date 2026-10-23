@@ -27,6 +27,10 @@ class Defender extends UnitWithCounter {
             }
         }
     }
+
+    isTargetable(): boolean {
+        return false;
+    }
 }
 
 class defenderUnit extends GameUnit {

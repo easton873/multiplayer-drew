@@ -5,7 +5,7 @@ import { Heart } from "../heart.js";
 import { Counter } from "../move/counter.js";
 import { Player } from "../player.js";
 import { Pos, PositionDifference } from "../pos.js";
-import { healUnit } from "./combat/helper.js";
+import { healUnit, isEnemyInRange } from "./combat/helper.js";
 import { DamageTaker } from "./damage.js";
 import { GameUnit } from "./game_unit.js";
 
@@ -220,6 +220,14 @@ export abstract class Unit extends ObservableUnit implements DamageTaker {
         return this.pos.isAdjacent(other.pos);
     }
 
+    distanceTo(other: Unit): number {
+        return this.pos.distanceTo(other.pos);
+    }
+
+    isTargetable(): boolean {
+        return !this.isInvisible();
+    }
+
     getDirectionFromHeart() : PositionDifference {
         const closest : Heart = this.owner.hearts.getStrongestHeartInRange(this.pos);
         if (!closest) { // this shouldn't ever happen
@@ -338,22 +346,35 @@ export abstract class UnitWithTarget extends Unit implements UnitObserver {
     }
 
     findNewTarget(units : Unit[]): void {
-        this.findTargetWithPredicate(units, (unit : Unit) => this.isValidTarget(unit));
+        this.findTargetWithPredicate(units, (u: Unit) => this.isValidTarget(u));
     }
 
     isValidTarget(unit : Unit) : boolean {
         return unit.team != this.team;
     }
 
-    findTargetWithPredicate(units : Unit[], predicate : (unit : Unit) => boolean): void {
-        let currDist = -1;
-        units.forEach((unit : Unit) => {
-            let dist = this.pos.distanceTo(unit.pos);
-            if (predicate(unit) && (currDist == -1 || dist < currDist) && !unit.isInvisible()) {
-                this.target = unit;
-                currDist = dist;
+    findTargetWithPredicate(units : Unit[], predicate: (u: Unit) => boolean): void {
+        const found = this.findClosestValidTarget(units, predicate);
+        if (found) {
+            this.target = found;
+        }
+    }
+
+    findBestTarget(units : Unit[], isTargetable: (u: Unit) => boolean, isBetter: (u: Unit, target: Unit) => boolean): Unit | null {
+        return units.reduce<Unit | null>((target, u) => {
+            if (!u.isTargetable() || !isTargetable(u)) {
+                return target;
             }
-        });
+            return !target || isBetter(u, target) ? u : target;
+        }, null);
+    }
+
+    findBestEnemyInRange(units : Unit[], range: number, isBetter: (u: Unit, target: Unit) => boolean): Unit | null {
+        return this.findBestTarget(units, (u: Unit): boolean => isEnemyInRange(this, u, range), isBetter);
+    }
+
+    findClosestValidTarget(units : Unit[], validPredicate: (u: Unit) => boolean): Unit | null {
+        return this.findBestTarget(units, validPredicate, (u: Unit, target: Unit) => (this.distanceTo(u) < this.distanceTo(target)));
     }
 
     applyToEntitesInArea(board : Board, pos: Pos, range: number, applyFn: (unit : Unit) => void): void {

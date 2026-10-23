@@ -3,9 +3,9 @@ export class Random {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    static fromList<T>(list: T[]): T | undefined {
+    static fromList<T>(list: T[]): T | null {
         if (list.length == 0) {
-            return undefined;
+            return null;
         }
         return list[this.fromRange(0, list.length - 1)];
     }

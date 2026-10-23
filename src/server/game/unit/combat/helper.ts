@@ -3,7 +3,6 @@ import { Pos } from "../../../game/pos.js";
 import { Board } from "../../../game/board.js";
 import { Unit } from "../unit.js";
 import { Heart, Hearts } from "../../heart.js";
-import { Player } from "../../player.js";
 
 export function clampHealth(unit : Unit): void {
     if (unit.hp > unit.totalHP) {
@@ -36,10 +35,6 @@ export function getTerritory(board: Board, hearts : Hearts): Pos[] {
     return spots;
 }
 
-export function findUnit(board: Board, predicate: (u: Unit) => boolean): Unit | undefined {
-    return Random.fromList(board.entities.filter(predicate));
-}
-
 export function isEnemy(self: Unit, other: Unit): boolean {
     return other.team != self.team;
 }
@@ -52,10 +47,15 @@ export function isEnemyInRange(self: Unit, other: Unit, range: number): boolean 
     return isEnemy(self, other) && self.inRangeForDistance(other, range);
 }
 
-export function findEnemyUnit(board: Board, unit: Unit): Unit | undefined {
-    return findUnit(board, (u: Unit) => isEnemyNonHeart(unit, u));
+export function searchForUnit(units : Unit[], predicate: (u: Unit) => boolean): Unit | null {
+    return Random.fromList(units.filter(predicate));
 }
 
-export function findEnemyInRange(board: Board, unit: Unit, range: number): Unit | undefined {
-    return findUnit(board, (u: Unit) => isEnemyInRange(unit, u, range));
+// forces a search meaning it just checks all units, doesn't check if things are targetable
+export function searchBoardForEnemyUnit(board : Board, unit: Unit): Unit | null {
+    return searchForUnit(board.entities, (u: Unit) => isEnemyNonHeart(unit, u));
+}
+
+export function searchBoardForEnemyInRange(board: Board, unit: Unit, range: number): Unit | null {
+    return searchForUnit(board.entities, (u: Unit) => isEnemyInRange(unit, u, range));
 }

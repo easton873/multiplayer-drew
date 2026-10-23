@@ -1,20 +1,18 @@
 import { Board } from "../../board.js";
 import { drawRandomPath, drawShrinkingCircle } from "../../drawing/helper.js";
-import { Heart } from "../../heart.js";
-import { Random } from "../../math.js";
 import { Counter } from "../../move/counter.js";
 import { Player } from "../../player.js";
 import { Pos } from "../../pos.js";
 import { Resources } from "../../resources.js";
-import { findEnemyInRange, findEnemyUnit, randomPos } from "../combat/helper.js";
+import { searchBoardForEnemyUnit, isEnemy, randomPos } from "../combat/helper.js";
 import { GameUnit } from "../game_unit.js";
 import { Ranged } from "../ranged_unit.js";
-import { ObservableUnit, Unit, UnitWithCounter } from "../unit.js";
+import { ObservableUnit, Unit } from "../unit.js";
 
 class Voldemort extends Ranged {
     private ready: boolean = false;
     private horcruxes: Unit[] = [];
-    private theBoyWhoLived: Unit | undefined;
+    private theBoyWhoLived: Unit | null;
     private markerCounter: Counter = new Counter(90);
     private avadaKedavraCounter: Counter = new Counter(90);
     private greenColor: string = "#4df50a"
@@ -28,7 +26,7 @@ class Voldemort extends Ranged {
                 horcurx.registerObserver(this);
                 this.horcruxes.push(horcurx);
             }
-            this.theBoyWhoLived = findEnemyUnit(board, this);
+            this.theBoyWhoLived = searchBoardForEnemyUnit(board, this);
             if (this.theBoyWhoLived) {
                 this.theBoyWhoLived.registerObserver(this);
             }
@@ -59,7 +57,7 @@ class Voldemort extends Ranged {
         if (!this.avadaKedavraCounter.tick()) {
             return;
         }
-        const target: Unit | undefined = findEnemyInRange(board, this, 225);
+        const target: Unit | null = this.findBestEnemyInRange(board.entities, 225, isEnemy);
         if (!target) {
             return;
         }
@@ -86,7 +84,7 @@ class Voldemort extends Ranged {
             }
         }
         if (unit == this.theBoyWhoLived) {
-            this.theBoyWhoLived = undefined;
+            this.theBoyWhoLived = null;
         }
         super.notifyDeath(unit)
     }
